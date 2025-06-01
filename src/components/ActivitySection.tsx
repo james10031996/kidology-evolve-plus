@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,13 @@ import CreativeArtStudio from './CreativeArtStudio';
 import STEMLab from './STEMLab';
 import LanguageLab from './LanguageLab';
 import SocialEmotionalLearning from './SocialEmotionalLearning';
-import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart } from 'lucide-react';
+import InteractiveMath from './InteractiveMath';
+import ReadingAdventures from './ReadingAdventures';
+import ScienceExperiments from './ScienceExperiments';
+import MusicMovement from './MusicMovement';
+import CodingForKids from './CodingForKids';
+import GeographyExplorer from './GeographyExplorer';
+import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart, Calculator, Music, Monitor, MapPin } from 'lucide-react';
 
 const ActivitySection = () => {
   const stories = [
@@ -102,61 +109,90 @@ const ActivitySection = () => {
         </div>
 
         <Tabs defaultValue="stories" className="w-full">
-          <TabsList className="grid w-full grid-cols-8 max-w-4xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
+          <TabsList className="grid w-full grid-cols-12 max-w-6xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
             <TabsTrigger 
               value="stories" 
-              className="rounded-full font-comic font-bold data-[state=active]:gradient-purple data-[state=active]:text-white"
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-purple data-[state=active]:text-white"
             >
-              <BookOpen className="w-4 h-4 mr-1" />
+              <BookOpen className="w-3 h-3 mr-1" />
               Stories
             </TabsTrigger>
             <TabsTrigger 
               value="games" 
-              className="rounded-full font-comic font-bold data-[state=active]:gradient-blue data-[state=active]:text-white"
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-blue data-[state=active]:text-white"
             >
-              <Gamepad2 className="w-4 h-4 mr-1" />
+              <Gamepad2 className="w-3 h-3 mr-1" />
               Games
             </TabsTrigger>
             <TabsTrigger 
-              value="art" 
-              className="rounded-full font-comic font-bold data-[state=active]:gradient-pink data-[state=active]:text-white"
+              value="math" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-blue data-[state=active]:text-white"
             >
-              <Palette className="w-4 h-4 mr-1" />
+              <Calculator className="w-3 h-3 mr-1" />
+              Math
+            </TabsTrigger>
+            <TabsTrigger 
+              value="reading" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-purple data-[state=active]:text-white"
+            >
+              <BookOpen className="w-3 h-3 mr-1" />
+              Reading
+            </TabsTrigger>
+            <TabsTrigger 
+              value="art" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-pink data-[state=active]:text-white"
+            >
+              <Palette className="w-3 h-3 mr-1" />
               Art
             </TabsTrigger>
             <TabsTrigger 
               value="stem" 
-              className="rounded-full font-comic font-bold data-[state=active]:gradient-blue data-[state=active]:text-white"
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-blue data-[state=active]:text-white"
             >
-              <Beaker className="w-4 h-4 mr-1" />
+              <Beaker className="w-3 h-3 mr-1" />
               STEM
             </TabsTrigger>
             <TabsTrigger 
-              value="language" 
-              className="rounded-full font-comic font-bold data-[state=active]:gradient-green data-[state=active]:text-white"
+              value="science" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-green data-[state=active]:text-white"
             >
-              <Globe2 className="w-4 h-4 mr-1" />
+              <Beaker className="w-3 h-3 mr-1" />
+              Science
+            </TabsTrigger>
+            <TabsTrigger 
+              value="language" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-green data-[state=active]:text-white"
+            >
+              <Globe2 className="w-3 h-3 mr-1" />
               Language
             </TabsTrigger>
             <TabsTrigger 
+              value="music" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-pink data-[state=active]:text-white"
+            >
+              <Music className="w-3 h-3 mr-1" />
+              Music
+            </TabsTrigger>
+            <TabsTrigger 
+              value="coding" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-purple data-[state=active]:text-white"
+            >
+              <Monitor className="w-3 h-3 mr-1" />
+              Coding
+            </TabsTrigger>
+            <TabsTrigger 
+              value="geography" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-blue data-[state=active]:text-white"
+            >
+              <MapPin className="w-3 h-3 mr-1" />
+              Geography
+            </TabsTrigger>
+            <TabsTrigger 
               value="social" 
-              className="rounded-full font-comic font-bold data-[state=active]:gradient-pink data-[state=active]:text-white"
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-pink data-[state=active]:text-white"
             >
-              <Heart className="w-4 h-4 mr-1" />
+              <Heart className="w-3 h-3 mr-1" />
               Social
-            </TabsTrigger>
-            <TabsTrigger 
-              value="pet" 
-              className="rounded-full font-comic font-bold data-[state=active]:gradient-green data-[state=active]:text-white"
-            >
-              🐾 Pet
-            </TabsTrigger>
-            <TabsTrigger 
-              value="rewards" 
-              className="rounded-full font-comic font-bold data-[state=active]:gradient-orange data-[state=active]:text-white"
-            >
-              <Gift className="w-4 h-4 mr-1" />
-              Rewards
             </TabsTrigger>
           </TabsList>
 
@@ -176,6 +212,14 @@ const ActivitySection = () => {
             </div>
           </TabsContent>
 
+          <TabsContent value="math">
+            <InteractiveMath />
+          </TabsContent>
+
+          <TabsContent value="reading">
+            <ReadingAdventures />
+          </TabsContent>
+
           <TabsContent value="art">
             <CreativeArtStudio />
           </TabsContent>
@@ -184,26 +228,46 @@ const ActivitySection = () => {
             <STEMLab />
           </TabsContent>
 
+          <TabsContent value="science">
+            <ScienceExperiments />
+          </TabsContent>
+
           <TabsContent value="language">
             <LanguageLab />
+          </TabsContent>
+
+          <TabsContent value="music">
+            <MusicMovement />
+          </TabsContent>
+
+          <TabsContent value="coding">
+            <CodingForKids />
+          </TabsContent>
+
+          <TabsContent value="geography">
+            <GeographyExplorer />
           </TabsContent>
 
           <TabsContent value="social">
             <SocialEmotionalLearning />
           </TabsContent>
-
-          <TabsContent value="pet">
-            <div className="max-w-md mx-auto">
-              <VirtualPet />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="rewards">
-            <div className="max-w-lg mx-auto">
-              <RewardsCenter />
-            </div>
-          </TabsContent>
         </Tabs>
+
+        {/* Pet and Rewards in a separate section */}
+        <div className="mt-16 grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div>
+            <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4 text-center">
+              🐾 Your Learning Buddy
+            </h3>
+            <VirtualPet />
+          </div>
+          <div>
+            <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4 text-center">
+              🎁 Rewards Center
+            </h3>
+            <RewardsCenter />
+          </div>
+        </div>
       </div>
     </section>
   );
