@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,11 @@ import InteractiveStoryCard from './InteractiveStoryCard';
 import MiniGameCard from './MiniGameCard';
 import VirtualPet from './VirtualPet';
 import RewardsCenter from './RewardsCenter';
-import { BookOpen, Gamepad2, Star, Gift } from 'lucide-react';
+import CreativeArtStudio from './CreativeArtStudio';
+import STEMLab from './STEMLab';
+import LanguageLab from './LanguageLab';
+import SocialEmotionalLearning from './SocialEmotionalLearning';
+import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart } from 'lucide-react';
 
 const ActivitySection = () => {
   const stories = [
@@ -94,25 +97,53 @@ const ActivitySection = () => {
             Fun Learning Activities
           </h2>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Discover magical stories, play exciting games, and earn amazing rewards while learning!
+            Discover magical stories, play exciting games, create amazing art, and explore science!
           </p>
         </div>
 
         <Tabs defaultValue="stories" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
+          <TabsList className="grid w-full grid-cols-8 max-w-4xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
             <TabsTrigger 
               value="stories" 
               className="rounded-full font-comic font-bold data-[state=active]:gradient-purple data-[state=active]:text-white"
             >
-              <BookOpen className="w-4 h-4 mr-2" />
+              <BookOpen className="w-4 h-4 mr-1" />
               Stories
             </TabsTrigger>
             <TabsTrigger 
               value="games" 
               className="rounded-full font-comic font-bold data-[state=active]:gradient-blue data-[state=active]:text-white"
             >
-              <Gamepad2 className="w-4 h-4 mr-2" />
+              <Gamepad2 className="w-4 h-4 mr-1" />
               Games
+            </TabsTrigger>
+            <TabsTrigger 
+              value="art" 
+              className="rounded-full font-comic font-bold data-[state=active]:gradient-pink data-[state=active]:text-white"
+            >
+              <Palette className="w-4 h-4 mr-1" />
+              Art
+            </TabsTrigger>
+            <TabsTrigger 
+              value="stem" 
+              className="rounded-full font-comic font-bold data-[state=active]:gradient-blue data-[state=active]:text-white"
+            >
+              <Beaker className="w-4 h-4 mr-1" />
+              STEM
+            </TabsTrigger>
+            <TabsTrigger 
+              value="language" 
+              className="rounded-full font-comic font-bold data-[state=active]:gradient-green data-[state=active]:text-white"
+            >
+              <Globe2 className="w-4 h-4 mr-1" />
+              Language
+            </TabsTrigger>
+            <TabsTrigger 
+              value="social" 
+              className="rounded-full font-comic font-bold data-[state=active]:gradient-pink data-[state=active]:text-white"
+            >
+              <Heart className="w-4 h-4 mr-1" />
+              Social
             </TabsTrigger>
             <TabsTrigger 
               value="pet" 
@@ -124,7 +155,7 @@ const ActivitySection = () => {
               value="rewards" 
               className="rounded-full font-comic font-bold data-[state=active]:gradient-orange data-[state=active]:text-white"
             >
-              <Gift className="w-4 h-4 mr-2" />
+              <Gift className="w-4 h-4 mr-1" />
               Rewards
             </TabsTrigger>
           </TabsList>
@@ -143,6 +174,22 @@ const ActivitySection = () => {
                 <MiniGameCard key={game.id} {...game} />
               ))}
             </div>
+          </TabsContent>
+
+          <TabsContent value="art">
+            <CreativeArtStudio />
+          </TabsContent>
+
+          <TabsContent value="stem">
+            <STEMLab />
+          </TabsContent>
+
+          <TabsContent value="language">
+            <LanguageLab />
+          </TabsContent>
+
+          <TabsContent value="social">
+            <SocialEmotionalLearning />
           </TabsContent>
 
           <TabsContent value="pet">
