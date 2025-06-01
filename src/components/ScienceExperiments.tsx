@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Flask, Zap, Droplets, Thermometer, Eye, PlayCircle } from 'lucide-react';
+import { Beaker, Zap, Droplets, Thermometer, Eye, PlayCircle } from 'lucide-react';
 
 const ScienceExperiments = () => {
   const [activeExperiment, setActiveExperiment] = useState(null);
@@ -126,7 +125,7 @@ const ScienceExperiments = () => {
       <Card className="p-6 bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl border-0 shadow-lg">
         <div className="text-center">
           <div className="w-16 h-16 gradient-green rounded-full mx-auto mb-3 flex items-center justify-center">
-            <Flask className="w-8 h-8 text-white" />
+            <Beaker className="w-8 h-8 text-white" />
           </div>
           <h2 className="font-fredoka font-bold text-2xl text-gray-800 mb-2">
             🔬 Science Experiments
