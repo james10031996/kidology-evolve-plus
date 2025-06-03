@@ -1,18 +1,43 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen, Star, Trophy, Volume2, ArrowRight, CheckCircle } from 'lucide-react';
 
+type AlphabetItem = {
+  letter: string;
+  word: string;
+  emoji: string;
+  sound: string;
+  fact: string;
+};
+
+type GeneralItem = {
+  name: string;
+  emoji: string;
+  sound: string;
+  fact: string;
+};
+
+type CategoryItem = AlphabetItem | GeneralItem;
+
+type Category = {
+  id: string;
+  name: string;
+  emoji: string;
+  description: string;
+  color: string;
+  items: CategoryItem[];
+};
+
 const GeneralKnowledge = () => {
   const [currentCategory, setCurrentCategory] = useState('alphabets');
   const [currentLevel, setCurrentLevel] = useState(0);
-  const [completedItems, setCompletedItems] = useState(new Set());
+  const [completedItems, setCompletedItems] = useState(new Set<string>());
   const [showAnswer, setShowAnswer] = useState(false);
   const [score, setScore] = useState(0);
 
-  const categories = [
+  const categories: Category[] = [
     {
       id: 'alphabets',
       name: 'Alphabets',
@@ -24,8 +49,64 @@ const GeneralKnowledge = () => {
         { letter: 'B', word: 'Butterfly', emoji: '🦋', sound: 'B is for Butterfly!', fact: 'Butterflies taste with their feet!' },
         { letter: 'C', word: 'Cat', emoji: '🐱', sound: 'C is for Cat!', fact: 'Cats sleep 12-16 hours a day!' },
         { letter: 'D', word: 'Dog', emoji: '🐶', sound: 'D is for Dog!', fact: 'Dogs have amazing sense of smell!' },
-        { letter: 'E', word: 'Elephant', emoji: '🐘', sound: 'E is for Elephant!', fact: 'Elephants never forget!' }
-      ]
+        { letter: 'E', word: 'Elephant', emoji: '🐘', sound: 'E is for Elephant!', fact: 'Elephants never forget!' },
+        { letter: 'F', word: 'Fish', emoji: '🐠', sound: 'F is for Fish!', fact: 'Fish can live in water and breathe through gills!' },
+        { letter: 'G', word: 'Giraffe', emoji: '🦒', sound: 'G is for Giraffe!', fact: 'Giraffes are the tallest animals!' },
+        { letter: 'H', word: 'Horse', emoji: '🐴', sound: 'H is for Horse!', fact: 'Horses can sleep standing up!' }
+      ] as AlphabetItem[]
+    },
+    {
+      id: 'numbers',
+      name: 'Numbers',
+      emoji: '🔢',
+      description: 'Count and learn with numbers!',
+      color: 'bg-purple-50',
+      items: [
+        { name: 'One', emoji: '1️⃣', sound: 'This is number one!', fact: 'One is the first counting number!' },
+        { name: 'Two', emoji: '2️⃣', sound: 'This is number two!', fact: 'Two hands, two eyes, we use pairs!' },
+        { name: 'Three', emoji: '3️⃣', sound: 'This is number three!', fact: 'Three wheels make a tricycle!' },
+        { name: 'Four', emoji: '4️⃣', sound: 'This is number four!', fact: 'Four legs on a chair or table!' },
+        { name: 'Five', emoji: '5️⃣', sound: 'This is number five!', fact: 'Five fingers on each hand!' },
+        { name: 'Six', emoji: '6️⃣', sound: 'This is number six!', fact: 'Insects have six legs!' },
+        { name: 'Seven', emoji: '7️⃣', sound: 'This is number seven!', fact: 'There are seven days in a week!' },
+        { name: 'Eight', emoji: '8️⃣', sound: 'This is number eight!', fact: 'Spiders have eight legs!' },
+        { name: 'Nine', emoji: '9️⃣', sound: 'This is number nine!', fact: 'Nine planets in our solar system!' },
+        { name: 'Ten', emoji: '🔟', sound: 'This is number ten!', fact: 'Ten toes on your feet!' }
+      ] as GeneralItem[]
+    },
+    {
+      id: 'colors',
+      name: 'Colors',
+      emoji: '🎨',
+      description: 'Discover the rainbow of colors!',
+      color: 'bg-red-50',
+      items: [
+        { name: 'Red', emoji: '🔴', sound: 'This is the color red!', fact: 'Red is the color of fire trucks and strawberries!' },
+        { name: 'Blue', emoji: '🔵', sound: 'This is the color blue!', fact: 'Blue is the color of the sky and ocean!' },
+        { name: 'Yellow', emoji: '🟡', sound: 'This is the color yellow!', fact: 'Yellow is the color of the sun and bananas!' },
+        { name: 'Green', emoji: '🟢', sound: 'This is the color green!', fact: 'Green is the color of grass and leaves!' },
+        { name: 'Orange', emoji: '🟠', sound: 'This is the color orange!', fact: 'Orange is the color of pumpkins and oranges!' },
+        { name: 'Purple', emoji: '🟣', sound: 'This is the color purple!', fact: 'Purple is made by mixing red and blue!' },
+        { name: 'Pink', emoji: '🩷', sound: 'This is the color pink!', fact: 'Pink is a lighter shade of red!' },
+        { name: 'Black', emoji: '⚫', sound: 'This is the color black!', fact: 'Black absorbs all colors of light!' }
+      ] as GeneralItem[]
+    },
+    {
+      id: 'shapes',
+      name: 'Shapes',
+      emoji: '📐',
+      description: 'Learn about different shapes!',
+      color: 'bg-indigo-50',
+      items: [
+        { name: 'Circle', emoji: '⭕', sound: 'This is a circle!', fact: 'Circles have no corners and are perfectly round!' },
+        { name: 'Square', emoji: '🟨', sound: 'This is a square!', fact: 'Squares have four equal sides!' },
+        { name: 'Triangle', emoji: '🔺', sound: 'This is a triangle!', fact: 'Triangles have three sides and three corners!' },
+        { name: 'Rectangle', emoji: '📏', sound: 'This is a rectangle!', fact: 'Rectangles have four sides with opposite sides equal!' },
+        { name: 'Diamond', emoji: '💎', sound: 'This is a diamond!', fact: 'Diamonds sparkle and are very valuable!' },
+        { name: 'Star', emoji: '⭐', sound: 'This is a star!', fact: 'Stars light up the night sky!' },
+        { name: 'Heart', emoji: '❤️', sound: 'This is a heart!', fact: 'Hearts represent love and kindness!' },
+        { name: 'Oval', emoji: '🥚', sound: 'This is an oval!', fact: 'Ovals are like stretched circles!' }
+      ] as GeneralItem[]
     },
     {
       id: 'body',
@@ -38,8 +119,11 @@ const GeneralKnowledge = () => {
         { name: 'Heart', emoji: '❤️', sound: 'This is your heart!', fact: 'Your heart beats 100,000 times a day!' },
         { name: 'Brain', emoji: '🧠', sound: 'This is your brain!', fact: 'Your brain uses 20% of your energy!' },
         { name: 'Hands', emoji: '✋', sound: 'These are your hands!', fact: 'You have 27 bones in each hand!' },
-        { name: 'Feet', emoji: '🦶', sound: 'These are your feet!', fact: 'Your feet have 26 bones each!' }
-      ]
+        { name: 'Feet', emoji: '🦶', sound: 'These are your feet!', fact: 'Your feet have 26 bones each!' },
+        { name: 'Ears', emoji: '👂', sound: 'These are your ears!', fact: 'Your ears help you balance too!' },
+        { name: 'Nose', emoji: '👃', sound: 'This is your nose!', fact: 'You can smell over 1 trillion different scents!' },
+        { name: 'Mouth', emoji: '👄', sound: 'This is your mouth!', fact: 'You have 32 teeth when you grow up!' }
+      ] as GeneralItem[]
     },
     {
       id: 'animals',
@@ -52,8 +136,11 @@ const GeneralKnowledge = () => {
         { name: 'Giraffe', emoji: '🦒', sound: 'Giraffes are very tall!', fact: 'Giraffes have the same number of neck bones as humans!' },
         { name: 'Penguin', emoji: '🐧', sound: 'Penguins love to swim!', fact: 'Penguins can hold their breath for 20 minutes!' },
         { name: 'Monkey', emoji: '🐵', sound: 'Monkeys are very playful!', fact: 'Some monkeys can use tools!' },
-        { name: 'Zebra', emoji: '🦓', sound: 'Zebras have beautiful stripes!', fact: 'Each zebra has a unique stripe pattern!' }
-      ]
+        { name: 'Zebra', emoji: '🦓', sound: 'Zebras have beautiful stripes!', fact: 'Each zebra has a unique stripe pattern!' },
+        { name: 'Tiger', emoji: '🐅', sound: 'Tigers are strong hunters!', fact: 'Tigers are excellent swimmers!' },
+        { name: 'Bear', emoji: '🐻', sound: 'Bears are big and strong!', fact: 'Bears can run up to 35 mph!' },
+        { name: 'Rabbit', emoji: '🐰', sound: 'Rabbits hop around quickly!', fact: 'Rabbits can jump 3 feet high!' }
+      ] as GeneralItem[]
     },
     {
       id: 'ocean',
@@ -66,8 +153,11 @@ const GeneralKnowledge = () => {
         { name: 'Dolphin', emoji: '🐬', sound: 'Dolphins are very smart!', fact: 'Dolphins recognize themselves in mirrors!' },
         { name: 'Octopus', emoji: '🐙', sound: 'Octopuses have eight arms!', fact: 'Octopuses have three hearts!' },
         { name: 'Starfish', emoji: '⭐', sound: 'Starfish live on ocean floor!', fact: 'Starfish can regrow their arms!' },
-        { name: 'Seahorse', emoji: '🐴', sound: 'Seahorses are unique fish!', fact: 'Male seahorses carry the babies!' }
-      ]
+        { name: 'Seahorse', emoji: '🐴', sound: 'Seahorses are unique fish!', fact: 'Male seahorses carry the babies!' },
+        { name: 'Shark', emoji: '🦈', sound: 'Sharks are amazing swimmers!', fact: 'Sharks have been around for 400 million years!' },
+        { name: 'Jellyfish', emoji: '🎐', sound: 'Jellyfish float in the water!', fact: 'Jellyfish are 95% water!' },
+        { name: 'Crab', emoji: '🦀', sound: 'Crabs walk sideways!', fact: 'Crabs can regrow lost claws!' }
+      ] as GeneralItem[]
     },
     {
       id: 'nature',
@@ -80,8 +170,11 @@ const GeneralKnowledge = () => {
         { name: 'Flower', emoji: '🌸', sound: 'Flowers are beautiful!', fact: 'Flowers attract bees with their colors!' },
         { name: 'Rainbow', emoji: '🌈', sound: 'Rainbows have seven colors!', fact: 'Rainbows are circles, but we see arcs!' },
         { name: 'Sun', emoji: '☀️', sound: 'The sun gives us light!', fact: 'The sun is a giant star!' },
-        { name: 'Moon', emoji: '🌙', sound: 'The moon shines at night!', fact: 'The moon controls ocean tides!' }
-      ]
+        { name: 'Moon', emoji: '🌙', sound: 'The moon shines at night!', fact: 'The moon controls ocean tides!' },
+        { name: 'Cloud', emoji: '☁️', sound: 'Clouds float in the sky!', fact: 'Clouds are made of tiny water droplets!' },
+        { name: 'Mountain', emoji: '⛰️', sound: 'Mountains are very tall!', fact: 'Mountains grow taller over time!' },
+        { name: 'Ocean', emoji: '🌊', sound: 'Oceans are huge bodies of water!', fact: 'Oceans cover 71% of Earth!' }
+      ] as GeneralItem[]
     },
     {
       id: 'objects',
@@ -94,8 +187,11 @@ const GeneralKnowledge = () => {
         { name: 'Car', emoji: '🚗', sound: 'Cars help us travel!', fact: 'The first car was invented in 1885!' },
         { name: 'Bicycle', emoji: '🚲', sound: 'Bicycles are fun to ride!', fact: 'Bicycles are the most efficient way to travel!' },
         { name: 'Phone', emoji: '📱', sound: 'Phones help us talk to people!', fact: 'The first mobile phone weighed 2 pounds!' },
-        { name: 'Clock', emoji: '🕐', sound: 'Clocks tell us the time!', fact: 'Ancient people used sundials to tell time!' }
-      ]
+        { name: 'Clock', emoji: '🕐', sound: 'Clocks tell us the time!', fact: 'Ancient people used sundials to tell time!' },
+        { name: 'Ball', emoji: '⚽', sound: 'Balls are fun to play with!', fact: 'The oldest ball was made 4,500 years ago!' },
+        { name: 'Chair', emoji: '🪑', sound: 'Chairs help us sit comfortably!', fact: 'The first chairs were thrones for kings!' },
+        { name: 'Umbrella', emoji: '☂️', sound: 'Umbrellas keep us dry!', fact: 'Umbrellas were first used to block sun!' }
+      ] as GeneralItem[]
     }
   ];
 
@@ -147,6 +243,10 @@ const GeneralKnowledge = () => {
     currentCategoryData.items.filter((_, index) => 
       completedItems.has(`${currentCategory}-${index}`)
     ).length : 0;
+
+  const isAlphabetItem = (item: CategoryItem): item is AlphabetItem => {
+    return 'letter' in item;
+  };
 
   return (
     <div className="space-y-6">
@@ -263,7 +363,7 @@ const GeneralKnowledge = () => {
               <div className={`${currentCategoryData?.color} rounded-2xl p-6 text-center`}>
                 <div className="text-8xl mb-4">{currentItem.emoji}</div>
                 
-                {currentCategory === 'alphabets' ? (
+                {isAlphabetItem(currentItem) ? (
                   <div className="space-y-2">
                     <h2 className="font-fredoka font-bold text-4xl text-gray-800">
                       {currentItem.letter}
@@ -371,7 +471,7 @@ const GeneralKnowledge = () => {
                     <div key={itemKey} className="flex items-center space-x-2 bg-white rounded-lg p-2">
                       <span className="text-lg">{item.emoji}</span>
                       <span className="font-comic text-sm font-bold text-gray-700">
-                        {catId === 'alphabets' ? `${item.letter} - ${item.word}` : item.name}
+                        {isAlphabetItem(item) ? `${item.letter} - ${item.word}` : item.name}
                       </span>
                     </div>
                   ) : null;
