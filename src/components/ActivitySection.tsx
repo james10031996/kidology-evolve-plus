@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,8 @@ import GeographyExplorer from './GeographyExplorer';
 import Paint from './Paint';
 import PuzzleAssembly from './PuzzleAssembly';
 import MatchingGame from './MatchingGame';
-import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart, Calculator, Music, Monitor, MapPin, Brush, Puzzle, Target } from 'lucide-react';
+import GeneralKnowledge from './GeneralKnowledge';
+import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart, Calculator, Music, Monitor, MapPin, Brush, Puzzle, Target, Brain } from 'lucide-react';
 
 const ActivitySection = () => {
   const stories = [
@@ -112,7 +112,7 @@ const ActivitySection = () => {
         </div>
 
         <Tabs defaultValue="stories" className="w-full">
-          <TabsList className="grid w-full grid-cols-15 max-w-7xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
+          <TabsList className="grid w-full grid-cols-16 max-w-7xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
             <TabsTrigger 
               value="stories" 
               className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-purple data-[state=active]:text-white"
@@ -126,6 +126,13 @@ const ActivitySection = () => {
             >
               <Gamepad2 className="w-3 h-3 mr-1" />
               Games
+            </TabsTrigger>
+            <TabsTrigger 
+              value="knowledge" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-purple data-[state=active]:text-white"
+            >
+              <Brain className="w-3 h-3 mr-1" />
+              Knowledge
             </TabsTrigger>
             <TabsTrigger 
               value="math" 
@@ -234,6 +241,10 @@ const ActivitySection = () => {
                 <MiniGameCard key={game.id} {...game} />
               ))}
             </div>
+          </TabsContent>
+
+          <TabsContent value="knowledge">
+            <GeneralKnowledge />
           </TabsContent>
 
           <TabsContent value="math">

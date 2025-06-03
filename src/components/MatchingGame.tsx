@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,11 +6,11 @@ import { Target, RotateCcw, CheckCircle, Star, Trophy } from 'lucide-react';
 
 const MatchingGame = () => {
   const [currentCategory, setCurrentCategory] = useState('body');
-  const [selectedObject, setSelectedObject] = useState(null);
-  const [selectedName, setSelectedName] = useState(null);
-  const [matches, setMatches] = useState({});
+  const [selectedObject, setSelectedObject] = useState<string | null>(null);
+  const [selectedName, setSelectedName] = useState<string | null>(null);
+  const [matches, setMatches] = useState<Record<string, Record<string, boolean>>>({});
   const [score, setScore] = useState(0);
-  const [showFeedback, setShowFeedback] = useState(null);
+  const [showFeedback, setShowFeedback] = useState<{type: string, message: string, emoji: string} | null>(null);
   const [gameComplete, setGameComplete] = useState(false);
 
   const categories = [
@@ -84,7 +83,7 @@ const MatchingGame = () => {
     }
   }, [categoryMatches, currentCategoryData]);
 
-  const handleObjectClick = (item) => {
+  const handleObjectClick = (item: any) => {
     if (categoryMatches[item.id]) return; // Already matched
     
     if (selectedName && selectedName === item.name) {
@@ -114,8 +113,8 @@ const MatchingGame = () => {
     }
   };
 
-  const handleNameClick = (name) => {
-    if (Object.values(categoryMatches).length >= currentCategoryData?.items.length) return;
+  const handleNameClick = (name: string) => {
+    if (Object.values(categoryMatches).length >= (currentCategoryData?.items.length || 0)) return;
     
     if (selectedObject) {
       const objectItem = currentCategoryData?.items.find(item => item.id === selectedObject);
@@ -157,7 +156,7 @@ const MatchingGame = () => {
     setShowFeedback(null);
   };
 
-  const shuffleArray = (array) => {
+  const shuffleArray = (array: any[]) => {
     return [...array].sort(() => Math.random() - 0.5);
   };
 
@@ -334,7 +333,7 @@ const MatchingGame = () => {
               <div className="flex items-center justify-between mb-2">
                 <span className="font-comic font-bold text-yellow-800">🏆 Total Progress</span>
                 <span className="font-comic text-sm text-yellow-600">
-                  {Object.values(matches).reduce((total, cat) => total + Object.keys(cat).length, 0)}/
+                  {Object.values(matches).reduce((total: number, cat: Record<string, boolean>) => total + Object.keys(cat).length, 0)}/
                   {categories.reduce((total, cat) => total + cat.items.length, 0)}
                 </span>
               </div>
@@ -342,7 +341,7 @@ const MatchingGame = () => {
                 <div 
                   className="bg-yellow-500 h-3 rounded-full transition-all duration-500"
                   style={{ 
-                    width: `${(Object.values(matches).reduce((total, cat) => total + Object.keys(cat).length, 0) / categories.reduce((total, cat) => total + cat.items.length, 0)) * 100}%` 
+                    width: `${(Object.values(matches).reduce((total: number, cat: Record<string, boolean>) => total + Object.keys(cat).length, 0) / categories.reduce((total, cat) => total + cat.items.length, 0)) * 100}%` 
                   }}
                 />
               </div>

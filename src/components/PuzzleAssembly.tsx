@@ -5,14 +5,30 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Puzzle, RotateCcw, CheckCircle, Sparkles, Trophy } from 'lucide-react';
 
+interface PuzzlePiece {
+  id: string;
+  name: string;
+  emoji: string;
+  color: string;
+}
+
+interface PuzzleData {
+  id: string;
+  name: string;
+  emoji: string;
+  description: string;
+  pieces: PuzzlePiece[];
+  slots: number;
+}
+
 const PuzzleAssembly = () => {
   const [currentPuzzle, setCurrentPuzzle] = useState('usa');
-  const [completedPuzzles, setCompletedPuzzles] = useState(new Set());
-  const [draggedPiece, setDraggedPiece] = useState(null);
-  const [placedPieces, setPlacedPieces] = useState({});
+  const [completedPuzzles, setCompletedPuzzles] = useState(new Set<string>());
+  const [draggedPiece, setDraggedPiece] = useState<PuzzlePiece | null>(null);
+  const [placedPieces, setPlacedPieces] = useState<Record<string, Record<string, PuzzlePiece>>>({});
   const [showCelebration, setShowCelebration] = useState('');
 
-  const puzzles = [
+  const puzzles: PuzzleData[] = [
     {
       id: 'usa',
       name: 'United States',
@@ -74,11 +90,11 @@ const PuzzleAssembly = () => {
 
   const currentPuzzleData = puzzles.find(p => p.id === currentPuzzle);
 
-  const handleDragStart = (piece) => {
+  const handleDragStart = (piece: PuzzlePiece) => {
     setDraggedPiece(piece);
   };
 
-  const handleDrop = (slotId) => {
+  const handleDrop = (slotId: string) => {
     if (draggedPiece) {
       setPlacedPieces(prev => ({
         ...prev,
