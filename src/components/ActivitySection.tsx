@@ -18,7 +18,8 @@ import ScienceExperiments from './ScienceExperiments';
 import MusicMovement from './MusicMovement';
 import CodingForKids from './CodingForKids';
 import GeographyExplorer from './GeographyExplorer';
-import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart, Calculator, Music, Monitor, MapPin } from 'lucide-react';
+import Paint from './Paint';
+import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart, Calculator, Music, Monitor, MapPin, Brush } from 'lucide-react';
 
 const ActivitySection = () => {
   const stories = [
@@ -109,7 +110,7 @@ const ActivitySection = () => {
         </div>
 
         <Tabs defaultValue="stories" className="w-full">
-          <TabsList className="grid w-full grid-cols-12 max-w-6xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
+          <TabsList className="grid w-full grid-cols-13 max-w-6xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
             <TabsTrigger 
               value="stories" 
               className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-purple data-[state=active]:text-white"
@@ -144,6 +145,13 @@ const ActivitySection = () => {
             >
               <Palette className="w-3 h-3 mr-1" />
               Art
+            </TabsTrigger>
+            <TabsTrigger 
+              value="paint" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-pink data-[state=active]:text-white"
+            >
+              <Brush className="w-3 h-3 mr-1" />
+              Paint
             </TabsTrigger>
             <TabsTrigger 
               value="stem" 
@@ -222,6 +230,10 @@ const ActivitySection = () => {
 
           <TabsContent value="art">
             <CreativeArtStudio />
+          </TabsContent>
+
+          <TabsContent value="paint">
+            <Paint />
           </TabsContent>
 
           <TabsContent value="stem">
