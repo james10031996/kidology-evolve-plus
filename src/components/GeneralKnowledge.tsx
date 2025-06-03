@@ -1,8 +1,9 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Star, Trophy, Volume2, ArrowRight, CheckCircle } from 'lucide-react';
+import { BookOpen, Star, Trophy, Volume2, ArrowRight, CheckCircle, ArrowLeft } from 'lucide-react';
 
 type AlphabetItem = {
   letter: string;
@@ -36,6 +37,7 @@ const GeneralKnowledge = () => {
   const [completedItems, setCompletedItems] = useState(new Set<string>());
   const [showAnswer, setShowAnswer] = useState(false);
   const [score, setScore] = useState(0);
+  const [viewMode, setViewMode] = useState<'categories' | 'learning'>('categories');
 
   const categories: Category[] = [
     {
@@ -52,7 +54,9 @@ const GeneralKnowledge = () => {
         { letter: 'E', word: 'Elephant', emoji: '🐘', sound: 'E is for Elephant!', fact: 'Elephants never forget!' },
         { letter: 'F', word: 'Fish', emoji: '🐠', sound: 'F is for Fish!', fact: 'Fish can live in water and breathe through gills!' },
         { letter: 'G', word: 'Giraffe', emoji: '🦒', sound: 'G is for Giraffe!', fact: 'Giraffes are the tallest animals!' },
-        { letter: 'H', word: 'Horse', emoji: '🐴', sound: 'H is for Horse!', fact: 'Horses can sleep standing up!' }
+        { letter: 'H', word: 'Horse', emoji: '🐴', sound: 'H is for Horse!', fact: 'Horses can sleep standing up!' },
+        { letter: 'I', word: 'Ice Cream', emoji: '🍦', sound: 'I is for Ice Cream!', fact: 'Ice cream was invented in China!' },
+        { letter: 'J', word: 'Jellyfish', emoji: '🎐', sound: 'J is for Jellyfish!', fact: 'Jellyfish are 95% water!' }
       ] as AlphabetItem[]
     },
     {
@@ -177,20 +181,71 @@ const GeneralKnowledge = () => {
       ] as GeneralItem[]
     },
     {
-      id: 'objects',
-      name: 'Everyday Objects',
-      emoji: '🏠',
-      description: 'Things we use every day!',
-      color: 'bg-orange-50',
+      id: 'food',
+      name: 'Healthy Foods',
+      emoji: '🍎',
+      description: 'Learn about nutritious foods!',
+      color: 'bg-yellow-50',
       items: [
-        { name: 'Book', emoji: '📚', sound: 'Books help us learn!', fact: 'The first books were made on clay tablets!' },
-        { name: 'Car', emoji: '🚗', sound: 'Cars help us travel!', fact: 'The first car was invented in 1885!' },
-        { name: 'Bicycle', emoji: '🚲', sound: 'Bicycles are fun to ride!', fact: 'Bicycles are the most efficient way to travel!' },
-        { name: 'Phone', emoji: '📱', sound: 'Phones help us talk to people!', fact: 'The first mobile phone weighed 2 pounds!' },
-        { name: 'Clock', emoji: '🕐', sound: 'Clocks tell us the time!', fact: 'Ancient people used sundials to tell time!' },
-        { name: 'Ball', emoji: '⚽', sound: 'Balls are fun to play with!', fact: 'The oldest ball was made 4,500 years ago!' },
-        { name: 'Chair', emoji: '🪑', sound: 'Chairs help us sit comfortably!', fact: 'The first chairs were thrones for kings!' },
-        { name: 'Umbrella', emoji: '☂️', sound: 'Umbrellas keep us dry!', fact: 'Umbrellas were first used to block sun!' }
+        { name: 'Apple', emoji: '🍎', sound: 'Apples are crunchy and sweet!', fact: 'An apple a day keeps the doctor away!' },
+        { name: 'Banana', emoji: '🍌', sound: 'Bananas are yellow and yummy!', fact: 'Bananas give you energy!' },
+        { name: 'Carrot', emoji: '🥕', sound: 'Carrots are orange and healthy!', fact: 'Carrots help your eyes see better!' },
+        { name: 'Broccoli', emoji: '🥦', sound: 'Broccoli looks like tiny trees!', fact: 'Broccoli has lots of vitamins!' },
+        { name: 'Strawberry', emoji: '🍓', sound: 'Strawberries are red and sweet!', fact: 'Strawberries have seeds on the outside!' },
+        { name: 'Orange', emoji: '🍊', sound: 'Oranges are full of vitamin C!', fact: 'Oranges help you stay healthy!' },
+        { name: 'Grapes', emoji: '🍇', sound: 'Grapes grow in bunches!', fact: 'Grapes can be purple, green, or red!' },
+        { name: 'Milk', emoji: '🥛', sound: 'Milk makes your bones strong!', fact: 'Milk comes from cows!' }
+      ] as GeneralItem[]
+    },
+    {
+      id: 'weather',
+      name: 'Weather',
+      emoji: '🌤️',
+      description: 'Discover different weather patterns!',
+      color: 'bg-sky-50',
+      items: [
+        { name: 'Sunny', emoji: '☀️', sound: 'It\'s a sunny day!', fact: 'Sunny days make plants grow!' },
+        { name: 'Rainy', emoji: '🌧️', sound: 'Rain falls from clouds!', fact: 'Rain helps flowers and trees grow!' },
+        { name: 'Snowy', emoji: '❄️', sound: 'Snow is white and cold!', fact: 'Every snowflake is unique!' },
+        { name: 'Windy', emoji: '💨', sound: 'Wind makes things move!', fact: 'Wind can power windmills!' },
+        { name: 'Cloudy', emoji: '☁️', sound: 'Clouds cover the sky!', fact: 'Clouds are made of water droplets!' },
+        { name: 'Thunder', emoji: '⛈️', sound: 'Thunder makes loud sounds!', fact: 'Lightning comes before thunder!' },
+        { name: 'Foggy', emoji: '🌫️', sound: 'Fog makes it hard to see far!', fact: 'Fog is like a cloud on the ground!' },
+        { name: 'Hot', emoji: '🔥', sound: 'Hot weather makes us warm!', fact: 'Desert animals love hot weather!' }
+      ] as GeneralItem[]
+    },
+    {
+      id: 'vehicles',
+      name: 'Vehicles',
+      emoji: '🚗',
+      description: 'Learn about different ways to travel!',
+      color: 'bg-gray-50',
+      items: [
+        { name: 'Car', emoji: '🚗', sound: 'Cars drive on roads!', fact: 'The first car was invented in 1885!' },
+        { name: 'Airplane', emoji: '✈️', sound: 'Airplanes fly in the sky!', fact: 'Airplanes can fly higher than clouds!' },
+        { name: 'Train', emoji: '🚂', sound: 'Trains run on tracks!', fact: 'Some trains can go 200 mph!' },
+        { name: 'Boat', emoji: '🚢', sound: 'Boats sail on water!', fact: 'Big boats are called ships!' },
+        { name: 'Bicycle', emoji: '🚲', sound: 'Bicycles have two wheels!', fact: 'Bicycles don\'t pollute the air!' },
+        { name: 'Bus', emoji: '🚌', sound: 'Buses carry many people!', fact: 'School buses are usually yellow!' },
+        { name: 'Truck', emoji: '🚛', sound: 'Trucks carry heavy things!', fact: 'Some trucks have 18 wheels!' },
+        { name: 'Helicopter', emoji: '🚁', sound: 'Helicopters have spinning blades!', fact: 'Helicopters can hover in one place!' }
+      ] as GeneralItem[]
+    },
+    {
+      id: 'space',
+      name: 'Space',
+      emoji: '🚀',
+      description: 'Explore the amazing universe!',
+      color: 'bg-violet-50',
+      items: [
+        { name: 'Earth', emoji: '🌍', sound: 'Earth is our home planet!', fact: 'Earth is the only planet with life!' },
+        { name: 'Moon', emoji: '🌙', sound: 'The moon orbits Earth!', fact: 'The moon controls ocean tides!' },
+        { name: 'Sun', emoji: '☀️', sound: 'The sun is a giant star!', fact: 'The sun is 93 million miles away!' },
+        { name: 'Stars', emoji: '⭐', sound: 'Stars twinkle in the night sky!', fact: 'Stars are like distant suns!' },
+        { name: 'Rocket', emoji: '🚀', sound: 'Rockets fly to space!', fact: 'Rockets need to go 25,000 mph to escape Earth!' },
+        { name: 'Planet', emoji: '🪐', sound: 'Planets orbit around stars!', fact: 'There are 8 planets in our solar system!' },
+        { name: 'Astronaut', emoji: '👨‍🚀', sound: 'Astronauts explore space!', fact: 'Astronauts float in zero gravity!' },
+        { name: 'Galaxy', emoji: '🌌', sound: 'Galaxies have billions of stars!', fact: 'Our galaxy is called the Milky Way!' }
       ] as GeneralItem[]
     }
   ];
@@ -227,140 +282,144 @@ const GeneralKnowledge = () => {
     }
   };
 
-  const resetCategory = () => {
+  const startLearning = (categoryId: string) => {
+    setCurrentCategory(categoryId);
     setCurrentLevel(0);
     setShowAnswer(false);
-    setCompletedItems(prev => {
-      const newSet = new Set(prev);
-      currentCategoryData?.items.forEach((_, index) => {
-        newSet.delete(`${currentCategory}-${index}`);
-      });
-      return newSet;
-    });
+    setViewMode('learning');
   };
 
-  const categoryProgress = currentCategoryData ? 
-    currentCategoryData.items.filter((_, index) => 
-      completedItems.has(`${currentCategory}-${index}`)
-    ).length : 0;
+  const backToCategories = () => {
+    setViewMode('categories');
+    setShowAnswer(false);
+  };
 
   const isAlphabetItem = (item: CategoryItem): item is AlphabetItem => {
     return 'letter' in item;
   };
 
+  if (viewMode === 'categories') {
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <Card className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border-0 shadow-lg">
+          <div className="text-center">
+            <div className="w-16 h-16 gradient-purple rounded-full mx-auto mb-3 flex items-center justify-center">
+              <BookOpen className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="font-fredoka font-bold text-2xl text-gray-800 mb-2">
+              🧠 General Knowledge Adventure
+            </h2>
+            <p className="font-comic text-gray-600">
+              Choose a topic and start learning amazing facts!
+            </p>
+            <div className="mt-3 flex items-center justify-center space-x-4">
+              <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-comic font-bold">
+                <Star className="w-4 h-4 inline mr-1" />
+                Score: {score}
+              </div>
+              <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-comic font-bold">
+                <Trophy className="w-4 h-4 inline mr-1" />
+                Items Learned: {completedItems.size}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Categories Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {categories.map((category) => {
+            const categoryProgress = category.items.filter((_, index) => 
+              completedItems.has(`${category.id}-${index}`)
+            ).length;
+            
+            return (
+              <Card
+                key={category.id}
+                className="p-4 cursor-pointer transition-all transform hover:scale-105 border-2 hover:border-purple-300 hover:shadow-lg"
+                onClick={() => startLearning(category.id)}
+              >
+                <div className={`${category.color} rounded-xl p-4 mb-3`}>
+                  <div className="text-4xl text-center mb-2">{category.emoji}</div>
+                  <h3 className="font-fredoka font-bold text-lg text-gray-800 text-center">
+                    {category.name}
+                  </h3>
+                </div>
+                
+                <p className="font-comic text-sm text-gray-600 text-center mb-3">
+                  {category.description}
+                </p>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-comic text-gray-600">Progress</span>
+                    <span className="font-comic text-gray-600">
+                      {categoryProgress}/{category.items.length}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-purple-500 h-2 rounded-full transition-all duration-300"
+                      style={{ 
+                        width: `${(categoryProgress / category.items.length) * 100}%` 
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <Button className="w-full mt-3 rounded-full gradient-purple text-white font-comic">
+                  Start Learning! <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // Learning View
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header with Back Button */}
       <Card className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border-0 shadow-lg">
-        <div className="text-center">
-          <div className="w-16 h-16 gradient-purple rounded-full mx-auto mb-3 flex items-center justify-center">
-            <BookOpen className="w-8 h-8 text-white" />
-          </div>
-          <h2 className="font-fredoka font-bold text-2xl text-gray-800 mb-2">
-            🧠 General Knowledge Adventure
-          </h2>
-          <p className="font-comic text-gray-600">
-            Discover amazing facts and learn new things every day!
-          </p>
-          <div className="mt-3 flex items-center justify-center space-x-4">
+        <div className="flex items-center justify-between mb-4">
+          <Button 
+            onClick={backToCategories}
+            variant="outline" 
+            className="rounded-full font-comic"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to Topics
+          </Button>
+          <div className="flex items-center space-x-4">
             <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-comic font-bold">
               <Star className="w-4 h-4 inline mr-1" />
               Score: {score}
             </div>
             <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-comic font-bold">
               <Trophy className="w-4 h-4 inline mr-1" />
-              Items Learned: {completedItems.size}
+              Items: {completedItems.size}
             </div>
           </div>
         </div>
+        
+        <div className="text-center">
+          <h2 className="font-fredoka font-bold text-2xl text-gray-800 mb-2">
+            {currentCategoryData?.emoji} {currentCategoryData?.name}
+          </h2>
+          <p className="font-comic text-gray-600">
+            {currentCategoryData?.description}
+          </p>
+        </div>
       </Card>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Category Selection */}
-        <Card className="p-6 bg-white rounded-2xl shadow-lg border-0">
-          <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-4">
-            📚 Choose Topic
-          </h3>
-          
-          <div className="space-y-3">
-            {categories.map((category) => (
-              <Card
-                key={category.id}
-                className={`p-4 cursor-pointer transition-all transform hover:scale-105 border-2 ${
-                  currentCategory === category.id 
-                    ? 'border-purple-400 bg-purple-50 shadow-lg' 
-                    : 'border-gray-200 hover:border-purple-300'
-                }`}
-                onClick={() => {
-                  setCurrentCategory(category.id);
-                  setCurrentLevel(0);
-                  setShowAnswer(false);
-                }}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="text-3xl">{category.emoji}</div>
-                  <div className="flex-1">
-                    <h4 className="font-comic font-bold text-gray-800">{category.name}</h4>
-                    <p className="font-comic text-xs text-gray-600">{category.description}</p>
-                    <div className="mt-2 flex items-center justify-between">
-                      <div className="w-16 bg-gray-200 rounded-full h-1">
-                        <div 
-                          className="bg-purple-500 h-1 rounded-full transition-all duration-300"
-                          style={{ 
-                            width: `${category.items.filter((_, index) => 
-                              completedItems.has(`${category.id}-${index}`)
-                            ).length / category.items.length * 100}%` 
-                          }}
-                        />
-                      </div>
-                      <span className="font-comic text-xs text-gray-500">
-                        {category.items.filter((_, index) => 
-                          completedItems.has(`${category.id}-${index}`)
-                        ).length}/{category.items.length}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-
-          {/* Overall Progress */}
-          <div className="mt-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-comic font-bold text-purple-800">🌟 Total Progress</span>
-              <span className="font-comic text-sm text-purple-600">
-                {completedItems.size}/{categories.reduce((total, cat) => total + cat.items.length, 0)}
-              </span>
-            </div>
-            <div className="w-full bg-purple-200 rounded-full h-3">
-              <div 
-                className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500"
-                style={{ 
-                  width: `${(completedItems.size / categories.reduce((total, cat) => total + cat.items.length, 0)) * 100}%` 
-                }}
-              />
-            </div>
-          </div>
-        </Card>
-
-        {/* Learning Area */}
-        <Card className="p-6 bg-white rounded-2xl shadow-lg border-0">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-fredoka font-bold text-lg text-gray-800">
-              🎓 Learning Zone
-            </h3>
-            <div className="flex space-x-2">
-              <Button size="sm" variant="outline" onClick={resetCategory} className="rounded-full">
-                Reset Topic
-              </Button>
-            </div>
-          </div>
-
-          {currentItem && (
-            <div className="space-y-6">
-              {/* Current Item Display */}
-              <div className={`${currentCategoryData?.color} rounded-2xl p-6 text-center`}>
+      {currentItem && (
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Learning Card */}
+          <div className="lg:col-span-2">
+            <Card className="p-6 bg-white rounded-2xl shadow-lg border-0">
+              <div className={`${currentCategoryData?.color} rounded-2xl p-8 text-center`}>
                 <div className="text-8xl mb-4">{currentItem.emoji}</div>
                 
                 {isAlphabetItem(currentItem) ? (
@@ -421,12 +480,10 @@ const GeneralKnowledge = () => {
                 )}
               </div>
 
-              {/* Progress Indicator */}
-              <div className="bg-gray-50 rounded-xl p-4">
+              {/* Progress */}
+              <div className="mt-6 bg-gray-50 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-comic font-bold text-gray-800">
-                    {currentCategoryData?.name} Progress
-                  </span>
+                  <span className="font-comic font-bold text-gray-800">Progress</span>
                   <span className="font-comic text-sm text-gray-600">
                     {currentLevel + 1}/{currentCategoryData?.items.length}
                   </span>
@@ -437,25 +494,18 @@ const GeneralKnowledge = () => {
                     style={{ width: `${((currentLevel + 1) / (currentCategoryData?.items.length || 1)) * 100}%` }}
                   />
                 </div>
-                <div className="mt-2 text-center">
-                  <span className="font-comic text-xs text-gray-600">
-                    Items completed: {categoryProgress}/{currentCategoryData?.items.length}
-                  </span>
-                </div>
               </div>
-            </div>
-          )}
-        </Card>
+            </Card>
+          </div>
 
-        {/* Knowledge Bank */}
-        <Card className="p-6 bg-white rounded-2xl shadow-lg border-0">
-          <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-4">
-            🏆 Knowledge Bank
-          </h3>
+          {/* Sidebar */}
+          <Card className="p-6 bg-white rounded-2xl shadow-lg border-0">
+            <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-4">
+              🎯 Learning Progress
+            </h3>
 
-          <div className="space-y-4">
             {/* Recently Learned */}
-            <div className="bg-green-50 rounded-xl p-4">
+            <div className="bg-green-50 rounded-xl p-4 mb-4">
               <h4 className="font-comic font-bold text-green-800 mb-3 flex items-center">
                 <CheckCircle className="w-4 h-4 mr-2" />
                 Recently Learned
@@ -503,20 +553,9 @@ const GeneralKnowledge = () => {
                 )}
               </div>
             </div>
-
-            {/* Instructions */}
-            <div className="bg-blue-50 rounded-xl p-4">
-              <h4 className="font-comic font-bold text-blue-800 mb-2">📖 How to Learn:</h4>
-              <ol className="font-comic text-sm text-blue-700 space-y-1">
-                <li>1. Choose a topic you want to explore</li>
-                <li>2. Click "Reveal & Learn!" to discover</li>
-                <li>3. Listen to sounds and read fun facts</li>
-                <li>4. Collect knowledge and earn achievements!</li>
-              </ol>
-            </div>
-          </div>
-        </Card>
-      </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };

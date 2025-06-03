@@ -1,10 +1,10 @@
 
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart, Calculator, Music, Monitor, MapPin, Brush, Puzzle, Target, Brain } from 'lucide-react';
+import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart, Calculator, Music, Monitor, MapPin, Brush, Puzzle, Target, Brain, Sparkles, User, Flower } from 'lucide-react';
 
 const ActivityTabs = () => {
   return (
-    <TabsList className="grid w-full grid-cols-17 max-w-7xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
+    <TabsList className="grid w-full grid-cols-21 max-w-8xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg overflow-x-auto">
       <TabsTrigger 
         value="stories" 
         className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-purple data-[state=active]:text-white"
@@ -123,6 +123,34 @@ const ActivityTabs = () => {
       >
         <Heart className="w-3 h-3 mr-1" />
         Social
+      </TabsTrigger>
+      <TabsTrigger 
+        value="magic-paint" 
+        className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-pink data-[state=active]:text-white"
+      >
+        <Sparkles className="w-3 h-3 mr-1" />
+        Magic Paint
+      </TabsTrigger>
+      <TabsTrigger 
+        value="story-studio" 
+        className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-orange data-[state=active]:text-white"
+      >
+        <BookOpen className="w-3 h-3 mr-1" />
+        Story Studio
+      </TabsTrigger>
+      <TabsTrigger 
+        value="avatar-creator" 
+        className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-purple data-[state=active]:text-white"
+      >
+        <User className="w-3 h-3 mr-1" />
+        Avatar
+      </TabsTrigger>
+      <TabsTrigger 
+        value="mandala" 
+        className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-pink data-[state=active]:text-white"
+      >
+        <Flower className="w-3 h-3 mr-1" />
+        Mandala
       </TabsTrigger>
     </TabsList>
   );

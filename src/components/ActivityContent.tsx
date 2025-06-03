@@ -17,6 +17,10 @@ import MusicMovement from './MusicMovement';
 import CodingForKids from './CodingForKids';
 import GeographyExplorer from './GeographyExplorer';
 import SocialEmotionalLearning from './SocialEmotionalLearning';
+import MagicPaintbook from './MagicPaintbook';
+import StoryIllustrationStudio from './StoryIllustrationStudio';
+import AvatarDressUpCreator from './AvatarDressUpCreator';
+import MandalaMaker from './MandalaMaker';
 
 const ActivityContent = () => {
   const stories = [
@@ -169,6 +173,22 @@ const ActivityContent = () => {
 
       <TabsContent value="social">
         <SocialEmotionalLearning />
+      </TabsContent>
+
+      <TabsContent value="magic-paint">
+        <MagicPaintbook />
+      </TabsContent>
+
+      <TabsContent value="story-studio">
+        <StoryIllustrationStudio />
+      </TabsContent>
+
+      <TabsContent value="avatar-creator">
+        <AvatarDressUpCreator />
+      </TabsContent>
+
+      <TabsContent value="mandala">
+        <MandalaMaker />
       </TabsContent>
     </>
   );
