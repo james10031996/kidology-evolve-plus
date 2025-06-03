@@ -19,7 +19,9 @@ import MusicMovement from './MusicMovement';
 import CodingForKids from './CodingForKids';
 import GeographyExplorer from './GeographyExplorer';
 import Paint from './Paint';
-import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart, Calculator, Music, Monitor, MapPin, Brush } from 'lucide-react';
+import PuzzleAssembly from './PuzzleAssembly';
+import MatchingGame from './MatchingGame';
+import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart, Calculator, Music, Monitor, MapPin, Brush, Puzzle, Target } from 'lucide-react';
 
 const ActivitySection = () => {
   const stories = [
@@ -110,7 +112,7 @@ const ActivitySection = () => {
         </div>
 
         <Tabs defaultValue="stories" className="w-full">
-          <TabsList className="grid w-full grid-cols-13 max-w-6xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
+          <TabsList className="grid w-full grid-cols-15 max-w-7xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
             <TabsTrigger 
               value="stories" 
               className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-purple data-[state=active]:text-white"
@@ -152,6 +154,20 @@ const ActivitySection = () => {
             >
               <Brush className="w-3 h-3 mr-1" />
               Paint
+            </TabsTrigger>
+            <TabsTrigger 
+              value="puzzle" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-green data-[state=active]:text-white"
+            >
+              <Puzzle className="w-3 h-3 mr-1" />
+              Puzzle
+            </TabsTrigger>
+            <TabsTrigger 
+              value="matching" 
+              className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-purple data-[state=active]:text-white"
+            >
+              <Target className="w-3 h-3 mr-1" />
+              Matching
             </TabsTrigger>
             <TabsTrigger 
               value="stem" 
@@ -234,6 +250,14 @@ const ActivitySection = () => {
 
           <TabsContent value="paint">
             <Paint />
+          </TabsContent>
+
+          <TabsContent value="puzzle">
+            <PuzzleAssembly />
+          </TabsContent>
+
+          <TabsContent value="matching">
+            <MatchingGame />
           </TabsContent>
 
           <TabsContent value="stem">
