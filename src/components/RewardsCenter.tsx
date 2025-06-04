@@ -3,21 +3,35 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Gift, Star, Trophy, Crown, Gem } from 'lucide-react';
+import { Gift, Star, Trophy, Crown, Gem, ShoppingCart } from 'lucide-react';
+import { useUser } from '@/contexts/UserContext';
 
 const RewardsCenter = () => {
-  const rewards = [
-    { id: 1, name: 'Golden Star', icon: '⭐', cost: 50, owned: 3, description: 'Show off your achievements!' },
-    { id: 2, name: 'Rainbow Badge', icon: '🌈', cost: 100, owned: 1, description: 'Colorful completion reward' },
-    { id: 3, name: 'Super Crown', icon: '👑', cost: 200, owned: 0, description: 'Ultimate learning champion' },
-    { id: 4, name: 'Magic Wand', icon: '🪄', cost: 150, owned: 0, description: 'Cast spells of knowledge' },
-    { id: 5, name: 'Treasure Chest', icon: '💎', cost: 300, owned: 0, description: 'Rare collection item' },
-    { id: 6, name: 'Fire Medal', icon: '🔥', cost: 75, owned: 2, description: 'Hot streak achievement' }
+  const { userData, purchaseReward } = useUser();
+
+  const dailyGoal = 100;
+  const dailyProgress = 65; // This would be calculated based on today's activities
+
+  const specialOffers = [
+    {
+      id: 'weekend-special',
+      title: 'Weekend Special!',
+      description: 'Double stars on all activities',
+      badge: '2X',
+      active: true
+    },
+    {
+      id: 'weekly-challenge',
+      title: 'Weekly Challenge',
+      description: 'Complete 5 subjects this week',
+      badge: '+200',
+      active: false
+    }
   ];
 
-  const currentStars = 1250;
-  const dailyGoal = 100;
-  const dailyProgress = 65;
+  const handlePurchase = (rewardId: string) => {
+    purchaseReward(rewardId);
+  };
 
   return (
     <Card className="p-6 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl border-0 shadow-lg">
@@ -30,7 +44,9 @@ const RewardsCenter = () => {
         </h2>
         <div className="flex items-center justify-center space-x-2 mb-4">
           <Star className="w-5 h-5 text-yellow-500 fill-current" />
-          <span className="font-fredoka font-bold text-xl text-yellow-600">{currentStars}</span>
+          <span className="font-fredoka font-bold text-xl text-yellow-600">
+            {userData.stars.toLocaleString()}
+          </span>
           <span className="font-comic text-gray-600">stars</span>
         </div>
       </div>
@@ -51,11 +67,11 @@ const RewardsCenter = () => {
 
       {/* Rewards Grid */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        {rewards.map((reward) => (
+        {userData.rewards.map((reward) => (
           <div key={reward.id} className="relative">
             <Card className={`p-4 text-center transition-all duration-200 hover:scale-105 border-2 ${
-              currentStars >= reward.cost 
-                ? 'border-yellow-200 bg-white shadow-md' 
+              userData.stars >= reward.cost 
+                ? 'border-yellow-200 bg-white shadow-md cursor-pointer' 
                 : 'border-gray-200 bg-gray-50 opacity-75'
             }`}>
               <div className="text-3xl mb-2">{reward.icon}</div>
@@ -69,9 +85,23 @@ const RewardsCenter = () => {
                 <Star className="w-3 h-3 text-yellow-500 fill-current" />
                 <span className="font-comic text-xs font-bold">{reward.cost}</span>
               </div>
-              {reward.owned > 0 && (
-                <Badge className="bg-green-100 text-green-700 text-xs font-comic">
+              
+              {reward.owned > 0 ? (
+                <Badge className="bg-green-100 text-green-700 text-xs font-comic w-full justify-center">
                   Owned: {reward.owned}
+                </Badge>
+              ) : userData.stars >= reward.cost ? (
+                <Button 
+                  size="sm" 
+                  className="w-full gradient-orange text-white font-comic text-xs"
+                  onClick={() => handlePurchase(reward.id)}
+                >
+                  <ShoppingCart className="w-3 h-3 mr-1" />
+                  Buy
+                </Button>
+              ) : (
+                <Badge variant="outline" className="text-xs font-comic w-full justify-center">
+                  Need {reward.cost - userData.stars} more
                 </Badge>
               )}
             </Card>
@@ -80,19 +110,49 @@ const RewardsCenter = () => {
       </div>
 
       {/* Special Offers */}
-      <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4 mb-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 gradient-purple rounded-full flex items-center justify-center">
-            <Gift className="w-5 h-5 text-white" />
+      <div className="space-y-3 mb-6">
+        {specialOffers.map((offer) => (
+          <div 
+            key={offer.id} 
+            className={`p-4 rounded-xl ${
+              offer.active 
+                ? 'bg-gradient-to-r from-purple-100 to-pink-100' 
+                : 'bg-gray-100'
+            }`}
+          >
+            <div className="flex items-center space-x-3">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                offer.active ? 'gradient-purple' : 'bg-gray-400'
+              }`}>
+                <Gift className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1">
+                <div className="font-comic font-bold text-gray-800">{offer.title}</div>
+                <div className="font-comic text-sm text-gray-600">{offer.description}</div>
+              </div>
+              <Badge className={`font-comic font-bold ${
+                offer.active ? 'gradient-purple text-white' : 'bg-gray-500 text-white'
+              }`}>
+                {offer.badge}
+              </Badge>
+            </div>
           </div>
-          <div className="flex-1">
-            <div className="font-comic font-bold text-gray-800">Weekend Special!</div>
-            <div className="font-comic text-sm text-gray-600">Double stars on all activities</div>
-          </div>
-          <Badge className="gradient-purple text-white font-comic font-bold">
-            2X
-          </Badge>
+        ))}
+      </div>
+
+      {/* Achievement Progress */}
+      <div className="mb-4 p-4 bg-blue-50 rounded-xl">
+        <div className="flex items-center space-x-3 mb-2">
+          <Trophy className="w-5 h-5 text-blue-500" />
+          <span className="font-comic font-bold text-gray-800">Achievement Bonus</span>
         </div>
+        <div className="font-comic text-sm text-gray-600 mb-2">
+          Unlock {6 - userData.achievements.filter(a => a.unlocked).length} more achievements to earn 500 bonus stars!
+        </div>
+        <Progress 
+          value={(userData.achievements.filter(a => a.unlocked).length / userData.achievements.length) * 100} 
+          className="h-2" 
+        />
       </div>
 
       {/* Leaderboard Preview */}

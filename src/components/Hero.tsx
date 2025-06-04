@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Play, Sparkles, Zap, Heart } from 'lucide-react';
 
@@ -51,22 +52,26 @@ const Hero = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button 
-                size="lg" 
-                className="gradient-orange text-white font-comic font-bold text-lg px-8 py-6 rounded-full hover:scale-105 transition-transform duration-200 shadow-lg"
-              >
-                Start Learning Now
-                <Sparkles className="w-5 h-5 ml-2" />
-              </Button>
+              <Link to="/courses">
+                <Button 
+                  size="lg" 
+                  className="gradient-orange text-white font-comic font-bold text-lg px-8 py-6 rounded-full hover:scale-105 transition-transform duration-200 shadow-lg"
+                >
+                  Start Learning Now
+                  <Sparkles className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
               
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="font-comic font-bold text-lg px-8 py-6 rounded-full border-2 border-orange-300 text-orange-600 hover:bg-orange-50 hover:scale-105 transition-all duration-200"
-              >
-                <Play className="w-5 h-5 mr-2" />
-                Watch Demo
-              </Button>
+              <Link to="/activities">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="font-comic font-bold text-lg px-8 py-6 rounded-full border-2 border-orange-300 text-orange-600 hover:bg-orange-50 hover:scale-105 transition-all duration-200"
+                >
+                  <Play className="w-5 h-5 mr-2" />
+                  Watch Demo
+                </Button>
+              </Link>
             </div>
             
             {/* Stats */}
@@ -91,29 +96,33 @@ const Hero = () => {
             <div className="relative bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-500">
               <div className="bg-white rounded-2xl p-6 shadow-xl">
                 <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="gradient-orange rounded-xl p-4 text-center">
+                  <Link to="/courses" className="gradient-orange rounded-xl p-4 text-center hover:scale-105 transition-transform">
                     <div className="text-white text-2xl mb-2">🔤</div>
                     <div className="text-white font-comic font-bold">ABC</div>
-                  </div>
-                  <div className="gradient-blue rounded-xl p-4 text-center">
+                  </Link>
+                  <Link to="/courses" className="gradient-blue rounded-xl p-4 text-center hover:scale-105 transition-transform">
                     <div className="text-white text-2xl mb-2">🔢</div>
                     <div className="text-white font-comic font-bold">123</div>
-                  </div>
-                  <div className="gradient-green rounded-xl p-4 text-center">
+                  </Link>
+                  <Link to="/activities" className="gradient-green rounded-xl p-4 text-center hover:scale-105 transition-transform">
                     <div className="text-white text-2xl mb-2">🎨</div>
                     <div className="text-white font-comic font-bold">Art</div>
-                  </div>
-                  <div className="gradient-purple rounded-xl p-4 text-center">
+                  </Link>
+                  <Link to="/activities" className="gradient-purple rounded-xl p-4 text-center hover:scale-105 transition-transform">
                     <div className="text-white text-2xl mb-2">🧬</div>
                     <div className="text-white font-comic font-bold">Science</div>
-                  </div>
+                  </Link>
                 </div>
                 
                 <div className="text-center">
                   <div className="w-16 h-16 bg-yellow-400 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl animate-bounce">
                     😊
                   </div>
-                  <div className="font-fredoka font-bold text-gray-800">Ready to Learn?</div>
+                  <Link to="/courses">
+                    <div className="font-fredoka font-bold text-gray-800 hover:text-orange-500 transition-colors cursor-pointer">
+                      Ready to Learn?
+                    </div>
+                  </Link>
                 </div>
               </div>
             </div>
