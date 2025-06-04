@@ -32,14 +32,32 @@ const NumberBubblePop = () => {
 
   const generateBubbles = () => {
     const newBubbles: Bubble[] = [];
-    const numbersToShow = Math.min(10, level + 4);
+    const numbersToShow = Math.min(15, level + 8);
+    const maxNumber = Math.max(10, level * 3);
+    
+    // Create array of unique numbers
+    const availableNumbers = Array.from({ length: maxNumber }, (_, i) => i + 1);
+    const shuffledNumbers = availableNumbers.sort(() => Math.random() - 0.5);
+    const selectedNumbers = shuffledNumbers.slice(0, numbersToShow);
     
     for (let i = 0; i < numbersToShow; i++) {
+      let x, y;
+      let attempts = 0;
+      
+      // Ensure bubbles don't overlap
+      do {
+        x = Math.random() * 75 + 5;
+        y = Math.random() * 65 + 10;
+        attempts++;
+      } while (attempts < 10 && newBubbles.some(bubble => 
+        Math.abs(bubble.x - x) < 15 && Math.abs(bubble.y - y) < 15
+      ));
+      
       newBubbles.push({
         id: i,
-        number: Math.floor(Math.random() * (level * 5)) + 1,
-        x: Math.random() * 80 + 10,
-        y: Math.random() * 70 + 15,
+        number: selectedNumbers[i],
+        x,
+        y,
         color: colors[Math.floor(Math.random() * colors.length)],
         popped: false
       });
@@ -67,11 +85,13 @@ const NumberBubblePop = () => {
       setScore(prev => prev + (level * 10));
       setTargetNumber(prev => prev + 1);
       
-      if (targetNumber >= 10) {
+      // Check if all sequential numbers up to 10 are found
+      const maxTarget = Math.min(10, Math.max(...bubbles.map(b => b.number)));
+      if (targetNumber >= maxTarget) {
         setLevel(prev => prev + 1);
         setTargetNumber(1);
         setTimeLeft(prev => prev + 20);
-        generateBubbles();
+        setTimeout(() => generateBubbles(), 1000);
       }
     } else {
       setScore(prev => Math.max(0, prev - 5));
@@ -109,11 +129,11 @@ const NumberBubblePop = () => {
         <div className="flex items-center mb-6">
           <Button 
             variant="ghost" 
-            onClick={() => navigate('/activities')}
+            onClick={() => navigate('/games')}
             className="mr-4 font-comic"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Activities
+            Back to Games
           </Button>
         </div>
 
@@ -123,7 +143,7 @@ const NumberBubblePop = () => {
             🫧 Number Bubble Pop
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Pop the bubbles in order from {targetNumber} to 10! Be quick and accurate to earn more points!
+            Pop the bubbles in order from {targetNumber} onwards! Be quick and accurate to earn more points!
           </p>
         </div>
 
@@ -217,7 +237,7 @@ const NumberBubblePop = () => {
               <div className="text-center">
                 <div className="text-8xl mb-4">🫧</div>
                 <div className="font-fredoka text-3xl text-gray-700 mb-4">Ready to Pop Some Bubbles?</div>
-                <div className="font-comic text-gray-600">Click the numbers in order from 1 to 10!</div>
+                <div className="font-comic text-gray-600">Click the numbers in order starting from 1!</div>
               </div>
             </div>
           )}
@@ -245,7 +265,7 @@ const NumberBubblePop = () => {
                 Play Again
               </Button>
               <Button 
-                onClick={() => navigate('/activities')}
+                onClick={() => navigate('/games')}
                 className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full"
               >
                 Try Another Game
@@ -261,7 +281,7 @@ const NumberBubblePop = () => {
             <li>• Click the bubbles in numerical order starting from 1</li>
             <li>• Each correct click earns you points (more points at higher levels)</li>
             <li>• Wrong clicks reduce your score by 5 points</li>
-            <li>• Complete sequences of 1-10 to advance levels</li>
+            <li>• Complete sequences to advance levels</li>
             <li>• Higher levels have more bubbles and give more points</li>
             <li>• Try to get the highest score before time runs out!</li>
           </ul>

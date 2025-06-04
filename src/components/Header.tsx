@@ -49,6 +49,15 @@ const Header = () => {
               Activities
             </Link>
             <Link 
+              to="/games" 
+              className={cn(
+                "font-comic font-medium transition-colors",
+                isActive('/games') ? "text-orange-500" : "text-gray-700 hover:text-orange-500"
+              )}
+            >
+              Games
+            </Link>
+            <Link 
               to="/progress" 
               className={cn(
                 "font-comic font-medium transition-colors",
@@ -66,6 +75,17 @@ const Header = () => {
             >
               Parents
             </Link>
+            {user && (
+              <Link 
+                to="/admin" 
+                className={cn(
+                  "font-comic font-medium transition-colors",
+                  isActive('/admin') ? "text-orange-500" : "text-gray-700 hover:text-orange-500"
+                )}
+              >
+                Admin
+              </Link>
+            )}
           </nav>
 
           {/* User Actions */}
@@ -125,6 +145,16 @@ const Header = () => {
               Activities
             </Link>
             <Link 
+              to="/games" 
+              className={cn(
+                "font-comic font-medium transition-colors",
+                isActive('/games') ? "text-orange-500" : "text-gray-700 hover:text-orange-500"
+              )}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Games
+            </Link>
+            <Link 
               to="/progress" 
               className={cn(
                 "font-comic font-medium transition-colors",
@@ -144,6 +174,18 @@ const Header = () => {
             >
               Parents
             </Link>
+            {user && (
+              <Link 
+                to="/admin" 
+                className={cn(
+                  "font-comic font-medium transition-colors",
+                  isActive('/admin') ? "text-orange-500" : "text-gray-700 hover:text-orange-500"
+                )}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Admin
+              </Link>
+            )}
             <div className="flex items-center justify-between pt-4 border-t border-gray-200">
               {user && (
                 <div className="flex items-center space-x-4">
