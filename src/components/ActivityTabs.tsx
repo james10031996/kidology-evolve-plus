@@ -1,10 +1,10 @@
 
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart, Calculator, Music, Monitor, MapPin, Brush, Puzzle, Target, Brain, Sparkles, User, Flower } from 'lucide-react';
+import { BookOpen, Gamepad2, Star, Gift, Palette, Beaker, Globe2, Heart, Calculator, Music, Monitor, MapPin, Brush, Puzzle, Target, Brain, Sparkles, User, Flower, FileText } from 'lucide-react';
 
 const ActivityTabs = () => {
   return (
-    <TabsList className="grid w-full grid-cols-21 max-w-8xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg overflow-x-auto">
+    <TabsList className="grid w-full grid-cols-22 max-w-8xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg overflow-x-auto">
       <TabsTrigger 
         value="stories" 
         className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-purple data-[state=active]:text-white"
@@ -18,6 +18,13 @@ const ActivityTabs = () => {
       >
         <Gamepad2 className="w-3 h-3 mr-1" />
         Games
+      </TabsTrigger>
+      <TabsTrigger 
+        value="poems-stories" 
+        className="rounded-full font-comic font-bold text-xs data-[state=active]:gradient-pink data-[state=active]:text-white"
+      >
+        <FileText className="w-3 h-3 mr-1" />
+        Poems & Stories
       </TabsTrigger>
       <TabsTrigger 
         value="search" 

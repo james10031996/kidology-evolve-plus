@@ -21,6 +21,7 @@ import MagicPaintbook from './MagicPaintbook';
 import StoryIllustrationStudio from './StoryIllustrationStudio';
 import AvatarDressUpCreator from './AvatarDressUpCreator';
 import MandalaMaker from './MandalaMaker';
+import PoemsStories from './PoemsStories';
 
 const ActivityContent = () => {
   const stories = [
@@ -113,6 +114,10 @@ const ActivityContent = () => {
             <MiniGameCard key={game.id} {...game} />
           ))}
         </div>
+      </TabsContent>
+
+      <TabsContent value="poems-stories">
+        <PoemsStories />
       </TabsContent>
 
       <TabsContent value="search">
