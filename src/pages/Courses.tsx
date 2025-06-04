@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,10 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Play, Star, Clock, Users, BookOpen, Award } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 
 const Courses = () => {
   const { userData, updateStars, updateProgress } = useUser();
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const courses = [
@@ -26,7 +27,8 @@ const Courses = () => {
       progress: userData.progress.find(p => p.name === 'Mathematics')?.progress || 0,
       color: 'gradient-blue',
       topics: ['Counting', 'Addition', 'Subtraction', 'Shapes', 'Patterns'],
-      nextLesson: 'Learning Numbers 1-10'
+      nextLesson: 'Learning Numbers 1-10',
+      route: '/courses/math-basics'
     },
     {
       id: 'reading-adventure',
@@ -41,7 +43,8 @@ const Courses = () => {
       progress: userData.progress.find(p => p.name === 'English')?.progress || 0,
       color: 'gradient-green',
       topics: ['Phonics', 'Sight Words', 'Reading', 'Comprehension'],
-      nextLesson: 'Letter Sounds A-E'
+      nextLesson: 'Letter Sounds A-E',
+      route: '/courses/reading-adventure'
     },
     {
       id: 'science-explorers',
@@ -56,7 +59,8 @@ const Courses = () => {
       progress: userData.progress.find(p => p.name === 'Science')?.progress || 0,
       color: 'gradient-purple',
       topics: ['Animals', 'Plants', 'Weather', 'Experiments'],
-      nextLesson: 'Animal Habitats'
+      nextLesson: 'Animal Habitats',
+      route: '/courses/science-explorers'
     },
     {
       id: 'creative-arts',
@@ -71,7 +75,8 @@ const Courses = () => {
       progress: userData.progress.find(p => p.name === 'Art')?.progress || 0,
       color: 'gradient-pink',
       topics: ['Drawing', 'Coloring', 'Crafts', 'Creativity'],
-      nextLesson: 'Basic Shapes Drawing'
+      nextLesson: 'Basic Shapes Drawing',
+      route: '/courses/creative-arts'
     }
   ];
 
@@ -87,9 +92,10 @@ const Courses = () => {
     ? courses 
     : courses.filter(course => course.category === selectedCategory);
 
-  const startLesson = (courseId: string) => {
-    const course = courses.find(c => c.id === courseId);
-    if (course) {
+  const startCourse = (course: any) => {
+    if (course.route) {
+      navigate(course.route);
+    } else {
       updateStars(10);
       updateProgress(course.title.includes('Math') ? 'Mathematics' : 
                     course.title.includes('Reading') ? 'English' :
@@ -211,7 +217,7 @@ const Courses = () => {
 
                 <Button 
                   className={`w-full ${course.color} text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200`}
-                  onClick={() => startLesson(course.id)}
+                  onClick={() => startCourse(course)}
                 >
                   <Play className="w-4 h-4 mr-2" />
                   {course.progress > 0 ? 'Continue Learning' : 'Start Course'}

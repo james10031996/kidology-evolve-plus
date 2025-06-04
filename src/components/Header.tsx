@@ -2,14 +2,17 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Menu, X, Star, Trophy, User } from 'lucide-react';
+import { BookOpen, Menu, X, Star, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/contexts/UserContext';
+import { useAuth } from '@/contexts/AuthContext';
+import AuthButton from '@/components/auth/AuthButton';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { userData } = useUser();
+  const { user } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -67,18 +70,19 @@ const Header = () => {
 
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <div className="flex items-center space-x-2 bg-yellow-100 px-3 py-1 rounded-full">
-              <Star className="w-4 h-4 text-yellow-500 fill-current" />
-              <span className="font-comic font-bold text-yellow-700">{userData.stars.toLocaleString()}</span>
-            </div>
-            <div className="flex items-center space-x-2 bg-blue-100 px-3 py-1 rounded-full">
-              <Trophy className="w-4 h-4 text-blue-500" />
-              <span className="font-comic font-bold text-blue-700">Level {userData.level}</span>
-            </div>
-            <Button size="sm" className="gradient-orange text-white font-comic font-bold rounded-full">
-              <User className="w-4 h-4 mr-2" />
-              {userData.name}
-            </Button>
+            {user && (
+              <>
+                <div className="flex items-center space-x-2 bg-yellow-100 px-3 py-1 rounded-full">
+                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                  <span className="font-comic font-bold text-yellow-700">{userData.stars.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-blue-100 px-3 py-1 rounded-full">
+                  <Trophy className="w-4 h-4 text-blue-500" />
+                  <span className="font-comic font-bold text-blue-700">Level {userData.level}</span>
+                </div>
+              </>
+            )}
+            <AuthButton />
           </div>
 
           {/* Mobile Menu Button */}
@@ -141,19 +145,19 @@ const Header = () => {
               Parents
             </Link>
             <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2 bg-yellow-100 px-3 py-1 rounded-full">
-                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                  <span className="font-comic font-bold text-yellow-700">{userData.stars.toLocaleString()}</span>
+              {user && (
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2 bg-yellow-100 px-3 py-1 rounded-full">
+                    <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                    <span className="font-comic font-bold text-yellow-700">{userData.stars.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-blue-100 px-3 py-1 rounded-full">
+                    <Trophy className="w-4 h-4 text-blue-500" />
+                    <span className="font-comic font-bold text-blue-700">Level {userData.level}</span>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2 bg-blue-100 px-3 py-1 rounded-full">
-                  <Trophy className="w-4 h-4 text-blue-500" />
-                  <span className="font-comic font-bold text-blue-700">Level {userData.level}</span>
-                </div>
-              </div>
-              <Button size="sm" className="gradient-orange text-white font-comic font-bold rounded-full">
-                {userData.name}
-              </Button>
+              )}
+              <AuthButton />
             </div>
           </nav>
         </div>

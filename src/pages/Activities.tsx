@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,10 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Play, Star, Clock, Trophy, Zap } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 
 const Activities = () => {
   const { userData, updateStars } = useUser();
+  const navigate = useNavigate();
 
   const activities = {
     games: [
@@ -23,7 +24,8 @@ const Activities = () => {
         bestScore: 850,
         playCount: 1200,
         gradient: 'gradient-blue',
-        stars: 15
+        stars: 15,
+        route: '/activities/number-bubble-pop'
       },
       {
         id: 'letter-safari',
@@ -131,8 +133,12 @@ const Activities = () => {
     ]
   };
 
-  const playActivity = (activityId: string, stars: number) => {
-    updateStars(stars);
+  const playActivity = (activity: any) => {
+    if (activity.route) {
+      navigate(activity.route);
+    } else {
+      updateStars(activity.stars);
+    }
   };
 
   return (
@@ -210,7 +216,7 @@ const Activities = () => {
 
                   <Button 
                     className={`w-full ${game.gradient} text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200`}
-                    onClick={() => playActivity(game.id, game.stars)}
+                    onClick={() => playActivity(game)}
                   >
                     <Play className="w-4 h-4 mr-2" />
                     Play Now
@@ -270,7 +276,7 @@ const Activities = () => {
 
                   <Button 
                     className="w-full gradient-orange text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200"
-                    onClick={() => playActivity(story.id, story.stars)}
+                    onClick={() => playActivity(story)}
                   >
                     <Play className="w-4 h-4 mr-2" />
                     Read Story
@@ -326,7 +332,7 @@ const Activities = () => {
 
                   <Button 
                     className={`w-full ${activity.gradient} text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200`}
-                    onClick={() => playActivity(activity.id, activity.stars)}
+                    onClick={() => playActivity(activity)}
                   >
                     <Zap className="w-4 h-4 mr-2" />
                     Start Creating
