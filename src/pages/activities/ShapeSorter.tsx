@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,7 +33,6 @@ const ShapeSorter = () => {
   const [gameCompleted, setGameCompleted] = useState(false);
   const [draggedShape, setDraggedShape] = useState<Shape | null>(null);
   const [timeLeft, setTimeLeft] = useState(180);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const gameAreaRef = useRef<HTMLDivElement>(null);
 
   const shapeTypes = ['circle', 'square', 'triangle', 'rectangle', 'star', 'heart', 'diamond', 'hexagon', 'oval', 'pentagon'] as const;
@@ -42,12 +40,12 @@ const ShapeSorter = () => {
   const sizes = ['small', 'medium', 'large'] as const;
 
   const generateShapes = () => {
-    const shapesPerType = Math.min(2 + Math.floor(level / 2), 4);
-    const typesToUse = shapeTypes.slice(0, Math.min(4 + Math.floor(level / 2), 10));
+    // Select 5 random shape types
+    const shuffledTypes = [...shapeTypes].sort(() => Math.random() - 0.5).slice(0, 5);
     const newShapes: Shape[] = [];
     const newDropZones: DropZone[] = [];
 
-    typesToUse.forEach((type, typeIndex) => {
+    shuffledTypes.forEach((type, typeIndex) => {
       // Create drop zone
       newDropZones.push({
         type,
@@ -55,31 +53,29 @@ const ShapeSorter = () => {
         id: `zone-${type}`
       });
 
-      // Create shapes
-      for (let i = 0; i < shapesPerType; i++) {
-        let x, y;
-        let attempts = 0;
-        const minDistance = 15;
-        
-        do {
-          x = Math.random() * 65 + 10;
-          y = Math.random() * 35 + 10;
-          attempts++;
-        } while (attempts < 20 && newShapes.some(existing => {
-          const distance = Math.sqrt(Math.pow(existing.x - x, 2) + Math.pow(existing.y - y, 2));
-          return distance < minDistance;
-        }));
+      // Create one shape for each type
+      let x, y;
+      let attempts = 0;
+      const minDistance = 15;
+      
+      do {
+        x = Math.random() * 65 + 10;
+        y = Math.random() * 35 + 10;
+        attempts++;
+      } while (attempts < 20 && newShapes.some(existing => {
+        const distance = Math.sqrt(Math.pow(existing.x - x, 2) + Math.pow(existing.y - y, 2));
+        return distance < minDistance;
+      }));
 
-        newShapes.push({
-          id: typeIndex * shapesPerType + i,
-          type,
-          color: colors[typeIndex % colors.length],
-          x,
-          y,
-          sorted: false,
-          size: sizes[Math.floor(Math.random() * sizes.length)]
-        });
-      }
+      newShapes.push({
+        id: typeIndex,
+        type,
+        color: colors[typeIndex % colors.length],
+        x,
+        y,
+        sorted: false,
+        size: sizes[Math.floor(Math.random() * sizes.length)]
+      });
     });
 
     setShapes(newShapes);
@@ -95,70 +91,20 @@ const ShapeSorter = () => {
     generateShapes();
   };
 
-  const handleMouseDown = (e: React.MouseEvent, shape: Shape) => {
-    e.preventDefault();
+  const handleDragStart = (e: React.DragEvent, shape: Shape) => {
     setDraggedShape(shape);
-    
-    if (gameAreaRef.current) {
-      const rect = gameAreaRef.current.getBoundingClientRect();
-      const shapeRect = e.currentTarget.getBoundingClientRect();
-      setDragOffset({
-        x: e.clientX - shapeRect.left - shapeRect.width / 2,
-        y: e.clientY - shapeRect.top - shapeRect.height / 2
-      });
-    }
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', shape.id.toString());
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!draggedShape || !gameAreaRef.current) return;
-    
-    const rect = gameAreaRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left - dragOffset.x) / rect.width) * 100;
-    const y = ((e.clientY - rect.top - dragOffset.y) / rect.height) * 100;
-    
-    setShapes(prev => prev.map(s => 
-      s.id === draggedShape.id 
-        ? { ...s, x: Math.max(5, Math.min(90, x)), y: Math.max(5, Math.min(85, y)) }
-        : s
-    ));
-  };
-
-  const handleMouseUp = () => {
-    setDraggedShape(null);
-    setDragOffset({ x: 0, y: 0 });
-  };
-
-  const handleTouchStart = (e: React.TouchEvent, shape: Shape) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    const touch = e.touches[0];
-    setDraggedShape(shape);
-    
-    if (gameAreaRef.current) {
-      const rect = gameAreaRef.current.getBoundingClientRect();
-      const shapeRect = e.currentTarget.getBoundingClientRect();
-      setDragOffset({
-        x: touch.clientX - shapeRect.left - shapeRect.width / 2,
-        y: touch.clientY - shapeRect.top - shapeRect.height / 2
-      });
-    }
+    e.dataTransfer.dropEffect = 'move';
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!draggedShape || !gameAreaRef.current) return;
+  const handleDrop = (e: React.DragEvent, dropZone: DropZone) => {
+    e.preventDefault();
     
-    const touch = e.touches[0];
-    const rect = gameAreaRef.current.getBoundingClientRect();
-    const x = ((touch.clientX - rect.left - dragOffset.x) / rect.width) * 100;
-    const y = ((touch.clientY - rect.top - dragOffset.y) / rect.height) * 100;
-    
-    setShapes(prev => prev.map(s => 
-      s.id === draggedShape.id 
-        ? { ...s, x: Math.max(5, Math.min(90, x)), y: Math.max(5, Math.min(85, y)) }
-        : s
-    ));
-  };
-
-  const handleDropZoneClick = (dropZone: DropZone) => {
     if (!draggedShape || !gameActive) return;
 
     if (draggedShape.type === dropZone.type) {
@@ -182,7 +128,6 @@ const ShapeSorter = () => {
     }
     
     setDraggedShape(null);
-    setDragOffset({ x: 0, y: 0 });
   };
 
   const resetGame = () => {
@@ -217,7 +162,7 @@ const ShapeSorter = () => {
     };
 
     const baseClasses = `${sizeClasses[shape.size]} flex items-center justify-center text-white font-bold shadow-xl transform transition-all duration-200 cursor-grab active:cursor-grabbing ${
-      isDragging ? 'scale-110 rotate-6 z-50' : 'hover:scale-105 z-10'
+      isDragging ? 'scale-110 rotate-6 z-50 opacity-70' : 'hover:scale-105 z-10'
     }`;
 
     const style = {
@@ -258,6 +203,8 @@ const ShapeSorter = () => {
       <div 
         className={`${baseClasses} ${shapeClasses[shape.type]} absolute`} 
         style={style}
+        draggable
+        onDragStart={(e) => handleDragStart(e, shape)}
       >
         {shapeSymbols[shape.type]}
       </div>
@@ -293,8 +240,14 @@ const ShapeSorter = () => {
       pentagon: 'rounded-xl'
     };
 
+    const dropZone = dropZones.find(zone => zone.id === id);
+
     return (
-      <div className={`${baseClasses} ${shapeClasses[type]}`} onClick={() => handleDropZoneClick({ type: type as any, color, id })}>
+      <div 
+        className={`${baseClasses} ${shapeClasses[type]}`} 
+        onDragOver={handleDragOver}
+        onDrop={(e) => dropZone && handleDrop(e, dropZone)}
+      >
         {shapeSymbols[type as keyof typeof shapeSymbols]}
       </div>
     );
@@ -321,7 +274,7 @@ const ShapeSorter = () => {
             🔷 Shape Sorter Challenge
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Drag and drop shapes into their matching zones! Learn geometry while having fun with advanced drag & drop!
+            Drag and drop 5 random shapes into their matching zones! Learn geometry while having fun with drag & drop!
           </p>
         </div>
 
@@ -374,24 +327,9 @@ const ShapeSorter = () => {
               <div 
                 ref={gameAreaRef}
                 className="relative w-full h-full select-none"
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleMouseUp}
               >
                 {shapes.filter(s => !s.sorted).map((shape) => (
-                  <div
-                    key={shape.id}
-                    onMouseDown={(e) => handleMouseDown(e, shape)}
-                    onTouchStart={(e) => handleTouchStart(e, shape)}
-                    className="absolute"
-                    style={{
-                      left: `${shape.x}%`,
-                      top: `${shape.y}%`,
-                      transform: 'translate(-50%, -50%)'
-                    }}
-                  >
+                  <div key={shape.id}>
                     {getShapeElement(shape, draggedShape?.id === shape.id)}
                   </div>
                 ))}
@@ -434,10 +372,10 @@ const ShapeSorter = () => {
             <div className="text-8xl mb-4 animate-bounce">🎯</div>
             <div className="font-fredoka text-3xl text-gray-700 mb-4">Ready to Sort Shapes?</div>
             <div className="font-comic text-gray-600 mb-4">
-              Drag shapes to their matching zones with advanced drag & drop controls!
+              Drag shapes to their matching zones with HTML5 drag & drop!
             </div>
             <div className="text-sm text-gray-500 font-comic">
-              💡 Tip: Click and drag on desktop, touch and drag on mobile!
+              💡 Tip: Drag and drop the shapes to their matching zones!
             </div>
           </Card>
         )}
@@ -477,11 +415,10 @@ const ShapeSorter = () => {
           <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4">🎮 How to Play:</h3>
           <ul className="font-comic text-gray-600 space-y-2">
             <li>• Drag shapes from the game area to their matching drop zones</li>
+            <li>• Each level shows 5 random shape types out of 10 available</li>
             <li>• Each correct match earns you 15 × level points</li>
             <li>• Wrong matches reduce your score by 8 points</li>
             <li>• Complete all shapes to advance to the next level</li>
-            <li>• Higher levels have more shape types and better rewards</li>
-            <li>• Try different sizes: small, medium, and large shapes!</li>
             <li>• Master all 10 different shape types: circles, squares, triangles, rectangles, stars, hearts, diamonds, hexagons, ovals, and pentagons!</li>
           </ul>
         </Card>

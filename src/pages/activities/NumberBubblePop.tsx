@@ -26,46 +26,54 @@ const NumberBubblePop = () => {
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [targetNumber, setTargetNumber] = useState(1);
   const [gameCompleted, setGameCompleted] = useState(false);
+  const [sortedNumbers, setSortedNumbers] = useState<number[]>([]);
 
   const colors = ['bg-blue-400', 'bg-green-400', 'bg-purple-400', 'bg-pink-400', 'bg-yellow-400', 'bg-red-400', 'bg-indigo-400', 'bg-teal-400'];
 
   const generateBubbles = () => {
     const newBubbles: Bubble[] = [];
-    const numbersToShow = Math.min(20, level + 10);
-    const maxNumber = Math.max(15, level * 4);
     
-    // Create array of sequential numbers starting from 1
-    const availableNumbers = Array.from({ length: maxNumber }, (_, i) => i + 1);
-    const selectedNumbers = availableNumbers.slice(0, numbersToShow);
+    // Generate 15 random numbers between 1 and 100
+    const randomNumbers = [];
+    while (randomNumbers.length < 15) {
+      const num = Math.floor(Math.random() * 100) + 1;
+      if (!randomNumbers.includes(num)) {
+        randomNumbers.push(num);
+      }
+    }
     
-    // Shuffle the positions but keep all numbers
-    for (let i = 0; i < numbersToShow; i++) {
+    // Sort numbers for gameplay logic
+    const sorted = [...randomNumbers].sort((a, b) => a - b);
+    setSortedNumbers(sorted);
+    setTargetNumber(sorted[0]);
+    
+    // Create bubbles with better spacing
+    for (let i = 0; i < 15; i++) {
       let x, y;
       let attempts = 0;
-      const minDistance = 18; // Increased minimum distance to prevent overlap
+      const minDistance = 18;
       
-      // Ensure bubbles don't overlap with better spacing
       do {
-        x = Math.random() * 70 + 10; // Reduced range to avoid edges
-        y = Math.random() * 55 + 15; // Reduced range to avoid edges
+        x = Math.random() * 70 + 10;
+        y = Math.random() * 55 + 15;
         attempts++;
       } while (attempts < 50 && newBubbles.some(bubble => {
         const distance = Math.sqrt(Math.pow(bubble.x - x, 2) + Math.pow(bubble.y - y, 2));
         return distance < minDistance;
       }));
       
-      // If we can't find a non-overlapping position, use grid-based positioning
+      // Grid fallback for better spacing
       if (attempts >= 50) {
-        const cols = Math.ceil(Math.sqrt(numbersToShow));
+        const cols = Math.ceil(Math.sqrt(15));
         const row = Math.floor(i / cols);
         const col = i % cols;
         x = (col + 1) * (80 / (cols + 1)) + 10;
-        y = (row + 1) * (60 / (Math.ceil(numbersToShow / cols) + 1)) + 15;
+        y = (row + 1) * (60 / (Math.ceil(15 / cols) + 1)) + 15;
       }
       
       newBubbles.push({
         id: i,
-        number: selectedNumbers[i],
+        number: randomNumbers[i],
         x,
         y,
         color: colors[Math.floor(Math.random() * colors.length)],
@@ -80,7 +88,6 @@ const NumberBubblePop = () => {
     setScore(0);
     setLevel(1);
     setTimeLeft(60);
-    setTargetNumber(1);
     setGameCompleted(false);
     generateBubbles();
   };
@@ -93,13 +100,16 @@ const NumberBubblePop = () => {
         b.id === bubble.id ? { ...b, popped: true } : b
       ));
       setScore(prev => prev + (level * 10));
-      setTargetNumber(prev => prev + 1);
       
-      // Check if all sequential numbers up to max are found
-      const maxTarget = Math.max(...bubbles.map(b => b.number));
-      if (targetNumber >= maxTarget) {
+      // Find next number in sequence
+      const currentIndex = sortedNumbers.findIndex(num => num === targetNumber);
+      const nextNumber = sortedNumbers[currentIndex + 1];
+      
+      if (nextNumber) {
+        setTargetNumber(nextNumber);
+      } else {
+        // All numbers found - level complete
         setLevel(prev => prev + 1);
-        setTargetNumber(1);
         setTimeLeft(prev => prev + 30);
         setTimeout(() => generateBubbles(), 1000);
       }
@@ -116,6 +126,7 @@ const NumberBubblePop = () => {
     setTargetNumber(1);
     setBubbles([]);
     setGameCompleted(false);
+    setSortedNumbers([]);
   };
 
   useEffect(() => {
@@ -147,17 +158,15 @@ const NumberBubblePop = () => {
           </Button>
         </div>
 
-        {/* Game Header */}
         <div className="text-center mb-8">
           <h1 className="font-fredoka font-bold text-4xl text-gray-800 mb-4 animate-bounce">
             🫧 Number Bubble Pop
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Pop the bubbles in order from {targetNumber} onwards! Be quick and accurate to earn more points!
+            Pop 15 random bubbles in numerical order from smallest to largest! Find number {targetNumber} next!
           </p>
         </div>
 
-        {/* Game Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card className="p-4 text-center bg-white rounded-xl shadow-lg animate-fade-in">
             <div className="font-comic text-sm text-gray-600">Score</div>
@@ -177,7 +186,6 @@ const NumberBubblePop = () => {
           </Card>
         </div>
 
-        {/* Game Controls */}
         <div className="flex justify-center space-x-4 mb-8">
           {!gameActive && !gameCompleted && (
             <Button 
@@ -209,7 +217,6 @@ const NumberBubblePop = () => {
           </Button>
         </div>
 
-        {/* Game Area */}
         <Card className="relative h-96 bg-gradient-to-br from-cyan-100 to-blue-200 rounded-2xl shadow-lg overflow-hidden mb-8">
           {gameActive && (
             <div className="relative w-full h-full">
@@ -247,14 +254,41 @@ const NumberBubblePop = () => {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center animate-fade-in">
                 <div className="text-8xl mb-4 animate-bounce">🫧</div>
-                <div className="font-fredoka text-3xl text-gray-700 mb-4">Ready to Pop Some Bubbles?</div>
-                <div className="font-comic text-gray-600">Click the numbers in order starting from 1!</div>
+                <div className="font-fredoka text-3xl text-gray-700 mb-4">Ready to Pop Bubbles?</div>
+                <div className="font-comic text-gray-600">Click the numbers in order from smallest to largest!</div>
               </div>
             </div>
           )}
         </Card>
 
-        {/* Game Completed */}
+        {gameActive && sortedNumbers.length > 0 && (
+          <Card className="p-4 mb-8 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl">
+            <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">Number Sequence (Smallest to Largest):</h3>
+            <div className="flex flex-wrap gap-2">
+              {sortedNumbers.map((number) => {
+                const bubble = bubbles.find(b => b.number === number);
+                const isPopped = bubble?.popped;
+                const isTarget = number === targetNumber;
+                
+                return (
+                  <Badge 
+                    key={number} 
+                    className={`font-comic ${
+                      isPopped 
+                        ? 'bg-green-500 text-white' 
+                        : isTarget 
+                          ? 'bg-orange-500 text-white animate-pulse' 
+                          : 'bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    {number}
+                  </Badge>
+                );
+              })}
+            </div>
+          </Card>
+        )}
+
         {gameCompleted && (
           <Card className="p-8 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl text-center animate-scale-in">
             <Trophy className="w-16 h-16 text-yellow-600 mx-auto mb-4 animate-bounce" />
@@ -285,15 +319,14 @@ const NumberBubblePop = () => {
           </Card>
         )}
 
-        {/* Instructions */}
         <Card className="p-6 bg-white rounded-2xl shadow-lg">
           <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4">How to Play:</h3>
           <ul className="font-comic text-gray-600 space-y-2">
-            <li>• Click the bubbles in numerical order starting from 1, 2, 3, 4, 5, 6, 7, 8...</li>
+            <li>• Click bubbles with 15 random numbers from 1-100 in numerical order (smallest to largest)</li>
+            <li>• Each level generates a new set of 15 random numbers</li>
             <li>• Each correct click earns you points (more points at higher levels)</li>
             <li>• Wrong clicks reduce your score by 5 points</li>
-            <li>• Complete sequences to advance levels and get more bubbles</li>
-            <li>• Higher levels have more bubbles and give more points</li>
+            <li>• Complete all 15 numbers to advance levels and get more time</li>
             <li>• Try to get the highest score before time runs out!</li>
           </ul>
         </Card>
