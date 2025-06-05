@@ -8,7 +8,7 @@ import Header from '@/components/Header';
 
 interface Shape {
   id: number;
-  type: 'circle' | 'square' | 'triangle' | 'rectangle' | 'star' | 'heart' | 'diamond' | 'hexagon' | 'oval' | 'pentagon';
+  type: 'circle' | 'square' | 'triangle' | 'rectangle' | 'star' | 'heart' | 'diamond' | 'hexagon' | 'oval' | 'pentagon' | 'octagon' | 'cross' | 'arrow' | 'crescent' | 'butterfly';
   color: string;
   x: number;
   y: number;
@@ -17,9 +17,10 @@ interface Shape {
 }
 
 interface DropZone {
-  type: 'circle' | 'square' | 'triangle' | 'rectangle' | 'star' | 'heart' | 'diamond' | 'hexagon' | 'oval' | 'pentagon';
+  type: 'circle' | 'square' | 'triangle' | 'rectangle' | 'star' | 'heart' | 'diamond' | 'hexagon' | 'oval' | 'pentagon' | 'octagon' | 'cross' | 'arrow' | 'crescent' | 'butterfly';
   color: string;
   id: string;
+  sortedShapes: Shape[];
 }
 
 const ShapeSorter = () => {
@@ -35,13 +36,13 @@ const ShapeSorter = () => {
   const [timeLeft, setTimeLeft] = useState(180);
   const gameAreaRef = useRef<HTMLDivElement>(null);
 
-  const shapeTypes = ['circle', 'square', 'triangle', 'rectangle', 'star', 'heart', 'diamond', 'hexagon', 'oval', 'pentagon'] as const;
+  const allShapeTypes = ['circle', 'square', 'triangle', 'rectangle', 'star', 'heart', 'diamond', 'hexagon', 'oval', 'pentagon', 'octagon', 'cross', 'arrow', 'crescent', 'butterfly'] as const;
   const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'pink', 'orange', 'teal', 'indigo', 'cyan'];
   const sizes = ['small', 'medium', 'large'] as const;
 
   const generateShapes = () => {
     // Select 5 random shape types
-    const shuffledTypes = [...shapeTypes].sort(() => Math.random() - 0.5).slice(0, 5);
+    const shuffledTypes = [...allShapeTypes].sort(() => Math.random() - 0.5).slice(0, 5);
     const newShapes: Shape[] = [];
     const newDropZones: DropZone[] = [];
 
@@ -50,10 +51,14 @@ const ShapeSorter = () => {
       newDropZones.push({
         type,
         color: colors[typeIndex % colors.length],
-        id: `zone-${type}`
+        id: `zone-${type}`,
+        sortedShapes: []
       });
+    });
 
-      // Create one shape for each type
+    // Create 10 shapes using the 5 selected types
+    for (let i = 0; i < 10; i++) {
+      const selectedType = shuffledTypes[i % shuffledTypes.length];
       let x, y;
       let attempts = 0;
       const minDistance = 15;
@@ -68,15 +73,15 @@ const ShapeSorter = () => {
       }));
 
       newShapes.push({
-        id: typeIndex,
-        type,
-        color: colors[typeIndex % colors.length],
+        id: i,
+        type: selectedType,
+        color: colors[Math.floor(Math.random() * colors.length)],
         x,
         y,
         sorted: false,
         size: sizes[Math.floor(Math.random() * sizes.length)]
       });
-    });
+    }
 
     setShapes(newShapes);
     setDropZones(newDropZones);
@@ -111,6 +116,13 @@ const ShapeSorter = () => {
       setShapes(prev => prev.map(s => 
         s.id === draggedShape.id ? { ...s, sorted: true } : s
       ));
+      
+      setDropZones(prev => prev.map(zone => 
+        zone.id === dropZone.id 
+          ? { ...zone, sortedShapes: [...zone.sortedShapes, draggedShape] }
+          : zone
+      ));
+      
       setScore(prev => prev + (level * 15));
       
       // Check if all shapes are sorted
@@ -183,7 +195,12 @@ const ShapeSorter = () => {
       diamond: '♦',
       hexagon: '⬢',
       oval: '⬭',
-      pentagon: '⬟'
+      pentagon: '⬟',
+      octagon: '⭘',
+      cross: '✚',
+      arrow: '➤',
+      crescent: '☽',
+      butterfly: '🦋'
     };
 
     const shapeClasses = {
@@ -196,7 +213,12 @@ const ShapeSorter = () => {
       diamond: 'rounded-lg rotate-45',
       hexagon: 'rounded-lg',
       oval: 'rounded-full',
-      pentagon: 'rounded-lg'
+      pentagon: 'rounded-lg',
+      octagon: 'rounded-lg',
+      cross: 'rounded-lg',
+      arrow: 'rounded-lg',
+      crescent: 'rounded-lg',
+      butterfly: 'rounded-lg'
     };
 
     return (
@@ -211,8 +233,8 @@ const ShapeSorter = () => {
     );
   };
 
-  const getDropZoneShape = (type: string, color: string, id: string) => {
-    const baseClasses = `w-20 h-20 border-4 border-dashed border-gray-400 rounded-xl flex items-center justify-center text-gray-400 text-2xl font-bold transition-all duration-300 hover:border-gray-600 hover:bg-gray-50 hover:scale-105 cursor-pointer`;
+  const getDropZoneShape = (zone: DropZone) => {
+    const baseClasses = `w-20 h-20 border-4 border-dashed border-gray-400 rounded-xl flex flex-col items-center justify-center text-gray-400 text-2xl font-bold transition-all duration-300 hover:border-gray-600 hover:bg-gray-50 hover:scale-105 cursor-pointer relative`;
 
     const shapeSymbols = {
       circle: '○',
@@ -224,7 +246,12 @@ const ShapeSorter = () => {
       diamond: '♢',
       hexagon: '⬡',
       oval: '⬯',
-      pentagon: '⬠'
+      pentagon: '⬠',
+      octagon: '⭘',
+      cross: '✚',
+      arrow: '➤',
+      crescent: '☽',
+      butterfly: '🦋'
     };
 
     const shapeClasses = {
@@ -237,18 +264,40 @@ const ShapeSorter = () => {
       diamond: 'rounded-xl rotate-45',
       hexagon: 'rounded-xl',
       oval: 'rounded-full',
-      pentagon: 'rounded-xl'
+      pentagon: 'rounded-xl',
+      octagon: 'rounded-xl',
+      cross: 'rounded-lg',
+      arrow: 'rounded-lg',
+      crescent: 'rounded-lg',
+      butterfly: 'rounded-lg'
     };
-
-    const dropZone = dropZones.find(zone => zone.id === id);
 
     return (
       <div 
-        className={`${baseClasses} ${shapeClasses[type]}`} 
+        className={`${baseClasses} ${shapeClasses[zone.type]}`} 
         onDragOver={handleDragOver}
-        onDrop={(e) => dropZone && handleDrop(e, dropZone)}
+        onDrop={(e) => handleDrop(e, zone)}
       >
-        {shapeSymbols[type as keyof typeof shapeSymbols]}
+        {zone.sortedShapes.length === 0 ? (
+          shapeSymbols[zone.type as keyof typeof shapeSymbols]
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex flex-wrap gap-1 justify-center items-center">
+              {zone.sortedShapes.slice(0, 4).map((shape, index) => (
+                <div 
+                  key={index}
+                  className="w-4 h-4 rounded-sm flex items-center justify-center text-xs text-white"
+                  style={{ backgroundColor: shape.color }}
+                >
+                  {shapeSymbols[shape.type]}
+                </div>
+              ))}
+              {zone.sortedShapes.length > 4 && (
+                <div className="text-xs text-gray-600">+{zone.sortedShapes.length - 4}</div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -274,7 +323,7 @@ const ShapeSorter = () => {
             🔷 Shape Sorter Challenge
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Drag and drop 5 random shapes into their matching zones! Learn geometry while having fun with drag & drop!
+            Drag and drop 10 shapes (5 different types) into their matching zones! Learn geometry while having fun!
           </p>
         </div>
 
@@ -356,9 +405,9 @@ const ShapeSorter = () => {
                     className="transition-transform duration-200 hover:scale-105 animate-fade-in"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    {getDropZoneShape(zone.type, zone.color, zone.id)}
+                    {getDropZoneShape(zone)}
                     <div className="font-comic text-sm text-gray-600 mt-2 capitalize text-center">
-                      {zone.type}
+                      {zone.type} ({zone.sortedShapes.length})
                     </div>
                   </div>
                 ))}
@@ -372,7 +421,7 @@ const ShapeSorter = () => {
             <div className="text-8xl mb-4 animate-bounce">🎯</div>
             <div className="font-fredoka text-3xl text-gray-700 mb-4">Ready to Sort Shapes?</div>
             <div className="font-comic text-gray-600 mb-4">
-              Drag shapes to their matching zones with HTML5 drag & drop!
+              Drag 10 shapes (5 different types) to their matching zones!
             </div>
             <div className="text-sm text-gray-500 font-comic">
               💡 Tip: Drag and drop the shapes to their matching zones!
@@ -415,11 +464,11 @@ const ShapeSorter = () => {
           <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4">🎮 How to Play:</h3>
           <ul className="font-comic text-gray-600 space-y-2">
             <li>• Drag shapes from the game area to their matching drop zones</li>
-            <li>• Each level shows 5 random shape types out of 10 available</li>
+            <li>• Each level shows 10 shapes using 5 random shape types out of 15 available</li>
             <li>• Each correct match earns you 15 × level points</li>
             <li>• Wrong matches reduce your score by 8 points</li>
             <li>• Complete all shapes to advance to the next level</li>
-            <li>• Master all 10 different shape types: circles, squares, triangles, rectangles, stars, hearts, diamonds, hexagons, ovals, and pentagons!</li>
+            <li>• Master all 15 different shape types: circles, squares, triangles, rectangles, stars, hearts, diamonds, hexagons, ovals, pentagons, octagons, crosses, arrows, crescents, and butterflies!</li>
           </ul>
         </Card>
       </div>

@@ -16,7 +16,7 @@ const Courses = () => {
   const courses = [
     {
       id: 'math-basics',
-      title: 'Math Basics',
+      title: 'Math Adventure',
       description: 'Learn counting, addition, subtraction, and basic geometry',
       category: 'mathematics',
       difficulty: 'Beginner',
@@ -26,14 +26,14 @@ const Courses = () => {
       students: 2340,
       progress: userData.progress.find(p => p.name === 'Mathematics')?.progress || 0,
       color: 'gradient-blue',
-      topics: ['Counting', 'Addition', 'Subtraction', 'Shapes', 'Patterns'],
-      nextLesson: 'Learning Numbers 1-10',
-      route: '/courses/math-basics'
+      topics: ['Numbers', 'Addition', 'Subtraction', 'Shapes', 'Patterns'],
+      nextLesson: 'Learning Numbers 1-20',
+      route: '/courses/math-adventure'
     },
     {
       id: 'reading-adventure',
       title: 'Reading Adventure',
-      description: 'Phonics, sight words, and reading comprehension',
+      description: 'Alphabets, vocabulary, colors, and comprehensive English learning',
       category: 'english',
       difficulty: 'Beginner',
       duration: '30 min',
@@ -42,14 +42,14 @@ const Courses = () => {
       students: 1890,
       progress: userData.progress.find(p => p.name === 'English')?.progress || 0,
       color: 'gradient-green',
-      topics: ['Phonics', 'Sight Words', 'Reading', 'Comprehension'],
-      nextLesson: 'Letter Sounds A-E',
+      topics: ['Alphabets', 'Colors', 'Vocabulary', 'Body Parts', 'Animals'],
+      nextLesson: 'Letter A-E with Examples',
       route: '/courses/reading-adventure'
     },
     {
       id: 'science-explorers',
       title: 'Science Explorers',
-      description: 'Discover the wonders of nature and simple experiments',
+      description: 'Discover experiments, planets, weather, and amazing science facts',
       category: 'science',
       difficulty: 'Intermediate',
       duration: '40 min',
@@ -58,8 +58,8 @@ const Courses = () => {
       students: 1560,
       progress: userData.progress.find(p => p.name === 'Science')?.progress || 0,
       color: 'gradient-purple',
-      topics: ['Animals', 'Plants', 'Weather', 'Experiments'],
-      nextLesson: 'Animal Habitats',
+      topics: ['Experiments', 'Planets', 'Weather', 'Animals', 'Plants'],
+      nextLesson: 'Fun Science Experiments',
       route: '/courses/science-explorers'
     },
     {
@@ -77,6 +77,70 @@ const Courses = () => {
       topics: ['Drawing', 'Coloring', 'Crafts', 'Creativity'],
       nextLesson: 'Basic Shapes Drawing',
       route: '/courses/creative-arts'
+    },
+    {
+      id: 'geography-explorer',
+      title: 'Geography Explorer',
+      description: 'Discover countries, continents, maps, and world wonders',
+      category: 'geography',
+      difficulty: 'Beginner',
+      duration: '30 min',
+      lessons: 12,
+      rating: 4.6,
+      students: 980,
+      progress: userData.progress.find(p => p.name === 'Geography')?.progress || 0,
+      color: 'gradient-teal',
+      topics: ['Countries', 'Continents', 'Maps', 'Landmarks'],
+      nextLesson: 'World Map Adventure',
+      route: '/courses/geography-explorer'
+    },
+    {
+      id: 'history-adventures',
+      title: 'History Adventures',
+      description: 'Journey through time with exciting historical stories',
+      category: 'history',
+      difficulty: 'Intermediate',
+      duration: '35 min',
+      lessons: 10,
+      rating: 4.5,
+      students: 750,
+      progress: userData.progress.find(p => p.name === 'History')?.progress || 0,
+      color: 'gradient-orange',
+      topics: ['Ancient Times', 'Famous People', 'Inventions', 'Civilizations'],
+      nextLesson: 'Ancient Civilizations',
+      route: '/courses/history-adventures'
+    },
+    {
+      id: 'social-moral',
+      title: 'Social & Moral Values',
+      description: 'Learn kindness, sharing, friendship, and good values',
+      category: 'social',
+      difficulty: 'All Levels',
+      duration: '25 min',
+      lessons: 8,
+      rating: 4.8,
+      students: 1100,
+      progress: userData.progress.find(p => p.name === 'Social')?.progress || 0,
+      color: 'gradient-yellow',
+      topics: ['Kindness', 'Sharing', 'Friendship', 'Respect'],
+      nextLesson: 'Being Kind to Others',
+      route: '/courses/social-moral'
+    },
+    {
+      id: 'nature-explorer',
+      title: 'Nature Explorer',
+      description: 'Explore forests, oceans, mountains, and natural wonders',
+      category: 'nature',
+      difficulty: 'Beginner',
+      duration: '30 min',
+      lessons: 10,
+      rating: 4.7,
+      students: 890,
+      progress: userData.progress.find(p => p.name === 'Nature')?.progress || 0,
+      color: 'gradient-green',
+      topics: ['Forests', 'Oceans', 'Mountains', 'Wildlife'],
+      nextLesson: 'Forest Adventure',
+      route: '/courses/nature-explorer'
     }
   ];
 
@@ -85,7 +149,11 @@ const Courses = () => {
     { id: 'mathematics', name: 'Mathematics', icon: '🔢' },
     { id: 'english', name: 'English', icon: '📖' },
     { id: 'science', name: 'Science', icon: '🔬' },
-    { id: 'art', name: 'Art', icon: '🎨' }
+    { id: 'art', name: 'Art', icon: '🎨' },
+    { id: 'geography', name: 'Geography', icon: '🌍' },
+    { id: 'history', name: 'History', icon: '🏛️' },
+    { id: 'social', name: 'Social', icon: '🤝' },
+    { id: 'nature', name: 'Nature', icon: '🌲' }
   ];
 
   const filteredCourses = selectedCategory === 'all' 
@@ -147,6 +215,10 @@ const Courses = () => {
                   {course.category === 'english' && '📖'}
                   {course.category === 'science' && '🔬'}
                   {course.category === 'art' && '🎨'}
+                  {course.category === 'geography' && '🌍'}
+                  {course.category === 'history' && '🏛️'}
+                  {course.category === 'social' && '🤝'}
+                  {course.category === 'nature' && '🌲'}
                 </div>
               </div>
 

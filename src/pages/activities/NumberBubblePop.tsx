@@ -33,9 +33,9 @@ const NumberBubblePop = () => {
   const generateBubbles = () => {
     const newBubbles: Bubble[] = [];
     
-    // Generate 15 random numbers between 1 and 100
+    // Generate 10 random numbers between 1 and 100
     const randomNumbers = [];
-    while (randomNumbers.length < 15) {
+    while (randomNumbers.length < 10) {
       const num = Math.floor(Math.random() * 100) + 1;
       if (!randomNumbers.includes(num)) {
         randomNumbers.push(num);
@@ -47,29 +47,16 @@ const NumberBubblePop = () => {
     setSortedNumbers(sorted);
     setTargetNumber(sorted[0]);
     
-    // Create bubbles with better spacing
-    for (let i = 0; i < 15; i++) {
-      let x, y;
-      let attempts = 0;
-      const minDistance = 18;
+    // Create bubbles with better spacing using grid layout
+    for (let i = 0; i < 10; i++) {
+      const cols = 5; // 5 columns
+      const rows = 2; // 2 rows
+      const row = Math.floor(i / cols);
+      const col = i % cols;
       
-      do {
-        x = Math.random() * 70 + 10;
-        y = Math.random() * 55 + 15;
-        attempts++;
-      } while (attempts < 50 && newBubbles.some(bubble => {
-        const distance = Math.sqrt(Math.pow(bubble.x - x, 2) + Math.pow(bubble.y - y, 2));
-        return distance < minDistance;
-      }));
-      
-      // Grid fallback for better spacing
-      if (attempts >= 50) {
-        const cols = Math.ceil(Math.sqrt(15));
-        const row = Math.floor(i / cols);
-        const col = i % cols;
-        x = (col + 1) * (80 / (cols + 1)) + 10;
-        y = (row + 1) * (60 / (Math.ceil(15 / cols) + 1)) + 15;
-      }
+      // Calculate position with padding
+      const x = (col + 1) * (80 / (cols + 1)) + 10;
+      const y = (row + 1) * (70 / (rows + 1)) + 15;
       
       newBubbles.push({
         id: i,
@@ -163,7 +150,7 @@ const NumberBubblePop = () => {
             🫧 Number Bubble Pop
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Pop 15 random bubbles in numerical order from smallest to largest! Find number {targetNumber} next!
+            Pop 10 random bubbles in numerical order from smallest to largest! Find number {targetNumber} next!
           </p>
         </div>
 
@@ -322,11 +309,11 @@ const NumberBubblePop = () => {
         <Card className="p-6 bg-white rounded-2xl shadow-lg">
           <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4">How to Play:</h3>
           <ul className="font-comic text-gray-600 space-y-2">
-            <li>• Click bubbles with 15 random numbers from 1-100 in numerical order (smallest to largest)</li>
-            <li>• Each level generates a new set of 15 random numbers</li>
+            <li>• Click bubbles with 10 random numbers from 1-100 in numerical order (smallest to largest)</li>
+            <li>• Each level generates a new set of 10 random numbers</li>
             <li>• Each correct click earns you points (more points at higher levels)</li>
             <li>• Wrong clicks reduce your score by 5 points</li>
-            <li>• Complete all 15 numbers to advance levels and get more time</li>
+            <li>• Complete all 10 numbers to advance levels and get more time</li>
             <li>• Try to get the highest score before time runs out!</li>
           </ul>
         </Card>
