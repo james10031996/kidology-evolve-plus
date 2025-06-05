@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,30 +27,41 @@ const NumberBubblePop = () => {
   const [targetNumber, setTargetNumber] = useState(1);
   const [gameCompleted, setGameCompleted] = useState(false);
 
-  const colors = ['bg-blue-400', 'bg-green-400', 'bg-purple-400', 'bg-pink-400', 'bg-yellow-400', 'bg-red-400'];
+  const colors = ['bg-blue-400', 'bg-green-400', 'bg-purple-400', 'bg-pink-400', 'bg-yellow-400', 'bg-red-400', 'bg-indigo-400', 'bg-teal-400'];
 
   const generateBubbles = () => {
     const newBubbles: Bubble[] = [];
-    const numbersToShow = Math.min(15, level + 8);
-    const maxNumber = Math.max(10, level * 3);
+    const numbersToShow = Math.min(20, level + 10);
+    const maxNumber = Math.max(15, level * 4);
     
-    // Create array of unique numbers
+    // Create array of sequential numbers starting from 1
     const availableNumbers = Array.from({ length: maxNumber }, (_, i) => i + 1);
-    const shuffledNumbers = availableNumbers.sort(() => Math.random() - 0.5);
-    const selectedNumbers = shuffledNumbers.slice(0, numbersToShow);
+    const selectedNumbers = availableNumbers.slice(0, numbersToShow);
     
+    // Shuffle the positions but keep all numbers
     for (let i = 0; i < numbersToShow; i++) {
       let x, y;
       let attempts = 0;
+      const minDistance = 18; // Increased minimum distance to prevent overlap
       
-      // Ensure bubbles don't overlap
+      // Ensure bubbles don't overlap with better spacing
       do {
-        x = Math.random() * 75 + 5;
-        y = Math.random() * 65 + 10;
+        x = Math.random() * 70 + 10; // Reduced range to avoid edges
+        y = Math.random() * 55 + 15; // Reduced range to avoid edges
         attempts++;
-      } while (attempts < 10 && newBubbles.some(bubble => 
-        Math.abs(bubble.x - x) < 15 && Math.abs(bubble.y - y) < 15
-      ));
+      } while (attempts < 50 && newBubbles.some(bubble => {
+        const distance = Math.sqrt(Math.pow(bubble.x - x, 2) + Math.pow(bubble.y - y, 2));
+        return distance < minDistance;
+      }));
+      
+      // If we can't find a non-overlapping position, use grid-based positioning
+      if (attempts >= 50) {
+        const cols = Math.ceil(Math.sqrt(numbersToShow));
+        const row = Math.floor(i / cols);
+        const col = i % cols;
+        x = (col + 1) * (80 / (cols + 1)) + 10;
+        y = (row + 1) * (60 / (Math.ceil(numbersToShow / cols) + 1)) + 15;
+      }
       
       newBubbles.push({
         id: i,
@@ -85,12 +95,12 @@ const NumberBubblePop = () => {
       setScore(prev => prev + (level * 10));
       setTargetNumber(prev => prev + 1);
       
-      // Check if all sequential numbers up to 10 are found
-      const maxTarget = Math.min(10, Math.max(...bubbles.map(b => b.number)));
+      // Check if all sequential numbers up to max are found
+      const maxTarget = Math.max(...bubbles.map(b => b.number));
       if (targetNumber >= maxTarget) {
         setLevel(prev => prev + 1);
         setTargetNumber(1);
-        setTimeLeft(prev => prev + 20);
+        setTimeLeft(prev => prev + 30);
         setTimeout(() => generateBubbles(), 1000);
       }
     } else {
@@ -139,7 +149,7 @@ const NumberBubblePop = () => {
 
         {/* Game Header */}
         <div className="text-center mb-8">
-          <h1 className="font-fredoka font-bold text-4xl text-gray-800 mb-4">
+          <h1 className="font-fredoka font-bold text-4xl text-gray-800 mb-4 animate-bounce">
             🫧 Number Bubble Pop
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
@@ -149,19 +159,19 @@ const NumberBubblePop = () => {
 
         {/* Game Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="p-4 text-center bg-white rounded-xl shadow-lg">
+          <Card className="p-4 text-center bg-white rounded-xl shadow-lg animate-fade-in">
             <div className="font-comic text-sm text-gray-600">Score</div>
             <div className="font-fredoka text-2xl font-bold text-blue-600">{score}</div>
           </Card>
-          <Card className="p-4 text-center bg-white rounded-xl shadow-lg">
+          <Card className="p-4 text-center bg-white rounded-xl shadow-lg animate-fade-in">
             <div className="font-comic text-sm text-gray-600">Level</div>
             <div className="font-fredoka text-2xl font-bold text-purple-600">{level}</div>
           </Card>
-          <Card className="p-4 text-center bg-white rounded-xl shadow-lg">
+          <Card className="p-4 text-center bg-white rounded-xl shadow-lg animate-fade-in">
             <div className="font-comic text-sm text-gray-600">Time</div>
             <div className="font-fredoka text-2xl font-bold text-red-600">{timeLeft}s</div>
           </Card>
-          <Card className="p-4 text-center bg-white rounded-xl shadow-lg">
+          <Card className="p-4 text-center bg-white rounded-xl shadow-lg animate-fade-in">
             <div className="font-comic text-sm text-gray-600">Find Number</div>
             <div className="font-fredoka text-2xl font-bold text-green-600">{targetNumber}</div>
           </Card>
@@ -172,7 +182,7 @@ const NumberBubblePop = () => {
           {!gameActive && !gameCompleted && (
             <Button 
               onClick={startGame}
-              className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full"
+              className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
             >
               <Play className="w-5 h-5 mr-2" />
               Start Game
@@ -182,7 +192,7 @@ const NumberBubblePop = () => {
           {gameActive && (
             <Button 
               onClick={() => setGameActive(false)}
-              className="gradient-orange text-white font-comic font-bold px-8 py-3 rounded-full"
+              className="gradient-orange text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
             >
               <Pause className="w-5 h-5 mr-2" />
               Pause
@@ -192,7 +202,7 @@ const NumberBubblePop = () => {
           <Button 
             onClick={resetGame}
             variant="outline"
-            className="font-comic font-bold px-8 py-3 rounded-full"
+            className="font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
           >
             <RotateCcw className="w-5 h-5 mr-2" />
             Reset
@@ -207,13 +217,14 @@ const NumberBubblePop = () => {
                 <button
                   key={bubble.id}
                   onClick={() => popBubble(bubble)}
-                  className={`absolute w-16 h-16 ${bubble.color} rounded-full flex items-center justify-center font-fredoka font-bold text-white text-xl shadow-lg transform transition-all duration-200 hover:scale-110 ${
-                    bubble.popped ? 'opacity-30 scale-50' : 'animate-bounce'
+                  className={`absolute w-16 h-16 ${bubble.color} rounded-full flex items-center justify-center font-fredoka font-bold text-white text-xl shadow-lg transform transition-all duration-300 hover:scale-110 z-10 ${
+                    bubble.popped ? 'opacity-30 scale-50 pointer-events-none' : 'animate-pulse hover:animate-none'
                   }`}
                   style={{
                     left: `${bubble.x}%`,
                     top: `${bubble.y}%`,
-                    animationDelay: `${bubble.id * 0.1}s`
+                    animationDelay: `${bubble.id * 0.1}s`,
+                    transform: `translate(-50%, -50%) ${bubble.popped ? 'scale(0.5)' : 'scale(1)'}`
                   }}
                   disabled={bubble.popped}
                 >
@@ -234,8 +245,8 @@ const NumberBubblePop = () => {
           
           {!gameActive && !gameCompleted && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-8xl mb-4">🫧</div>
+              <div className="text-center animate-fade-in">
+                <div className="text-8xl mb-4 animate-bounce">🫧</div>
                 <div className="font-fredoka text-3xl text-gray-700 mb-4">Ready to Pop Some Bubbles?</div>
                 <div className="font-comic text-gray-600">Click the numbers in order starting from 1!</div>
               </div>
@@ -245,8 +256,8 @@ const NumberBubblePop = () => {
 
         {/* Game Completed */}
         {gameCompleted && (
-          <Card className="p-8 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl text-center">
-            <Trophy className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
+          <Card className="p-8 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl text-center animate-scale-in">
+            <Trophy className="w-16 h-16 text-yellow-600 mx-auto mb-4 animate-bounce" />
             <h2 className="font-fredoka font-bold text-3xl text-gray-800 mb-4">
               🎉 Game Complete! 🎉
             </h2>
@@ -259,14 +270,14 @@ const NumberBubblePop = () => {
             <div className="flex justify-center space-x-4">
               <Button 
                 onClick={startGame}
-                className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full"
+                className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
               >
                 <Play className="w-5 h-5 mr-2" />
                 Play Again
               </Button>
               <Button 
                 onClick={() => navigate('/games')}
-                className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full"
+                className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
               >
                 Try Another Game
               </Button>
@@ -278,10 +289,10 @@ const NumberBubblePop = () => {
         <Card className="p-6 bg-white rounded-2xl shadow-lg">
           <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4">How to Play:</h3>
           <ul className="font-comic text-gray-600 space-y-2">
-            <li>• Click the bubbles in numerical order starting from 1</li>
+            <li>• Click the bubbles in numerical order starting from 1, 2, 3, 4, 5, 6, 7, 8...</li>
             <li>• Each correct click earns you points (more points at higher levels)</li>
             <li>• Wrong clicks reduce your score by 5 points</li>
-            <li>• Complete sequences to advance levels</li>
+            <li>• Complete sequences to advance levels and get more bubbles</li>
             <li>• Higher levels have more bubbles and give more points</li>
             <li>• Try to get the highest score before time runs out!</li>
           </ul>
