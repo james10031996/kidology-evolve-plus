@@ -1,15 +1,11 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, BookOpen, Settings, BarChart3, Shield, GraduationCap, Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Users, BookOpen, Settings, BarChart3, Shield, GraduationCap } from 'lucide-react';
 import Header from '@/components/Header';
 import AdminStoriesManager from '@/components/AdminStoriesManager';
-import AdminTestManager from '@/components/AdminTestManager';
-import AdminUserManager from '@/components/AdminUserManager';
-import AdminAnalytics from '@/components/AdminAnalytics';
-import AdminSettings from '@/components/AdminSettings';
-import AdminCourseManager from '@/components/AdminCourseManager';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -24,7 +20,7 @@ const Admin = () => {
             🔧 Admin Dashboard
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Manage content, users, and platform settings with comprehensive administrative tools
+            Manage content, users, and platform settings
           </p>
         </div>
 
@@ -110,19 +106,67 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="courses">
-            <AdminCourseManager />
+            <Card className="p-8 bg-white rounded-2xl shadow-lg text-center">
+              <div className="text-6xl mb-4">🎓</div>
+              <h3 className="font-fredoka font-bold text-2xl text-gray-800 mb-4">
+                Course Management
+              </h3>
+              <p className="font-comic text-gray-600 mb-6">
+                Create and manage educational courses with tests and quizzes
+              </p>
+              <Button className="gradient-green text-white font-comic font-bold">
+                <GraduationCap className="w-4 h-4 mr-2" />
+                Manage Courses
+              </Button>
+            </Card>
           </TabsContent>
 
           <TabsContent value="users">
-            <AdminUserManager />
+            <Card className="p-8 bg-white rounded-2xl shadow-lg text-center">
+              <div className="text-6xl mb-4">👥</div>
+              <h3 className="font-fredoka font-bold text-2xl text-gray-800 mb-4">
+                User Management
+              </h3>
+              <p className="font-comic text-gray-600 mb-6">
+                Monitor user activity and manage accounts
+              </p>
+              <Button className="gradient-orange text-white font-comic font-bold">
+                <Users className="w-4 h-4 mr-2" />
+                View Users
+              </Button>
+            </Card>
           </TabsContent>
 
           <TabsContent value="analytics">
-            <AdminAnalytics />
+            <Card className="p-8 bg-white rounded-2xl shadow-lg text-center">
+              <div className="text-6xl mb-4">📈</div>
+              <h3 className="font-fredoka font-bold text-2xl text-gray-800 mb-4">
+                Analytics Dashboard
+              </h3>
+              <p className="font-comic text-gray-600 mb-6">
+                Track engagement, progress, and platform performance
+              </p>
+              <Button className="gradient-pink text-white font-comic font-bold">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                View Analytics
+              </Button>
+            </Card>
           </TabsContent>
 
           <TabsContent value="settings">
-            <AdminSettings />
+            <Card className="p-8 bg-white rounded-2xl shadow-lg text-center">
+              <div className="text-6xl mb-4">⚙️</div>
+              <h3 className="font-fredoka font-bold text-2xl text-gray-800 mb-4">
+                Platform Settings
+              </h3>
+              <p className="font-comic text-gray-600 mb-6">
+                Configure platform settings and security options
+              </p>
+              <Button className="gradient-gray text-white font-comic font-bold">
+                <Settings className="w-4 h-4 mr-2" />
+                Manage Settings
+              </Button>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

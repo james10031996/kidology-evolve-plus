@@ -1,148 +1,131 @@
 
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Play, BookOpen, Star, Sparkles } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import AnimatedSearchBar from './AnimatedSearchBar';
+import { Play, Sparkles, Zap, Heart } from 'lucide-react';
 
 const Hero = () => {
-  const navigate = useNavigate();
-
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-200 rounded-full opacity-20 animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
-        <div className="absolute top-40 right-20 w-16 h-16 bg-pink-200 rounded-full opacity-20 animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}></div>
-        <div className="absolute bottom-20 left-20 w-24 h-24 bg-blue-200 rounded-full opacity-20 animate-bounce" style={{ animationDelay: '2s', animationDuration: '5s' }}></div>
-        <div className="absolute bottom-40 right-10 w-20 h-20 bg-green-200 rounded-full opacity-20 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}></div>
+    <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-yellow-50 to-pink-50 py-16 md:py-24">
+      {/* Floating Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 floating">
+          <div className="w-16 h-16 gradient-blue rounded-full flex items-center justify-center">
+            <Sparkles className="w-8 h-8 text-white" />
+          </div>
+        </div>
+        <div className="absolute top-32 right-16 floating-delayed">
+          <div className="w-12 h-12 gradient-green rounded-full flex items-center justify-center">
+            <Heart className="w-6 h-6 text-white" />
+          </div>
+        </div>
+        <div className="absolute bottom-24 left-1/4 floating">
+          <div className="w-20 h-20 gradient-purple rounded-full flex items-center justify-center">
+            <Zap className="w-10 h-10 text-white" />
+          </div>
+        </div>
+        <div className="absolute top-16 right-1/3 bounce-gentle">
+          <div className="w-8 h-8 bg-yellow-400 rounded-full"></div>
+        </div>
+        <div className="absolute bottom-16 right-20 pulse-soft">
+          <div className="w-6 h-6 bg-pink-400 rounded-full"></div>
+        </div>
       </div>
 
-      <div className="container mx-auto px-4 py-20 relative z-10">
+      <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column - Text Content */}
-          <div className="text-center lg:text-left space-y-8">
-            <div className="space-y-4">
-              <h1 className="font-fredoka font-bold text-4xl md:text-6xl lg:text-7xl text-gray-800 leading-tight animate-fade-in">
-                Fun Learning
-                <span className="block gradient-text bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  Adventures
-                </span>
-                <span className="block text-3xl md:text-4xl lg:text-5xl">
-                  for Kids! 🌟
-                </span>
-              </h1>
+          {/* Content */}
+          <div className="text-center lg:text-left">
+            <div className="inline-flex items-center bg-orange-100 text-orange-700 px-4 py-2 rounded-full font-comic font-bold text-sm mb-6">
+              🎉 Welcome to Learning Adventure!
+            </div>
+            
+            <h1 className="font-fredoka font-bold text-4xl md:text-6xl text-gray-800 mb-6 leading-tight">
+              Learn, Play &{' '}
+              <span className="bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">
+                Grow
+              </span>{' '}
+              Together!
+            </h1>
+            
+            <p className="font-comic text-lg md:text-xl text-gray-600 mb-8 max-w-xl mx-auto lg:mx-0">
+              Join thousands of kids on an exciting educational journey with interactive lessons, fun activities, and amazing rewards!
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Link to="/courses">
+                <Button 
+                  size="lg" 
+                  className="gradient-orange text-white font-comic font-bold text-lg px-8 py-6 rounded-full hover:scale-105 transition-transform duration-200 shadow-lg"
+                >
+                  Start Learning Now
+                  <Sparkles className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
               
-              <p className="font-comic text-lg md:text-xl text-gray-600 max-w-2xl mx-auto lg:mx-0 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                Discover magical stories, play exciting games, and learn amazing things in a safe, colorful world designed just for children!
-              </p>
+              <Link to="/activities">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="font-comic font-bold text-lg px-8 py-6 rounded-full border-2 border-orange-300 text-orange-600 hover:bg-orange-50 hover:scale-105 transition-all duration-200"
+                >
+                  <Play className="w-5 h-5 mr-2" />
+                  Watch Demo
+                </Button>
+              </Link>
             </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <Button 
-                size="lg"
-                onClick={() => navigate('/courses')}
-                className="gradient-orange text-white hover:scale-105 transition-transform duration-200 font-comic font-bold text-lg px-8 py-4 rounded-full shadow-lg"
-              >
-                <BookOpen className="w-6 h-6 mr-2" />
-                Start Learning
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              
-              <Button 
-                size="lg" 
-                variant="outline"
-                onClick={() => navigate('/demo')}
-                className="border-2 border-purple-300 text-purple-600 hover:bg-purple-50 hover:scale-105 transition-all duration-200 font-comic font-bold text-lg px-8 py-4 rounded-full"
-              >
-                <Play className="w-6 h-6 mr-2" />
-                Watch Demo
-              </Button>
-            </div>
-
-            {/* Get Started Free Button */}
-            <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
-              <Button 
-                size="lg"
-                onClick={() => navigate('/courses')}
-                className="gradient-blue text-white hover:scale-105 transition-transform duration-200 font-comic font-bold text-lg px-8 py-4 rounded-full shadow-lg"
-              >
-                <Sparkles className="w-6 h-6 mr-2" />
-                Get Started Free
-                <Star className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
-
-            {/* Search Bar */}
-            <div className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
-              <AnimatedSearchBar />
+            
+            {/* Stats */}
+            <div className="flex flex-wrap justify-center lg:justify-start gap-8 mt-12">
+              <div className="text-center">
+                <div className="font-fredoka font-bold text-2xl text-orange-500">50K+</div>
+                <div className="font-comic text-gray-600">Happy Kids</div>
+              </div>
+              <div className="text-center">
+                <div className="font-fredoka font-bold text-2xl text-blue-500">1000+</div>
+                <div className="font-comic text-gray-600">Fun Lessons</div>
+              </div>
+              <div className="text-center">
+                <div className="font-fredoka font-bold text-2xl text-green-500">95%</div>
+                <div className="font-comic text-gray-600">Success Rate</div>
+              </div>
             </div>
           </div>
-
-          {/* Right Column - Visual Elements */}
-          <div className="relative animate-fade-in" style={{ animationDelay: '0.6s' }}>
-            <div className="relative z-10 bg-white rounded-3xl p-8 shadow-2xl border-4 border-purple-100">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-200 cursor-pointer" onClick={() => navigate('/activities')}>
-                  <div className="text-4xl mb-3 animate-bounce">🎮</div>
-                  <h3 className="font-fredoka font-bold text-gray-800">Fun Games</h3>
-                  <p className="font-comic text-sm text-gray-600">Interactive learning games</p>
+          
+          {/* Hero Image */}
+          <div className="relative">
+            <div className="relative bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-500">
+              <div className="bg-white rounded-2xl p-6 shadow-xl">
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <Link to="/courses" className="gradient-orange rounded-xl p-4 text-center hover:scale-105 transition-transform">
+                    <div className="text-white text-2xl mb-2">🔤</div>
+                    <div className="text-white font-comic font-bold">ABC</div>
+                  </Link>
+                  <Link to="/courses" className="gradient-blue rounded-xl p-4 text-center hover:scale-105 transition-transform">
+                    <div className="text-white text-2xl mb-2">🔢</div>
+                    <div className="text-white font-comic font-bold">123</div>
+                  </Link>
+                  <Link to="/activities" className="gradient-green rounded-xl p-4 text-center hover:scale-105 transition-transform">
+                    <div className="text-white text-2xl mb-2">🎨</div>
+                    <div className="text-white font-comic font-bold">Art</div>
+                  </Link>
+                  <Link to="/activities" className="gradient-purple rounded-xl p-4 text-center hover:scale-105 transition-transform">
+                    <div className="text-white text-2xl mb-2">🧬</div>
+                    <div className="text-white font-comic font-bold">Science</div>
+                  </Link>
                 </div>
                 
-                <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-200 cursor-pointer" onClick={() => navigate('/activities')}>
-                  <div className="text-4xl mb-3 animate-bounce" style={{ animationDelay: '0.5s' }}>📚</div>
-                  <h3 className="font-fredoka font-bold text-gray-800">Stories</h3>
-                  <p className="font-comic text-sm text-gray-600">Magical adventures await</p>
-                </div>
-                
-                <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-200 cursor-pointer" onClick={() => navigate('/courses')}>
-                  <div className="text-4xl mb-3 animate-bounce" style={{ animationDelay: '1s' }}>🎓</div>
-                  <h3 className="font-fredoka font-bold text-gray-800">Courses</h3>
-                  <p className="font-comic text-sm text-gray-600">Learn step by step</p>
-                </div>
-                
-                <div className="bg-gradient-to-br from-pink-100 to-pink-200 rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-200 cursor-pointer" onClick={() => navigate('/activities')}>
-                  <div className="text-4xl mb-3 animate-bounce" style={{ animationDelay: '1.5s' }}>🎨</div>
-                  <h3 className="font-fredoka font-bold text-gray-800">Create</h3>
-                  <p className="font-comic text-sm text-gray-600">Express your creativity</p>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-yellow-400 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl animate-bounce">
+                    😊
+                  </div>
+                  <Link to="/courses">
+                    <div className="font-fredoka font-bold text-gray-800 hover:text-orange-500 transition-colors cursor-pointer">
+                      Ready to Learn?
+                    </div>
+                  </Link>
                 </div>
               </div>
             </div>
-            
-            {/* Floating Elements */}
-            <div className="absolute -top-4 -right-4 w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-2xl animate-spin" style={{ animationDuration: '10s' }}>
-              ⭐
-            </div>
-            <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-pink-400 rounded-full flex items-center justify-center text-3xl animate-bounce">
-              🌈
-            </div>
-          </div>
-        </div>
-
-        {/* Features Section */}
-        <div className="mt-20 grid md:grid-cols-3 gap-8 animate-fade-in" style={{ animationDelay: '1s' }}>
-          <div className="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl animate-pulse">
-              🧠
-            </div>
-            <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-2">Interactive Learning</h3>
-            <p className="font-comic text-gray-600">Engage with hands-on activities that make learning fun and memorable</p>
-          </div>
-          
-          <div className="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-blue-400 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl animate-pulse" style={{ animationDelay: '0.5s' }}>
-              🏆
-            </div>
-            <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-2">Achievement System</h3>
-            <p className="font-comic text-gray-600">Earn stars, unlock badges, and track progress as you learn</p>
-          </div>
-          
-          <div className="text-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-red-400 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl animate-pulse" style={{ animationDelay: '1s' }}>
-              🛡️
-            </div>
-            <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-2">Safe Environment</h3>
-            <p className="font-comic text-gray-600">Child-friendly content in a secure, ad-free learning space</p>
           </div>
         </div>
       </div>

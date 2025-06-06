@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, Plus, Trash2, Edit, Eye } from 'lucide-react';
 import AdminAddContent from './AdminAddContent';
-import EnhancedBookReader from './EnhancedBookReader';
 
 interface Story {
   id: string;
@@ -32,19 +31,9 @@ const AdminStoriesManager = () => {
       createdAt: '2024-01-15',
       pages: [
         {
-          text: "Welcome to the magical forest where Luna the fairy lives! She's about to discover something amazing.",
+          text: "Welcome to the magical forest where Luna the fairy lives!",
           animation: "fly-around",
           backgroundColor: "from-green-100 to-emerald-100"
-        },
-        {
-          text: "As Luna flutters through the sparkling trees, she notices numbers dancing in the air like fireflies!",
-          animation: "shimmer",
-          backgroundColor: "from-blue-100 to-purple-100"
-        },
-        {
-          text: "The number 1 appears first, glowing softly. Then 2 and 3 join the magical dance around Luna.",
-          animation: "twinkle",
-          backgroundColor: "from-purple-100 to-pink-100"
         }
       ]
     },
@@ -57,21 +46,15 @@ const AdminStoriesManager = () => {
       createdAt: '2024-01-20',
       pages: [
         {
-          text: "Captain Cosmo puts on his shiny space suit, ready for the greatest adventure in the galaxy!",
+          text: "Captain Cosmo puts on his shiny space suit!",
           animation: "scale-in",
           backgroundColor: "from-blue-100 to-indigo-100"
-        },
-        {
-          text: "His rocket ship zooms past twinkling stars and colorful planets spinning in the cosmic dance.",
-          animation: "shooting-star",
-          backgroundColor: "from-purple-100 to-blue-100"
         }
       ]
     }
   ]);
 
   const [selectedTab, setSelectedTab] = useState('manage');
-  const [previewStory, setPreviewStory] = useState<Story | null>(null);
 
   const handleAddStory = (newContent: {
     title: string;
@@ -96,10 +79,6 @@ const AdminStoriesManager = () => {
 
   const handleDeleteStory = (id: string) => {
     setStories(prev => prev.filter(story => story.id !== id));
-  };
-
-  const handlePreviewStory = (story: Story) => {
-    setPreviewStory(story);
   };
 
   return (
@@ -184,11 +163,7 @@ const AdminStoriesManager = () => {
                     <Edit className="w-3 h-3 mr-1" />
                     Edit
                   </Button>
-                  <Button 
-                    size="sm" 
-                    className="gradient-purple text-white text-xs"
-                    onClick={() => handlePreviewStory(story)}
-                  >
+                  <Button size="sm" className="gradient-purple text-white text-xs">
                     <Eye className="w-3 h-3 mr-1" />
                     Preview
                   </Button>
@@ -223,15 +198,6 @@ const AdminStoriesManager = () => {
           </Card>
         </TabsContent>
       </Tabs>
-
-      {/* Story Preview Modal */}
-      {previewStory && (
-        <EnhancedBookReader
-          pages={previewStory.pages}
-          title={previewStory.title}
-          onClose={() => setPreviewStory(null)}
-        />
-      )}
     </div>
   );
 };
