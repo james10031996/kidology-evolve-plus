@@ -4,17 +4,15 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, Play, Star, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Play, Star, CheckCircle, Brain, Calculator, Shapes, Target } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
-import GameCompletionPopup from '@/components/GameCompletionPopup';
 
 const MathAdventure = () => {
   const navigate = useNavigate();
   const [currentTopic, setCurrentTopic] = useState(0);
   const [completedTopics, setCompletedTopics] = useState<number[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [showCompletion, setShowCompletion] = useState(false);
 
   const topics = [
     {
@@ -25,44 +23,27 @@ const MathAdventure = () => {
       slides: [
         {
           title: 'Number 1',
-          content: 'This is number ONE! Count the apple: 🍎',
-          visual: '1️⃣',
-          animation: 'bounce',
-          example: '🍎'
+          content: 'This is number ONE! 🎈',
+          visual: '🎈',
+          animation: 'bounce'
         },
         {
           title: 'Number 2', 
-          content: 'This is number TWO! Count the cats: 🐱🐱',
-          visual: '2️⃣',
-          animation: 'scale',
-          example: '🐱🐱'
+          content: 'This is number TWO! 🎈🎈',
+          visual: '🎈🎈',
+          animation: 'scale'
         },
         {
           title: 'Number 3',
-          content: 'This is number THREE! Count the stars: ⭐⭐⭐', 
-          visual: '3️⃣',
-          animation: 'bounce',
-          example: '⭐⭐⭐'
-        },
-        {
-          title: 'Number 4',
-          content: 'This is number FOUR! Count the flowers: 🌸🌸🌸🌸', 
-          visual: '4️⃣',
-          animation: 'pulse',
-          example: '🌸🌸🌸🌸'
-        },
-        {
-          title: 'Number 5',
-          content: 'This is number FIVE! Count the balloons: 🎈🎈🎈🎈🎈', 
-          visual: '5️⃣',
-          animation: 'bounce',
-          example: '🎈🎈🎈🎈🎈'
+          content: 'This is number THREE! 🎈🎈🎈', 
+          visual: '🎈🎈🎈',
+          animation: 'bounce'
         }
       ]
     },
     {
       id: 2,
-      title: 'Addition Magic',
+      title: 'Addition Basics',
       icon: '➕',
       description: 'Learn to add numbers together',
       slides: [
@@ -70,29 +51,13 @@ const MathAdventure = () => {
           title: '1 + 1 = 2',
           content: 'One apple plus one apple equals two apples!',
           visual: '🍎 + 🍎 = 🍎🍎',
-          animation: 'slide',
-          example: '1 + 1 = 2'
-        },
-        {
-          title: '2 + 1 = 3',
-          content: 'Two birds plus one bird equals three birds!',
-          visual: '🐦🐦 + 🐦 = 🐦🐦🐦',
-          animation: 'bounce',
-          example: '2 + 1 = 3'
+          animation: 'slide'
         },
         {
           title: '2 + 2 = 4',
-          content: 'Two cars plus two cars equals four cars!',
-          visual: '🚗🚗 + 🚗🚗 = 🚗🚗🚗🚗',
-          animation: 'scale',
-          example: '2 + 2 = 4'
-        },
-        {
-          title: '3 + 2 = 5',
-          content: 'Three hearts plus two hearts equals five hearts!',
-          visual: '❤️❤️❤️ + ❤️❤️ = ❤️❤️❤️❤️❤️',
-          animation: 'pulse',
-          example: '3 + 2 = 5'
+          content: 'Two cats plus two cats equals four cats!',
+          visual: '🐱🐱 + 🐱🐱 = 🐱🐱🐱🐱',
+          animation: 'bounce'
         }
       ]
     },
@@ -104,118 +69,41 @@ const MathAdventure = () => {
       slides: [
         {
           title: '3 - 1 = 2',
-          content: 'Three cookies, eat one, two remain!',
-          visual: '🍪🍪🍪 - 🍪 = 🍪🍪',
-          animation: 'fade',
-          example: '3 - 1 = 2'
+          content: 'Three birds, one flies away, two remain!',
+          visual: '🐦🐦🐦 - 🐦 = 🐦🐦',
+          animation: 'fade'
         },
         {
           title: '5 - 2 = 3',
-          content: 'Five bananas, eat two, three left!',
-          visual: '🍌🍌🍌🍌🍌 - 🍌🍌 = 🍌🍌🍌',
-          animation: 'scale',
-          example: '5 - 2 = 3'
-        },
-        {
-          title: '4 - 3 = 1',
-          content: 'Four toys, give away three, one remains!',
-          visual: '🧸🧸🧸🧸 - 🧸🧸🧸 = 🧸',
-          animation: 'bounce',
-          example: '4 - 3 = 1'
+          content: 'Five cookies, eat two, three left!',
+          visual: '🍪🍪🍪🍪🍪 - 🍪🍪 = 🍪🍪🍪',
+          animation: 'scale'
         }
       ]
     },
     {
       id: 4,
-      title: 'Shape Kingdom',
+      title: 'Basic Shapes',
       icon: '🔷',
-      description: 'Discover magical shapes',
+      description: 'Learn about circles, squares, and triangles',
       slides: [
         {
           title: 'Circle',
-          content: 'A circle is perfectly round like the sun!',
-          visual: '🟡',
-          animation: 'spin',
-          example: 'Sun ☀️, Ball ⚽, Coin 🪙'
+          content: 'A circle is round like a ball! 🔵',
+          visual: '🔵',
+          animation: 'spin'
         },
         {
           title: 'Square',
-          content: 'A square has four equal sides like a window!',
+          content: 'A square has four equal sides! 🟦',
           visual: '🟦',
-          animation: 'bounce',
-          example: 'Window 🪟, Box 📦, Dice 🎲'
+          animation: 'bounce'
         },
         {
           title: 'Triangle',
-          content: 'A triangle has three sides like a mountain!',
+          content: 'A triangle has three sides! 🔺',
           visual: '🔺',
-          animation: 'wobble',
-          example: 'Mountain ⛰️, Roof 🏠, Pizza slice 🍕'
-        },
-        {
-          title: 'Rectangle',
-          content: 'A rectangle is like a stretched square!',
-          visual: '📱',
-          animation: 'pulse',
-          example: 'Phone 📱, Book 📖, Door 🚪'
-        }
-      ]
-    },
-    {
-      id: 5,
-      title: 'Pattern Puzzles',
-      icon: '🧩',
-      description: 'Find and create amazing patterns',
-      slides: [
-        {
-          title: 'Color Patterns',
-          content: 'Red, Blue, Red, Blue - what comes next?',
-          visual: '🔴🔵🔴🔵❓',
-          animation: 'bounce',
-          example: 'Answer: 🔴 (Red)'
-        },
-        {
-          title: 'Shape Patterns',
-          content: 'Circle, Square, Circle, Square - continue!',
-          visual: '⭕🔲⭕🔲❓',
-          animation: 'scale',
-          example: 'Answer: ⭕ (Circle)'
-        },
-        {
-          title: 'Number Patterns',
-          content: '1, 2, 3, 4 - what number is next?',
-          visual: '1️⃣2️⃣3️⃣4️⃣❓',
-          animation: 'pulse',
-          example: 'Answer: 5️⃣ (Five)'
-        }
-      ]
-    },
-    {
-      id: 6,
-      title: 'Size & Comparison',
-      icon: '📏',
-      description: 'Learn about big, small, tall, and short',
-      slides: [
-        {
-          title: 'Big vs Small',
-          content: 'The elephant is BIG, the mouse is SMALL!',
-          visual: '🐘 vs 🐭',
-          animation: 'scale',
-          example: 'Big: 🐘🏠🌳 Small: 🐭🐛🌸'
-        },
-        {
-          title: 'Tall vs Short',
-          content: 'The giraffe is TALL, the dog is SHORT!',
-          visual: '🦒 vs 🐕',
-          animation: 'bounce',
-          example: 'Tall: 🦒🌲🏢 Short: 🐕🌿🏘️'
-        },
-        {
-          title: 'Long vs Short',
-          content: 'The snake is LONG, the caterpillar is SHORT!',
-          visual: '🐍 vs 🐛',
-          animation: 'slide',
-          example: 'Long: 🐍🚂📏 Short: 🐛✏️📎'
+          animation: 'wobble'
         }
       ]
     }
@@ -236,13 +124,9 @@ const MathAdventure = () => {
     if (!completedTopics.includes(currentTopic)) {
       setCompletedTopics([...completedTopics, currentTopic]);
     }
-    
     if (currentTopic < topics.length - 1) {
       setCurrentTopic(currentTopic + 1);
       setCurrentSlide(0);
-    } else {
-      // All topics completed - show completion popup
-      setShowCompletion(true);
     }
   };
 
@@ -263,12 +147,12 @@ const MathAdventure = () => {
             🧮 Math Adventure
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Join us on an exciting mathematical journey through numbers, shapes, and patterns!
+            Join us on an exciting mathematical journey!
           </p>
         </div>
 
         {/* Topic Selection */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {topics.map((topic, index) => (
             <Card 
               key={topic.id}
@@ -314,14 +198,9 @@ const MathAdventure = () => {
                 {currentSlideData.visual}
               </div>
               
-              <p className="font-comic text-xl text-gray-700 mb-6">
+              <p className="font-comic text-xl text-gray-700 mb-8">
                 {currentSlideData.content}
               </p>
-
-              <div className="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl p-4 mb-6">
-                <p className="font-comic text-lg text-gray-800 mb-2">Example:</p>
-                <div className="text-2xl">{currentSlideData.example}</div>
-              </div>
               
               <div className="flex justify-between items-center">
                 <Badge variant="outline" className="font-comic">
@@ -361,18 +240,6 @@ const MathAdventure = () => {
           </div>
         </Card>
       </div>
-
-      {/* Game Completion Popup */}
-      <GameCompletionPopup
-        isOpen={showCompletion}
-        onClose={() => {
-          setShowCompletion(false);
-          navigate('/courses');
-        }}
-        score={100}
-        stars={100}
-        gameName="Math Adventure Course"
-      />
     </div>
   );
 };
