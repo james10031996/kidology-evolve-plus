@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,35 +26,41 @@ const NumberBubblePop = () => {
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [targetNumber, setTargetNumber] = useState(1);
   const [gameCompleted, setGameCompleted] = useState(false);
+  const [sortedNumbers, setSortedNumbers] = useState<number[]>([]);
 
-  const colors = ['bg-blue-400', 'bg-green-400', 'bg-purple-400', 'bg-pink-400', 'bg-yellow-400', 'bg-red-400'];
+  const colors = ['bg-blue-400', 'bg-green-400', 'bg-purple-400', 'bg-pink-400', 'bg-yellow-400', 'bg-red-400', 'bg-indigo-400', 'bg-teal-400'];
 
   const generateBubbles = () => {
     const newBubbles: Bubble[] = [];
-    const numbersToShow = Math.min(15, level + 8);
-    const maxNumber = Math.max(10, level * 3);
     
-    // Create array of unique numbers
-    const availableNumbers = Array.from({ length: maxNumber }, (_, i) => i + 1);
-    const shuffledNumbers = availableNumbers.sort(() => Math.random() - 0.5);
-    const selectedNumbers = shuffledNumbers.slice(0, numbersToShow);
+    // Generate 10 random numbers between 1 and 100
+    const randomNumbers = [];
+    while (randomNumbers.length < 10) {
+      const num = Math.floor(Math.random() * 100) + 1;
+      if (!randomNumbers.includes(num)) {
+        randomNumbers.push(num);
+      }
+    }
     
-    for (let i = 0; i < numbersToShow; i++) {
-      let x, y;
-      let attempts = 0;
+    // Sort numbers for gameplay logic
+    const sorted = [...randomNumbers].sort((a, b) => a - b);
+    setSortedNumbers(sorted);
+    setTargetNumber(sorted[0]);
+    
+    // Create bubbles with better spacing using grid layout
+    for (let i = 0; i < 10; i++) {
+      const cols = 5; // 5 columns
+      const rows = 2; // 2 rows
+      const row = Math.floor(i / cols);
+      const col = i % cols;
       
-      // Ensure bubbles don't overlap
-      do {
-        x = Math.random() * 75 + 5;
-        y = Math.random() * 65 + 10;
-        attempts++;
-      } while (attempts < 10 && newBubbles.some(bubble => 
-        Math.abs(bubble.x - x) < 15 && Math.abs(bubble.y - y) < 15
-      ));
+      // Calculate position with padding
+      const x = (col + 1) * (80 / (cols + 1)) + 10;
+      const y = (row + 1) * (70 / (rows + 1)) + 15;
       
       newBubbles.push({
         id: i,
-        number: selectedNumbers[i],
+        number: randomNumbers[i],
         x,
         y,
         color: colors[Math.floor(Math.random() * colors.length)],
@@ -70,7 +75,6 @@ const NumberBubblePop = () => {
     setScore(0);
     setLevel(1);
     setTimeLeft(60);
-    setTargetNumber(1);
     setGameCompleted(false);
     generateBubbles();
   };
@@ -83,14 +87,17 @@ const NumberBubblePop = () => {
         b.id === bubble.id ? { ...b, popped: true } : b
       ));
       setScore(prev => prev + (level * 10));
-      setTargetNumber(prev => prev + 1);
       
-      // Check if all sequential numbers up to 10 are found
-      const maxTarget = Math.min(10, Math.max(...bubbles.map(b => b.number)));
-      if (targetNumber >= maxTarget) {
+      // Find next number in sequence
+      const currentIndex = sortedNumbers.findIndex(num => num === targetNumber);
+      const nextNumber = sortedNumbers[currentIndex + 1];
+      
+      if (nextNumber) {
+        setTargetNumber(nextNumber);
+      } else {
+        // All numbers found - level complete
         setLevel(prev => prev + 1);
-        setTargetNumber(1);
-        setTimeLeft(prev => prev + 20);
+        setTimeLeft(prev => prev + 30);
         setTimeout(() => generateBubbles(), 1000);
       }
     } else {
@@ -106,6 +113,7 @@ const NumberBubblePop = () => {
     setTargetNumber(1);
     setBubbles([]);
     setGameCompleted(false);
+    setSortedNumbers([]);
   };
 
   useEffect(() => {
@@ -137,42 +145,39 @@ const NumberBubblePop = () => {
           </Button>
         </div>
 
-        {/* Game Header */}
         <div className="text-center mb-8">
-          <h1 className="font-fredoka font-bold text-4xl text-gray-800 mb-4">
+          <h1 className="font-fredoka font-bold text-4xl text-gray-800 mb-4 animate-bounce">
             🫧 Number Bubble Pop
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Pop the bubbles in order from {targetNumber} onwards! Be quick and accurate to earn more points!
+            Pop 10 random bubbles in numerical order from smallest to largest! Find number {targetNumber} next!
           </p>
         </div>
 
-        {/* Game Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="p-4 text-center bg-white rounded-xl shadow-lg">
+          <Card className="p-4 text-center bg-white rounded-xl shadow-lg animate-fade-in">
             <div className="font-comic text-sm text-gray-600">Score</div>
             <div className="font-fredoka text-2xl font-bold text-blue-600">{score}</div>
           </Card>
-          <Card className="p-4 text-center bg-white rounded-xl shadow-lg">
+          <Card className="p-4 text-center bg-white rounded-xl shadow-lg animate-fade-in">
             <div className="font-comic text-sm text-gray-600">Level</div>
             <div className="font-fredoka text-2xl font-bold text-purple-600">{level}</div>
           </Card>
-          <Card className="p-4 text-center bg-white rounded-xl shadow-lg">
+          <Card className="p-4 text-center bg-white rounded-xl shadow-lg animate-fade-in">
             <div className="font-comic text-sm text-gray-600">Time</div>
             <div className="font-fredoka text-2xl font-bold text-red-600">{timeLeft}s</div>
           </Card>
-          <Card className="p-4 text-center bg-white rounded-xl shadow-lg">
+          <Card className="p-4 text-center bg-white rounded-xl shadow-lg animate-fade-in">
             <div className="font-comic text-sm text-gray-600">Find Number</div>
             <div className="font-fredoka text-2xl font-bold text-green-600">{targetNumber}</div>
           </Card>
         </div>
 
-        {/* Game Controls */}
         <div className="flex justify-center space-x-4 mb-8">
           {!gameActive && !gameCompleted && (
             <Button 
               onClick={startGame}
-              className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full"
+              className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
             >
               <Play className="w-5 h-5 mr-2" />
               Start Game
@@ -182,7 +187,7 @@ const NumberBubblePop = () => {
           {gameActive && (
             <Button 
               onClick={() => setGameActive(false)}
-              className="gradient-orange text-white font-comic font-bold px-8 py-3 rounded-full"
+              className="gradient-orange text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
             >
               <Pause className="w-5 h-5 mr-2" />
               Pause
@@ -192,14 +197,13 @@ const NumberBubblePop = () => {
           <Button 
             onClick={resetGame}
             variant="outline"
-            className="font-comic font-bold px-8 py-3 rounded-full"
+            className="font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
           >
             <RotateCcw className="w-5 h-5 mr-2" />
             Reset
           </Button>
         </div>
 
-        {/* Game Area */}
         <Card className="relative h-96 bg-gradient-to-br from-cyan-100 to-blue-200 rounded-2xl shadow-lg overflow-hidden mb-8">
           {gameActive && (
             <div className="relative w-full h-full">
@@ -207,13 +211,14 @@ const NumberBubblePop = () => {
                 <button
                   key={bubble.id}
                   onClick={() => popBubble(bubble)}
-                  className={`absolute w-16 h-16 ${bubble.color} rounded-full flex items-center justify-center font-fredoka font-bold text-white text-xl shadow-lg transform transition-all duration-200 hover:scale-110 ${
-                    bubble.popped ? 'opacity-30 scale-50' : 'animate-bounce'
+                  className={`absolute w-16 h-16 ${bubble.color} rounded-full flex items-center justify-center font-fredoka font-bold text-white text-xl shadow-lg transform transition-all duration-300 hover:scale-110 z-10 ${
+                    bubble.popped ? 'opacity-30 scale-50 pointer-events-none' : 'animate-pulse hover:animate-none'
                   }`}
                   style={{
                     left: `${bubble.x}%`,
                     top: `${bubble.y}%`,
-                    animationDelay: `${bubble.id * 0.1}s`
+                    animationDelay: `${bubble.id * 0.1}s`,
+                    transform: `translate(-50%, -50%) ${bubble.popped ? 'scale(0.5)' : 'scale(1)'}`
                   }}
                   disabled={bubble.popped}
                 >
@@ -234,19 +239,46 @@ const NumberBubblePop = () => {
           
           {!gameActive && !gameCompleted && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-8xl mb-4">🫧</div>
-                <div className="font-fredoka text-3xl text-gray-700 mb-4">Ready to Pop Some Bubbles?</div>
-                <div className="font-comic text-gray-600">Click the numbers in order starting from 1!</div>
+              <div className="text-center animate-fade-in">
+                <div className="text-8xl mb-4 animate-bounce">🫧</div>
+                <div className="font-fredoka text-3xl text-gray-700 mb-4">Ready to Pop Bubbles?</div>
+                <div className="font-comic text-gray-600">Click the numbers in order from smallest to largest!</div>
               </div>
             </div>
           )}
         </Card>
 
-        {/* Game Completed */}
+        {gameActive && sortedNumbers.length > 0 && (
+          <Card className="p-4 mb-8 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl">
+            <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">Number Sequence (Smallest to Largest):</h3>
+            <div className="flex flex-wrap gap-2">
+              {sortedNumbers.map((number) => {
+                const bubble = bubbles.find(b => b.number === number);
+                const isPopped = bubble?.popped;
+                const isTarget = number === targetNumber;
+                
+                return (
+                  <Badge 
+                    key={number} 
+                    className={`font-comic ${
+                      isPopped 
+                        ? 'bg-green-500 text-white' 
+                        : isTarget 
+                          ? 'bg-orange-500 text-white animate-pulse' 
+                          : 'bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    {number}
+                  </Badge>
+                );
+              })}
+            </div>
+          </Card>
+        )}
+
         {gameCompleted && (
-          <Card className="p-8 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl text-center">
-            <Trophy className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
+          <Card className="p-8 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl text-center animate-scale-in">
+            <Trophy className="w-16 h-16 text-yellow-600 mx-auto mb-4 animate-bounce" />
             <h2 className="font-fredoka font-bold text-3xl text-gray-800 mb-4">
               🎉 Game Complete! 🎉
             </h2>
@@ -259,14 +291,14 @@ const NumberBubblePop = () => {
             <div className="flex justify-center space-x-4">
               <Button 
                 onClick={startGame}
-                className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full"
+                className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
               >
                 <Play className="w-5 h-5 mr-2" />
                 Play Again
               </Button>
               <Button 
                 onClick={() => navigate('/games')}
-                className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full"
+                className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
               >
                 Try Another Game
               </Button>
@@ -274,15 +306,14 @@ const NumberBubblePop = () => {
           </Card>
         )}
 
-        {/* Instructions */}
         <Card className="p-6 bg-white rounded-2xl shadow-lg">
           <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4">How to Play:</h3>
           <ul className="font-comic text-gray-600 space-y-2">
-            <li>• Click the bubbles in numerical order starting from 1</li>
+            <li>• Click bubbles with 10 random numbers from 1-100 in numerical order (smallest to largest)</li>
+            <li>• Each level generates a new set of 10 random numbers</li>
             <li>• Each correct click earns you points (more points at higher levels)</li>
             <li>• Wrong clicks reduce your score by 5 points</li>
-            <li>• Complete sequences to advance levels</li>
-            <li>• Higher levels have more bubbles and give more points</li>
+            <li>• Complete all 10 numbers to advance levels and get more time</li>
             <li>• Try to get the highest score before time runs out!</li>
           </ul>
         </Card>

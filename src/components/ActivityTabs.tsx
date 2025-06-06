@@ -4,12 +4,18 @@ import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 const ActivityTabs = () => {
   return (
     <div className="mb-8">
-      <TabsList className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 w-full bg-white rounded-2xl p-2 shadow-lg">
+      <TabsList className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 w-full bg-white rounded-2xl p-2 shadow-lg">
         <TabsTrigger 
           value="stories" 
           className="rounded-xl font-comic font-bold text-xs lg:text-sm data-[state=active]:bg-orange-100 data-[state=active]:text-orange-600"
         >
           📚 Stories
+        </TabsTrigger>
+        <TabsTrigger 
+          value="poems-stories" 
+          className="rounded-xl font-comic font-bold text-xs lg:text-sm data-[state=active]:bg-rose-100 data-[state=active]:text-rose-600"
+        >
+          📖 Poems & Stories
         </TabsTrigger>
         <TabsTrigger 
           value="games" 

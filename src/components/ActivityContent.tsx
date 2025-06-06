@@ -1,6 +1,6 @@
 
 import { TabsContent } from '@/components/ui/tabs';
-import InteractiveStoryCard from './InteractiveStoryCard';
+import StoryLibrary from './StoryLibrary';
 import MiniGameCard from './MiniGameCard';
 import GeneralKnowledge from './GeneralKnowledge';
 import SearchMissingObject from './SearchMissingObject';
@@ -24,37 +24,6 @@ import MandalaMaker from './MandalaMaker';
 import PoemsStories from './PoemsStories';
 
 const ActivityContent = () => {
-  const stories = [
-    {
-      id: '1',
-      title: 'The Magic Forest Adventure',
-      description: 'Join Luna the fairy on an exciting journey through the enchanted forest where numbers come alive!',
-      difficulty: 'Easy' as const,
-      duration: '5 min',
-      rating: 4.9,
-      category: 'Fantasy',
-      isNew: true
-    },
-    {
-      id: '2',
-      title: 'Space Explorer Mission',
-      description: 'Blast off with Captain Cosmo and learn about planets, stars, and the wonders of space!',
-      difficulty: 'Medium' as const,
-      duration: '7 min',
-      rating: 4.8,
-      category: 'Science'
-    },
-    {
-      id: '3',
-      title: 'Underwater Treasure Hunt',
-      description: 'Dive deep with Finny the fish to discover hidden treasures and ocean mysteries!',
-      difficulty: 'Easy' as const,
-      duration: '6 min',
-      rating: 4.7,
-      category: 'Adventure'
-    }
-  ];
-
   const miniGames = [
     {
       id: '1',
@@ -93,19 +62,14 @@ const ActivityContent = () => {
       difficulty: 2,
       bestScore: 720,
       playCount: 950,
-      gradient: 'gradient-pink',
-      isLocked: true
+      gradient: 'gradient-pink'
     }
   ];
 
   return (
     <>
       <TabsContent value="stories">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {stories.map((story) => (
-            <InteractiveStoryCard key={story.id} {...story} />
-          ))}
-        </div>
+        <StoryLibrary />
       </TabsContent>
 
       <TabsContent value="games">

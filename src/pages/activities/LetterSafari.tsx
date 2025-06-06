@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Play, Pause, RotateCcw, Star, Trophy } from 'lucide-react';
+import { ArrowLeft, Play, Pause, RotateCcw, Star, Trophy, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import Header from '@/components/Header';
@@ -16,6 +15,10 @@ interface LetterAnimal {
   x: number;
   y: number;
   found: boolean;
+  fullName: string;
+  information: string;
+  habitat: string;
+  category: string;
 }
 
 const LetterSafari = () => {
@@ -29,42 +32,46 @@ const LetterSafari = () => {
   const [targetLetter, setTargetLetter] = useState('A');
   const [gameCompleted, setGameCompleted] = useState(false);
   const [foundLetters, setFoundLetters] = useState<string[]>([]);
+  const [selectedAnimal, setSelectedAnimal] = useState<LetterAnimal | null>(null);
 
-  const animalData = [
-    { letter: 'A', animal: 'Alligator', emoji: '🐊' },
-    { letter: 'B', animal: 'Bear', emoji: '🐻' },
-    { letter: 'C', animal: 'Cat', emoji: '🐱' },
-    { letter: 'D', animal: 'Dog', emoji: '🐶' },
-    { letter: 'E', animal: 'Elephant', emoji: '🐘' },
-    { letter: 'F', animal: 'Fox', emoji: '🦊' },
-    { letter: 'G', animal: 'Giraffe', emoji: '🦒' },
-    { letter: 'H', animal: 'Horse', emoji: '🐎' },
-    { letter: 'I', animal: 'Iguana', emoji: '🦎' },
-    { letter: 'J', animal: 'Jaguar', emoji: '🐆' },
-    { letter: 'K', animal: 'Koala', emoji: '🐨' },
-    { letter: 'L', animal: 'Lion', emoji: '🦁' },
-    { letter: 'M', animal: 'Monkey', emoji: '🐵' },
-    { letter: 'N', animal: 'Newt', emoji: '🦎' },
-    { letter: 'O', animal: 'Owl', emoji: '🦉' },
-    { letter: 'P', animal: 'Penguin', emoji: '🐧' },
-    { letter: 'Q', animal: 'Quail', emoji: '🐦' },
-    { letter: 'R', animal: 'Rabbit', emoji: '🐰' },
-    { letter: 'S', animal: 'Snake', emoji: '🐍' },
-    { letter: 'T', animal: 'Tiger', emoji: '🐅' },
-    { letter: 'U', animal: 'Unicorn', emoji: '🦄' },
-    { letter: 'V', animal: 'Vulture', emoji: '🦅' },
-    { letter: 'W', animal: 'Wolf', emoji: '🐺' },
-    { letter: 'X', animal: 'X-ray Fish', emoji: '🐠' },
-    { letter: 'Y', animal: 'Yak', emoji: '🐂' },
-    { letter: 'Z', animal: 'Zebra', emoji: '🦓' }
+  const allAnimals = [
+    { letter: 'A', animal: 'Alligator', emoji: '🐊', fullName: 'American Alligator', information: 'Large reptiles with powerful jaws and armored bodies. They live in freshwater swamps and rivers.', habitat: 'Freshwater swamps, rivers, and marshes', category: 'Reptile' },
+    { letter: 'B', animal: 'Bear', emoji: '🐻', fullName: 'Brown Bear', information: 'Large, powerful mammals with thick fur. They are omnivores and excellent swimmers.', habitat: 'Forests, mountains, and tundra', category: 'Mammal' },
+    { letter: 'C', animal: 'Cat', emoji: '🐱', fullName: 'Domestic Cat', information: 'Small carnivorous mammals that are popular pets. They are excellent hunters with sharp claws.', habitat: 'Homes and urban areas', category: 'Pet' },
+    { letter: 'D', animal: 'Dolphin', emoji: '🐬', fullName: 'Bottlenose Dolphin', information: 'Highly intelligent marine mammals known for their playful behavior and echolocation abilities.', habitat: 'Oceans and coastal waters', category: 'Marine Mammal' },
+    { letter: 'E', animal: 'Elephant', emoji: '🐘', fullName: 'African Elephant', information: 'The largest land mammals with long trunks, large ears, and tusks. They are very intelligent and social.', habitat: 'African savannas and forests', category: 'Mammal' },
+    { letter: 'F', animal: 'Fox', emoji: '🦊', fullName: 'Red Fox', information: 'Clever and adaptable small mammals with bushy tails. They are excellent hunters and problem solvers.', habitat: 'Forests, grasslands, and urban areas', category: 'Mammal' },
+    { letter: 'G', animal: 'Giraffe', emoji: '🦒', fullName: 'Masai Giraffe', information: 'The tallest mammals in the world with long necks that help them reach high tree leaves.', habitat: 'African savannas', category: 'Mammal' },
+    { letter: 'H', animal: 'Horse', emoji: '🐎', fullName: 'Arabian Horse', information: 'Strong and graceful animals that have been human companions for thousands of years.', habitat: 'Grasslands and farms', category: 'Domestic Animal' },
+    { letter: 'I', animal: 'Iguana', emoji: '🦎', fullName: 'Green Iguana', information: 'Large lizards that can change color and are excellent swimmers. They love basking in the sun.', habitat: 'Tropical rainforests and beaches', category: 'Reptile' },
+    { letter: 'J', animal: 'Jaguar', emoji: '🐆', fullName: 'South American Jaguar', information: 'Powerful big cats with the strongest bite of all felines. They are excellent swimmers.', habitat: 'Amazon rainforest and wetlands', category: 'Big Cat' },
+    { letter: 'K', animal: 'Koala', emoji: '🐨', fullName: 'Australian Koala', information: 'Cute marsupials that sleep up to 20 hours a day and only eat eucalyptus leaves.', habitat: 'Eucalyptus forests in Australia', category: 'Marsupial' },
+    { letter: 'L', animal: 'Lion', emoji: '🦁', fullName: 'African Lion', information: 'Majestic big cats known as the "King of the Jungle." They live in groups called prides.', habitat: 'African savannas and grasslands', category: 'Big Cat' },
+    { letter: 'M', animal: 'Monkey', emoji: '🐵', fullName: 'Capuchin Monkey', information: 'Intelligent primates with long tails and nimble hands. They use tools and live in social groups.', habitat: 'Tropical rainforests', category: 'Primate' },
+    { letter: 'N', animal: 'Narwhal', emoji: '🦄', fullName: 'Arctic Narwhal', information: 'Arctic whales famous for their long tusks. They are called "unicorns of the sea."', habitat: 'Arctic Ocean waters', category: 'Marine Mammal' },
+    { letter: 'O', animal: 'Owl', emoji: '🦉', fullName: 'Great Horned Owl', information: 'Nocturnal birds of prey with excellent night vision and silent flight. They have large, forward-facing eyes.', habitat: 'Forests, deserts, and urban areas', category: 'Bird' },
+    { letter: 'P', animal: 'Penguin', emoji: '🐧', fullName: 'Emperor Penguin', information: 'Flightless birds that are excellent swimmers. They live in colonies and slide on their bellies.', habitat: 'Antarctic ice and cold oceans', category: 'Bird' },
+    { letter: 'Q', animal: 'Quail', emoji: '🐦', fullName: 'California Quail', information: 'Small ground birds with distinctive head plumes. They live in groups called coveys.', habitat: 'Grasslands and scrublands', category: 'Bird' },
+    { letter: 'R', animal: 'Rabbit', emoji: '🐰', fullName: 'European Rabbit', information: 'Small mammals with long ears and powerful hind legs for hopping. They live in underground burrows.', habitat: 'Meadows, forests, and gardens', category: 'Mammal' },
+    { letter: 'S', animal: 'Shark', emoji: '🦈', fullName: 'Great White Shark', information: 'Powerful ocean predators with sharp teeth and excellent senses. They have been around for millions of years.', habitat: 'Ocean waters worldwide', category: 'Fish' },
+    { letter: 'T', animal: 'Tiger', emoji: '🐅', fullName: 'Siberian Tiger', information: 'The largest wild cats with distinctive orange and black stripes. Each tiger has a unique stripe pattern.', habitat: 'Asian forests and grasslands', category: 'Big Cat' },
+    { letter: 'U', animal: 'Unicorn', emoji: '🦄', fullName: 'Mythical Unicorn', information: 'Magical creatures with a single horn, symbolizing purity and grace in many cultures and stories.', habitat: 'Enchanted forests and fairy tales', category: 'Mythical' },
+    { letter: 'V', animal: 'Vulture', emoji: '🦅', fullName: 'Turkey Vulture', information: 'Large birds that help clean the environment by eating carrion. They have excellent eyesight.', habitat: 'Open areas and mountains', category: 'Bird' },
+    { letter: 'W', animal: 'Whale', emoji: '🐋', fullName: 'Blue Whale', information: 'The largest animals ever known to have lived on Earth. They can communicate across vast ocean distances.', habitat: 'All oceans worldwide', category: 'Marine Mammal' },
+    { letter: 'X', animal: 'X-ray Fish', emoji: '🐠', fullName: 'X-ray Tetra Fish', information: 'Small tropical fish with transparent bodies that allow you to see their internal organs.', habitat: 'Amazon River and tributaries', category: 'Fish' },
+    { letter: 'Y', animal: 'Yak', emoji: '🐂', fullName: 'Tibetan Yak', information: 'Large, hairy cattle that live in high mountains. They provide milk, meat, and wool to mountain people.', habitat: 'Himalayan mountains and plateaus', category: 'Mammal' },
+    { letter: 'Z', animal: 'Zebra', emoji: '🦓', fullName: 'Plains Zebra', information: 'Wild horses with distinctive black and white stripes. No two zebras have exactly the same stripe pattern.', habitat: 'African grasslands and savannas', category: 'Mammal' }
   ];
 
   const generateAnimals = () => {
-    const lettersPerLevel = Math.min(8 + level, 15);
-    const selectedAnimals = animalData.slice(0, lettersPerLevel);
+    // Select 10 random animals from A-Z
+    const shuffledAnimals = [...allAnimals].sort(() => Math.random() - 0.5).slice(0, 10);
+    // Sort them alphabetically for gameplay
+    shuffledAnimals.sort((a, b) => a.letter.localeCompare(b.letter));
+    
     const newAnimals: LetterAnimal[] = [];
 
-    selectedAnimals.forEach((animal, index) => {
+    shuffledAnimals.forEach((animal, index) => {
       let x, y;
       let attempts = 0;
       
@@ -81,6 +88,10 @@ const LetterSafari = () => {
         letter: animal.letter,
         animal: animal.animal,
         emoji: animal.emoji,
+        fullName: animal.fullName,
+        information: animal.information,
+        habitat: animal.habitat,
+        category: animal.category,
         x,
         y,
         found: false
@@ -88,6 +99,7 @@ const LetterSafari = () => {
     });
 
     setAnimals(newAnimals);
+    setTargetLetter(newAnimals[0]?.letter || 'A');
   };
 
   const startGame = () => {
@@ -95,9 +107,9 @@ const LetterSafari = () => {
     setScore(0);
     setLevel(1);
     setTimeLeft(90);
-    setTargetLetter('A');
     setGameCompleted(false);
     setFoundLetters([]);
+    setSelectedAnimal(null);
     generateAnimals();
   };
 
@@ -110,29 +122,24 @@ const LetterSafari = () => {
       ));
       setScore(prev => prev + (level * 15));
       setFoundLetters(prev => [...prev, animal.letter]);
+      setSelectedAnimal(animal);
       
       // Find next letter
-      const nextCharCode = targetLetter.charCodeAt(0) + 1;
-      if (nextCharCode <= 'Z'.charCodeAt(0)) {
-        const nextLetter = String.fromCharCode(nextCharCode);
-        const hasNextLetter = animals.some(a => a.letter === nextLetter);
-        if (hasNextLetter) {
-          setTargetLetter(nextLetter);
-        } else {
-          // Level complete
-          setLevel(prev => prev + 1);
-          setTargetLetter('A');
-          setTimeLeft(prev => prev + 30);
-          setFoundLetters([]);
-          setTimeout(() => generateAnimals(), 1500);
-        }
+      const sortedAnimals = animals.sort((a, b) => a.letter.localeCompare(b.letter));
+      const currentIndex = sortedAnimals.findIndex(a => a.letter === targetLetter);
+      const nextAnimal = sortedAnimals[currentIndex + 1];
+      
+      if (nextAnimal) {
+        setTargetLetter(nextAnimal.letter);
       } else {
-        // All letters found in this level
+        // All animals found in this level
         setLevel(prev => prev + 1);
-        setTargetLetter('A');
         setTimeLeft(prev => prev + 30);
         setFoundLetters([]);
-        setTimeout(() => generateAnimals(), 1500);
+        setTimeout(() => {
+          generateAnimals();
+          setSelectedAnimal(null);
+        }, 3000);
       }
     } else {
       setScore(prev => Math.max(0, prev - 10));
@@ -148,6 +155,7 @@ const LetterSafari = () => {
     setAnimals([]);
     setGameCompleted(false);
     setFoundLetters([]);
+    setSelectedAnimal(null);
   };
 
   useEffect(() => {
@@ -184,7 +192,7 @@ const LetterSafari = () => {
             🦁 Letter Safari Adventure
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Find animals in alphabetical order! Look for the letter {targetLetter} next!
+            Find 10 amazing animals in alphabetical order! Look for the letter {targetLetter} next!
           </p>
         </div>
 
@@ -267,15 +275,49 @@ const LetterSafari = () => {
               <div className="text-center">
                 <div className="text-8xl mb-4">🌍</div>
                 <div className="font-fredoka text-3xl text-gray-700 mb-4">Ready for Safari Adventure?</div>
-                <div className="font-comic text-gray-600">Find animals in alphabetical order!</div>
+                <div className="font-comic text-gray-600">Find 10 amazing animals in alphabetical order!</div>
               </div>
             </div>
           )}
         </Card>
 
+        {/* Animal Information Display */}
+        {selectedAnimal && (
+          <Card className="p-6 mb-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl shadow-xl animate-scale-in">
+            <div className="flex items-start space-x-4">
+              <div className="text-6xl">{selectedAnimal.emoji}</div>
+              <div className="flex-1">
+                <h3 className="font-fredoka font-bold text-2xl text-gray-800 mb-2">
+                  {selectedAnimal.fullName}
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="font-comic text-gray-700 mb-3">{selectedAnimal.information}</p>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Badge className="bg-green-100 text-green-700 border-green-200">
+                        {selectedAnimal.category}
+                      </Badge>
+                      <Badge className="bg-blue-100 text-blue-700 border-blue-200">
+                        Letter {selectedAnimal.letter}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl">
+                    <div className="flex items-center mb-2">
+                      <Info className="w-4 h-4 text-blue-600 mr-2" />
+                      <span className="font-comic font-bold text-gray-700">Habitat:</span>
+                    </div>
+                    <p className="font-comic text-gray-600">{selectedAnimal.habitat}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        )}
+
         {foundLetters.length > 0 && (
           <Card className="p-4 mb-8 bg-green-50 rounded-2xl">
-            <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">Found Letters:</h3>
+            <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">Found Animals:</h3>
             <div className="flex flex-wrap gap-2">
               {foundLetters.map((letter) => (
                 <Badge key={letter} className="bg-green-500 text-white font-comic">
