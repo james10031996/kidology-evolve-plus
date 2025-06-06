@@ -1,4 +1,3 @@
-
 import { TabsContent } from '@/components/ui/tabs';
 import StoryLibrary from './StoryLibrary';
 import MiniGameCard from './MiniGameCard';
@@ -69,7 +68,7 @@ const ActivityContent = () => {
   return (
     <>
       <TabsContent value="stories">
-        <StoryLibrary />
+        <PoemsStories />
       </TabsContent>
 
       <TabsContent value="games">
