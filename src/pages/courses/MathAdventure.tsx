@@ -3,248 +3,155 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, Play, Star, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Play, Calculator, Star, Plus, Minus, X, Divide } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '@/contexts/UserContext';
 import Header from '@/components/Header';
-import GameCompletionPopup from '@/components/GameCompletionPopup';
 
 const MathAdventure = () => {
   const navigate = useNavigate();
-  const [currentTopic, setCurrentTopic] = useState(0);
-  const [completedTopics, setCompletedTopics] = useState<number[]>([]);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [showCompletion, setShowCompletion] = useState(false);
+  const { updateStars, updateProgress } = useUser();
+  const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
 
-  const topics = [
-    {
-      id: 1,
-      title: 'Numbers 1-20',
-      icon: '🔢',
-      description: 'Learn to count and recognize numbers',
-      slides: [
-        {
-          title: 'Number 1',
-          content: 'This is number ONE! Count the apple: 🍎',
-          visual: '1️⃣',
-          animation: 'bounce',
-          example: '🍎'
-        },
-        {
-          title: 'Number 2', 
-          content: 'This is number TWO! Count the cats: 🐱🐱',
-          visual: '2️⃣',
-          animation: 'scale',
-          example: '🐱🐱'
-        },
-        {
-          title: 'Number 3',
-          content: 'This is number THREE! Count the stars: ⭐⭐⭐', 
-          visual: '3️⃣',
-          animation: 'bounce',
-          example: '⭐⭐⭐'
-        },
-        {
-          title: 'Number 4',
-          content: 'This is number FOUR! Count the flowers: 🌸🌸🌸🌸', 
-          visual: '4️⃣',
-          animation: 'pulse',
-          example: '🌸🌸🌸🌸'
-        },
-        {
-          title: 'Number 5',
-          content: 'This is number FIVE! Count the balloons: 🎈🎈🎈🎈🎈', 
-          visual: '5️⃣',
-          animation: 'bounce',
-          example: '🎈🎈🎈🎈🎈'
-        }
-      ]
-    },
-    {
-      id: 2,
-      title: 'Addition Magic',
-      icon: '➕',
-      description: 'Learn to add numbers together',
-      slides: [
-        {
-          title: '1 + 1 = 2',
-          content: 'One apple plus one apple equals two apples!',
-          visual: '🍎 + 🍎 = 🍎🍎',
-          animation: 'slide',
-          example: '1 + 1 = 2'
-        },
-        {
-          title: '2 + 1 = 3',
-          content: 'Two birds plus one bird equals three birds!',
-          visual: '🐦🐦 + 🐦 = 🐦🐦🐦',
-          animation: 'bounce',
-          example: '2 + 1 = 3'
-        },
-        {
-          title: '2 + 2 = 4',
-          content: 'Two cars plus two cars equals four cars!',
-          visual: '🚗🚗 + 🚗🚗 = 🚗🚗🚗🚗',
-          animation: 'scale',
-          example: '2 + 2 = 4'
-        },
-        {
-          title: '3 + 2 = 5',
-          content: 'Three hearts plus two hearts equals five hearts!',
-          visual: '❤️❤️❤️ + ❤️❤️ = ❤️❤️❤️❤️❤️',
-          animation: 'pulse',
-          example: '3 + 2 = 5'
-        }
-      ]
-    },
-    {
-      id: 3,
-      title: 'Subtraction Fun',
-      icon: '➖',
-      description: 'Learn to subtract numbers',
-      slides: [
-        {
-          title: '3 - 1 = 2',
-          content: 'Three cookies, eat one, two remain!',
-          visual: '🍪🍪🍪 - 🍪 = 🍪🍪',
-          animation: 'fade',
-          example: '3 - 1 = 2'
-        },
-        {
-          title: '5 - 2 = 3',
-          content: 'Five bananas, eat two, three left!',
-          visual: '🍌🍌🍌🍌🍌 - 🍌🍌 = 🍌🍌🍌',
-          animation: 'scale',
-          example: '5 - 2 = 3'
-        },
-        {
-          title: '4 - 3 = 1',
-          content: 'Four toys, give away three, one remains!',
-          visual: '🧸🧸🧸🧸 - 🧸🧸🧸 = 🧸',
-          animation: 'bounce',
-          example: '4 - 3 = 1'
-        }
-      ]
-    },
-    {
-      id: 4,
-      title: 'Shape Kingdom',
-      icon: '🔷',
-      description: 'Discover magical shapes',
-      slides: [
-        {
-          title: 'Circle',
-          content: 'A circle is perfectly round like the sun!',
-          visual: '🟡',
-          animation: 'spin',
-          example: 'Sun ☀️, Ball ⚽, Coin 🪙'
-        },
-        {
-          title: 'Square',
-          content: 'A square has four equal sides like a window!',
-          visual: '🟦',
-          animation: 'bounce',
-          example: 'Window 🪟, Box 📦, Dice 🎲'
-        },
-        {
-          title: 'Triangle',
-          content: 'A triangle has three sides like a mountain!',
-          visual: '🔺',
-          animation: 'wobble',
-          example: 'Mountain ⛰️, Roof 🏠, Pizza slice 🍕'
-        },
-        {
-          title: 'Rectangle',
-          content: 'A rectangle is like a stretched square!',
-          visual: '📱',
-          animation: 'pulse',
-          example: 'Phone 📱, Book 📖, Door 🚪'
-        }
-      ]
-    },
-    {
-      id: 5,
-      title: 'Pattern Puzzles',
-      icon: '🧩',
-      description: 'Find and create amazing patterns',
-      slides: [
-        {
-          title: 'Color Patterns',
-          content: 'Red, Blue, Red, Blue - what comes next?',
-          visual: '🔴🔵🔴🔵❓',
-          animation: 'bounce',
-          example: 'Answer: 🔴 (Red)'
-        },
-        {
-          title: 'Shape Patterns',
-          content: 'Circle, Square, Circle, Square - continue!',
-          visual: '⭕🔲⭕🔲❓',
-          animation: 'scale',
-          example: 'Answer: ⭕ (Circle)'
-        },
-        {
-          title: 'Number Patterns',
-          content: '1, 2, 3, 4 - what number is next?',
-          visual: '1️⃣2️⃣3️⃣4️⃣❓',
-          animation: 'pulse',
-          example: 'Answer: 5️⃣ (Five)'
-        }
-      ]
-    },
-    {
-      id: 6,
-      title: 'Size & Comparison',
-      icon: '📏',
-      description: 'Learn about big, small, tall, and short',
-      slides: [
-        {
-          title: 'Big vs Small',
-          content: 'The elephant is BIG, the mouse is SMALL!',
-          visual: '🐘 vs 🐭',
-          animation: 'scale',
-          example: 'Big: 🐘🏠🌳 Small: 🐭🐛🌸'
-        },
-        {
-          title: 'Tall vs Short',
-          content: 'The giraffe is TALL, the dog is SHORT!',
-          visual: '🦒 vs 🐕',
-          animation: 'bounce',
-          example: 'Tall: 🦒🌲🏢 Short: 🐕🌿🏘️'
-        },
-        {
-          title: 'Long vs Short',
-          content: 'The snake is LONG, the caterpillar is SHORT!',
-          visual: '🐍 vs 🐛',
-          animation: 'slide',
-          example: 'Long: 🐍🚂📏 Short: 🐛✏️📎'
-        }
-      ]
-    }
+  const numbers = Array.from({ length: 20 }, (_, i) => i + 1);
+  
+  const mathConcepts = {
+    addition: [
+      { problem: '2 + 3', answer: 5, visual: '🍎🍎 + 🍎🍎🍎 = 🍎🍎🍎🍎🍎' },
+      { problem: '4 + 1', answer: 5, visual: '⭐⭐⭐⭐ + ⭐ = ⭐⭐⭐⭐⭐' },
+      { problem: '3 + 4', answer: 7, visual: '🌟🌟🌟 + 🌟🌟🌟🌟 = 🌟🌟🌟🌟🌟🌟🌟' }
+    ],
+    subtraction: [
+      { problem: '5 - 2', answer: 3, visual: '🍎🍎🍎🍎🍎 - 🍎🍎 = 🍎🍎🍎' },
+      { problem: '7 - 3', answer: 4, visual: '⭐⭐⭐⭐⭐⭐⭐ - ⭐⭐⭐ = ⭐⭐⭐⭐' },
+      { problem: '6 - 4', answer: 2, visual: '🌟🌟🌟🌟🌟🌟 - 🌟🌟🌟🌟 = 🌟🌟' }
+    ],
+    multiplication: [
+      { problem: '2 × 3', answer: 6, visual: '🍎🍎 + 🍎🍎 + 🍎🍎 = 🍎🍎🍎🍎🍎🍎' },
+      { problem: '3 × 2', answer: 6, visual: '⭐⭐⭐ + ⭐⭐⭐ = ⭐⭐⭐⭐⭐⭐' },
+      { problem: '4 × 2', answer: 8, visual: '🌟🌟🌟🌟 + 🌟🌟🌟🌟 = 🌟🌟🌟🌟🌟🌟🌟🌟' }
+    ],
+    shapes: [
+      { name: 'Circle', sides: 0, emoji: '⭕', description: 'Round like a ball' },
+      { name: 'Square', sides: 4, emoji: '⬜', description: 'Four equal sides' },
+      { name: 'Triangle', sides: 3, emoji: '🔺', description: 'Three sides' },
+      { name: 'Rectangle', sides: 4, emoji: '▬', description: 'Four sides, opposite equal' }
+    ]
+  };
+
+  const lessons = [
+    { id: 'numbers', title: '🔢 Numbers 1-20', description: 'Learn to count and recognize numbers', color: 'gradient-blue' },
+    { id: 'addition', title: '➕ Addition Magic', description: 'Add numbers with fun visuals', color: 'gradient-green' },
+    { id: 'subtraction', title: '➖ Subtraction Fun', description: 'Take away numbers playfully', color: 'gradient-red' },
+    { id: 'multiplication', title: '✖️ Multiplication', description: 'Multiply with repeated addition', color: 'gradient-purple' },
+    { id: 'shapes', title: '🔷 Geometry Shapes', description: 'Discover basic shapes around us', color: 'gradient-orange' },
+    { id: 'patterns', title: '🎨 Patterns', description: 'Create and continue patterns', color: 'gradient-pink' },
+    { id: 'measurement', title: '📏 Measurement', description: 'Learn about size, length, and weight', color: 'gradient-teal' },
+    { id: 'time', title: '⏰ Telling Time', description: 'Read clocks and understand time', color: 'gradient-yellow' }
   ];
 
-  const currentTopicData = topics[currentTopic];
-  const currentSlideData = currentTopicData?.slides[currentSlide];
-
-  const nextSlide = () => {
-    if (currentSlide < currentTopicData.slides.length - 1) {
-      setCurrentSlide(currentSlide + 1);
-    } else {
-      completeTopic();
-    }
+  const startLesson = (lessonId: string) => {
+    setSelectedLesson(lessonId);
+    updateStars(10);
+    updateProgress('Mathematics', 5);
   };
 
-  const completeTopic = () => {
-    if (!completedTopics.includes(currentTopic)) {
-      setCompletedTopics([...completedTopics, currentTopic]);
-    }
+  const renderNumbersLesson = () => (
+    <div className="grid md:grid-cols-4 lg:grid-cols-5 gap-6">
+      {numbers.map((number, index) => (
+        <Card key={number} className="p-6 text-center bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in" style={{ animationDelay: `${index * 0.05}s` }}>
+          <div className="text-6xl font-fredoka font-bold text-blue-600 mb-4 animate-bounce">
+            {number}
+          </div>
+          <div className="text-2xl mb-4">
+            {Array.from({ length: Math.min(number, 10) }, (_, i) => '⭐').join('')}
+          </div>
+          <div className="font-comic text-sm text-gray-600">
+            {number === 1 ? 'One' : number === 2 ? 'Two' : number === 3 ? 'Three' : 
+             number === 4 ? 'Four' : number === 5 ? 'Five' : number === 6 ? 'Six' :
+             number === 7 ? 'Seven' : number === 8 ? 'Eight' : number === 9 ? 'Nine' :
+             number === 10 ? 'Ten' : `Number ${number}`}
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+
+  const renderOperationLesson = (operation: string, problems: any[], icon: any) => (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {problems.map((prob, index) => (
+        <Card key={index} className="p-8 text-center bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in" style={{ animationDelay: `${index * 0.2}s` }}>
+          <div className="text-4xl mb-4">
+            {React.createElement(icon, { className: "w-12 h-12 mx-auto text-purple-600" })}
+          </div>
+          <div className="font-fredoka text-3xl font-bold text-purple-700 mb-4">
+            {prob.problem} = {prob.answer}
+          </div>
+          <div className="bg-white p-4 rounded-xl mb-4 text-2xl">
+            {prob.visual}
+          </div>
+          <div className="font-comic text-gray-600">
+            Visual representation helps understand {operation}!
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+
+  const renderShapesLesson = () => (
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {mathConcepts.shapes.map((shape, index) => (
+        <Card key={shape.name} className="p-8 text-center bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in" style={{ animationDelay: `${index * 0.2}s` }}>
+          <div className="text-8xl mb-4 animate-bounce">
+            {shape.emoji}
+          </div>
+          <div className="font-fredoka text-2xl font-bold text-orange-600 mb-2">
+            {shape.name}
+          </div>
+          <div className="font-comic text-lg text-gray-700 mb-2">
+            {shape.sides > 0 ? `${shape.sides} sides` : 'No sides'}
+          </div>
+          <div className="font-comic text-sm text-gray-600 bg-orange-50 p-3 rounded-lg">
+            {shape.description}
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+
+  if (selectedLesson) {
+    const lesson = lessons.find(l => l.id === selectedLesson);
     
-    if (currentTopic < topics.length - 1) {
-      setCurrentTopic(currentTopic + 1);
-      setCurrentSlide(0);
-    } else {
-      // All topics completed - show completion popup
-      setShowCompletion(true);
-    }
-  };
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+        <Header />
+        
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center mb-6">
+            <Button onClick={() => setSelectedLesson(null)} variant="ghost" className="mr-4 font-comic">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Lessons
+            </Button>
+          </div>
+
+          <div className="text-center mb-8">
+            <h1 className="font-fredoka font-bold text-4xl text-gray-800 mb-4">
+              {lesson?.title}
+            </h1>
+            <p className="font-comic text-lg text-gray-600">
+              {lesson?.description}
+            </p>
+          </div>
+
+          {selectedLesson === 'numbers' && renderNumbersLesson()}
+          {selectedLesson === 'addition' && renderOperationLesson('addition', mathConcepts.addition, Plus)}
+          {selectedLesson === 'subtraction' && renderOperationLesson('subtraction', mathConcepts.subtraction, Minus)}
+          {selectedLesson === 'multiplication' && renderOperationLesson('multiplication', mathConcepts.multiplication, X)}
+          {selectedLesson === 'shapes' && renderShapesLesson()}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
@@ -258,121 +165,52 @@ const MathAdventure = () => {
           </Button>
         </div>
 
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <h1 className="font-fredoka font-bold text-4xl text-gray-800 mb-4">
-            🧮 Math Adventure
+            🔢 Math Adventure Course
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Join us on an exciting mathematical journey through numbers, shapes, and patterns!
+            Explore the magical world of mathematics! Learn numbers, operations, shapes, and much more with colorful visuals.
           </p>
         </div>
 
-        {/* Topic Selection */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          {topics.map((topic, index) => (
-            <Card 
-              key={topic.id}
-              className={`p-4 cursor-pointer transition-all duration-300 hover:shadow-lg ${
-                currentTopic === index 
-                  ? 'bg-gradient-to-br from-blue-100 to-purple-100 border-blue-300' 
-                  : completedTopics.includes(index)
-                  ? 'bg-gradient-to-br from-green-100 to-emerald-100 border-green-300'
-                  : 'bg-white border-gray-200'
-              }`}
-              onClick={() => {
-                setCurrentTopic(index);
-                setCurrentSlide(0);
-              }}
-            >
-              <div className="text-center">
-                <div className="text-3xl mb-2 animate-bounce">
-                  {topic.icon}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {lessons.map((lesson, index) => (
+            <Card key={lesson.id} className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+              <div className={`w-full h-32 ${lesson.color} rounded-xl mb-4 flex items-center justify-center`}>
+                <div className="text-4xl text-white animate-bounce">
+                  {lesson.title.split(' ')[0]}
                 </div>
-                <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-1">
-                  {topic.title}
-                </h3>
-                <p className="font-comic text-sm text-gray-600">
-                  {topic.description}
-                </p>
-                {completedTopics.includes(index) && (
-                  <CheckCircle className="w-6 h-6 text-green-500 mx-auto mt-2" />
-                )}
               </div>
+
+              <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-2">
+                {lesson.title}
+              </h3>
+              <p className="font-comic text-gray-600 text-sm mb-4">
+                {lesson.description}
+              </p>
+
+              <div className="flex items-center justify-between mb-4">
+                <Badge className="bg-blue-100 text-blue-700 font-comic">
+                  Mathematical
+                </Badge>
+                <div className="flex items-center space-x-1">
+                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                  <span className="font-comic text-sm font-bold text-yellow-600">10 stars</span>
+                </div>
+              </div>
+
+              <Button 
+                className={`w-full ${lesson.color} text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200`}
+                onClick={() => startLesson(lesson.id)}
+              >
+                <Calculator className="w-4 h-4 mr-2" />
+                Start Learning
+              </Button>
             </Card>
           ))}
         </div>
-
-        {/* Current Lesson */}
-        {currentSlideData && (
-          <Card className="p-8 bg-white rounded-2xl shadow-lg mb-8">
-            <div className="text-center">
-              <h2 className="font-fredoka font-bold text-3xl text-gray-800 mb-4">
-                {currentSlideData.title}
-              </h2>
-              
-              <div className={`text-6xl mb-6 animate-${currentSlideData.animation}`}>
-                {currentSlideData.visual}
-              </div>
-              
-              <p className="font-comic text-xl text-gray-700 mb-6">
-                {currentSlideData.content}
-              </p>
-
-              <div className="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl p-4 mb-6">
-                <p className="font-comic text-lg text-gray-800 mb-2">Example:</p>
-                <div className="text-2xl">{currentSlideData.example}</div>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <Badge variant="outline" className="font-comic">
-                  {currentSlide + 1} of {currentTopicData.slides.length}
-                </Badge>
-                
-                <Button 
-                  onClick={nextSlide}
-                  className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
-                >
-                  <Play className="w-4 h-4 mr-2" />
-                  {currentSlide < currentTopicData.slides.length - 1 ? 'Next' : 'Complete Topic'}
-                </Button>
-              </div>
-            </div>
-          </Card>
-        )}
-
-        {/* Progress */}
-        <Card className="p-6 bg-gradient-to-r from-yellow-100 to-orange-100">
-          <div className="text-center">
-            <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4">
-              Your Progress
-            </h3>
-            <Progress value={(completedTopics.length / topics.length) * 100} className="mb-4" />
-            <p className="font-comic text-gray-700">
-              {completedTopics.length} of {topics.length} topics completed
-            </p>
-            {completedTopics.length === topics.length && (
-              <div className="mt-4">
-                <Badge className="gradient-green text-white font-comic font-bold px-4 py-2">
-                  <Star className="w-4 h-4 mr-2" />
-                  Course Completed! +100 Stars
-                </Badge>
-              </div>
-            )}
-          </div>
-        </Card>
       </div>
-
-      {/* Game Completion Popup */}
-      <GameCompletionPopup
-        isOpen={showCompletion}
-        onClose={() => {
-          setShowCompletion(false);
-          navigate('/courses');
-        }}
-        score={100}
-        stars={100}
-        gameName="Math Adventure Course"
-      />
     </div>
   );
 };
