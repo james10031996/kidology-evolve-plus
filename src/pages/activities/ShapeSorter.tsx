@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import Header from '@/components/Header';
 
 interface Shape {
   id: number;
-  type: 'circle' | 'square' | 'triangle' | 'rectangle' | 'star' | 'heart' | 'diamond' | 'hexagon' | 'oval' | 'pentagon' | 'octagon' | 'cross' | 'arrow' | 'crescent' | 'butterfly';
+  type: 'circle' | 'square' | 'triangle' | 'rectangle' | 'star' | 'heart' | 'diamond' | 'hexagon' | 'oval' | 'pentagon';
   color: string;
   x: number;
   y: number;
@@ -17,10 +18,9 @@ interface Shape {
 }
 
 interface DropZone {
-  type: 'circle' | 'square' | 'triangle' | 'rectangle' | 'star' | 'heart' | 'diamond' | 'hexagon' | 'oval' | 'pentagon' | 'octagon' | 'cross' | 'arrow' | 'crescent' | 'butterfly';
+  type: 'circle' | 'square' | 'triangle' | 'rectangle' | 'star' | 'heart' | 'diamond' | 'hexagon' | 'oval' | 'pentagon';
   color: string;
   id: string;
-  sortedShapes: Shape[];
 }
 
 const ShapeSorter = () => {
@@ -34,54 +34,53 @@ const ShapeSorter = () => {
   const [gameCompleted, setGameCompleted] = useState(false);
   const [draggedShape, setDraggedShape] = useState<Shape | null>(null);
   const [timeLeft, setTimeLeft] = useState(180);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const gameAreaRef = useRef<HTMLDivElement>(null);
 
-  const allShapeTypes = ['circle', 'square', 'triangle', 'rectangle', 'star', 'heart', 'diamond', 'hexagon', 'oval', 'pentagon', 'octagon', 'cross', 'arrow', 'crescent', 'butterfly'] as const;
+  const shapeTypes = ['circle', 'square', 'triangle', 'rectangle', 'star', 'heart', 'diamond', 'hexagon', 'oval', 'pentagon'] as const;
   const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'pink', 'orange', 'teal', 'indigo', 'cyan'];
   const sizes = ['small', 'medium', 'large'] as const;
 
   const generateShapes = () => {
-    // Select 5 random shape types
-    const shuffledTypes = [...allShapeTypes].sort(() => Math.random() - 0.5).slice(0, 5);
+    const shapesPerType = Math.min(2 + Math.floor(level / 2), 4);
+    const typesToUse = shapeTypes.slice(0, Math.min(4 + Math.floor(level / 2), 10));
     const newShapes: Shape[] = [];
     const newDropZones: DropZone[] = [];
 
-    shuffledTypes.forEach((type, typeIndex) => {
+    typesToUse.forEach((type, typeIndex) => {
       // Create drop zone
       newDropZones.push({
         type,
         color: colors[typeIndex % colors.length],
-        id: `zone-${type}`,
-        sortedShapes: []
+        id: `zone-${type}`
       });
+
+      // Create shapes
+      for (let i = 0; i < shapesPerType; i++) {
+        let x, y;
+        let attempts = 0;
+        const minDistance = 15;
+        
+        do {
+          x = Math.random() * 65 + 10;
+          y = Math.random() * 35 + 10;
+          attempts++;
+        } while (attempts < 20 && newShapes.some(existing => {
+          const distance = Math.sqrt(Math.pow(existing.x - x, 2) + Math.pow(existing.y - y, 2));
+          return distance < minDistance;
+        }));
+
+        newShapes.push({
+          id: typeIndex * shapesPerType + i,
+          type,
+          color: colors[typeIndex % colors.length],
+          x,
+          y,
+          sorted: false,
+          size: sizes[Math.floor(Math.random() * sizes.length)]
+        });
+      }
     });
-
-    // Create 10 shapes using the 5 selected types
-    for (let i = 0; i < 10; i++) {
-      const selectedType = shuffledTypes[i % shuffledTypes.length];
-      let x, y;
-      let attempts = 0;
-      const minDistance = 15;
-      
-      do {
-        x = Math.random() * 65 + 10;
-        y = Math.random() * 35 + 10;
-        attempts++;
-      } while (attempts < 20 && newShapes.some(existing => {
-        const distance = Math.sqrt(Math.pow(existing.x - x, 2) + Math.pow(existing.y - y, 2));
-        return distance < minDistance;
-      }));
-
-      newShapes.push({
-        id: i,
-        type: selectedType,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        x,
-        y,
-        sorted: false,
-        size: sizes[Math.floor(Math.random() * sizes.length)]
-      });
-    }
 
     setShapes(newShapes);
     setDropZones(newDropZones);
@@ -96,33 +95,76 @@ const ShapeSorter = () => {
     generateShapes();
   };
 
-  const handleDragStart = (e: React.DragEvent, shape: Shape) => {
+  const handleMouseDown = (e: React.MouseEvent, shape: Shape) => {
+    e.preventDefault();
     setDraggedShape(shape);
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', shape.id.toString());
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
-
-  const handleDrop = (e: React.DragEvent, dropZone: DropZone) => {
-    e.preventDefault();
     
+    if (gameAreaRef.current) {
+      const rect = gameAreaRef.current.getBoundingClientRect();
+      const shapeRect = e.currentTarget.getBoundingClientRect();
+      setDragOffset({
+        x: e.clientX - shapeRect.left - shapeRect.width / 2,
+        y: e.clientY - shapeRect.top - shapeRect.height / 2
+      });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!draggedShape || !gameAreaRef.current) return;
+    
+    const rect = gameAreaRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left - dragOffset.x) / rect.width) * 100;
+    const y = ((e.clientY - rect.top - dragOffset.y) / rect.height) * 100;
+    
+    setShapes(prev => prev.map(s => 
+      s.id === draggedShape.id 
+        ? { ...s, x: Math.max(5, Math.min(90, x)), y: Math.max(5, Math.min(85, y)) }
+        : s
+    ));
+  };
+
+  const handleMouseUp = () => {
+    setDraggedShape(null);
+    setDragOffset({ x: 0, y: 0 });
+  };
+
+  const handleTouchStart = (e: React.TouchEvent, shape: Shape) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    setDraggedShape(shape);
+    
+    if (gameAreaRef.current) {
+      const rect = gameAreaRef.current.getBoundingClientRect();
+      const shapeRect = e.currentTarget.getBoundingClientRect();
+      setDragOffset({
+        x: touch.clientX - shapeRect.left - shapeRect.width / 2,
+        y: touch.clientY - shapeRect.top - shapeRect.height / 2
+      });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!draggedShape || !gameAreaRef.current) return;
+    
+    const touch = e.touches[0];
+    const rect = gameAreaRef.current.getBoundingClientRect();
+    const x = ((touch.clientX - rect.left - dragOffset.x) / rect.width) * 100;
+    const y = ((touch.clientY - rect.top - dragOffset.y) / rect.height) * 100;
+    
+    setShapes(prev => prev.map(s => 
+      s.id === draggedShape.id 
+        ? { ...s, x: Math.max(5, Math.min(90, x)), y: Math.max(5, Math.min(85, y)) }
+        : s
+    ));
+  };
+
+  const handleDropZoneClick = (dropZone: DropZone) => {
     if (!draggedShape || !gameActive) return;
 
     if (draggedShape.type === dropZone.type) {
       setShapes(prev => prev.map(s => 
         s.id === draggedShape.id ? { ...s, sorted: true } : s
       ));
-      
-      setDropZones(prev => prev.map(zone => 
-        zone.id === dropZone.id 
-          ? { ...zone, sortedShapes: [...zone.sortedShapes, draggedShape] }
-          : zone
-      ));
-      
       setScore(prev => prev + (level * 15));
       
       // Check if all shapes are sorted
@@ -140,6 +182,7 @@ const ShapeSorter = () => {
     }
     
     setDraggedShape(null);
+    setDragOffset({ x: 0, y: 0 });
   };
 
   const resetGame = () => {
@@ -174,7 +217,7 @@ const ShapeSorter = () => {
     };
 
     const baseClasses = `${sizeClasses[shape.size]} flex items-center justify-center text-white font-bold shadow-xl transform transition-all duration-200 cursor-grab active:cursor-grabbing ${
-      isDragging ? 'scale-110 rotate-6 z-50 opacity-70' : 'hover:scale-105 z-10'
+      isDragging ? 'scale-110 rotate-6 z-50' : 'hover:scale-105 z-10'
     }`;
 
     const style = {
@@ -195,12 +238,7 @@ const ShapeSorter = () => {
       diamond: '♦',
       hexagon: '⬢',
       oval: '⬭',
-      pentagon: '⬟',
-      octagon: '⭘',
-      cross: '✚',
-      arrow: '➤',
-      crescent: '☽',
-      butterfly: '🦋'
+      pentagon: '⬟'
     };
 
     const shapeClasses = {
@@ -213,28 +251,21 @@ const ShapeSorter = () => {
       diamond: 'rounded-lg rotate-45',
       hexagon: 'rounded-lg',
       oval: 'rounded-full',
-      pentagon: 'rounded-lg',
-      octagon: 'rounded-lg',
-      cross: 'rounded-lg',
-      arrow: 'rounded-lg',
-      crescent: 'rounded-lg',
-      butterfly: 'rounded-lg'
+      pentagon: 'rounded-lg'
     };
 
     return (
       <div 
         className={`${baseClasses} ${shapeClasses[shape.type]} absolute`} 
         style={style}
-        draggable
-        onDragStart={(e) => handleDragStart(e, shape)}
       >
         {shapeSymbols[shape.type]}
       </div>
     );
   };
 
-  const getDropZoneShape = (zone: DropZone) => {
-    const baseClasses = `w-20 h-20 border-4 border-dashed border-gray-400 rounded-xl flex flex-col items-center justify-center text-gray-400 text-2xl font-bold transition-all duration-300 hover:border-gray-600 hover:bg-gray-50 hover:scale-105 cursor-pointer relative`;
+  const getDropZoneShape = (type: string, color: string, id: string) => {
+    const baseClasses = `w-20 h-20 border-4 border-dashed border-gray-400 rounded-xl flex items-center justify-center text-gray-400 text-2xl font-bold transition-all duration-300 hover:border-gray-600 hover:bg-gray-50 hover:scale-105 cursor-pointer`;
 
     const shapeSymbols = {
       circle: '○',
@@ -246,12 +277,7 @@ const ShapeSorter = () => {
       diamond: '♢',
       hexagon: '⬡',
       oval: '⬯',
-      pentagon: '⬠',
-      octagon: '⭘',
-      cross: '✚',
-      arrow: '➤',
-      crescent: '☽',
-      butterfly: '🦋'
+      pentagon: '⬠'
     };
 
     const shapeClasses = {
@@ -264,40 +290,12 @@ const ShapeSorter = () => {
       diamond: 'rounded-xl rotate-45',
       hexagon: 'rounded-xl',
       oval: 'rounded-full',
-      pentagon: 'rounded-xl',
-      octagon: 'rounded-xl',
-      cross: 'rounded-lg',
-      arrow: 'rounded-lg',
-      crescent: 'rounded-lg',
-      butterfly: 'rounded-lg'
+      pentagon: 'rounded-xl'
     };
 
     return (
-      <div 
-        className={`${baseClasses} ${shapeClasses[zone.type]}`} 
-        onDragOver={handleDragOver}
-        onDrop={(e) => handleDrop(e, zone)}
-      >
-        {zone.sortedShapes.length === 0 ? (
-          shapeSymbols[zone.type as keyof typeof shapeSymbols]
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex flex-wrap gap-1 justify-center items-center">
-              {zone.sortedShapes.slice(0, 4).map((shape, index) => (
-                <div 
-                  key={index}
-                  className="w-4 h-4 rounded-sm flex items-center justify-center text-xs text-white"
-                  style={{ backgroundColor: shape.color }}
-                >
-                  {shapeSymbols[shape.type]}
-                </div>
-              ))}
-              {zone.sortedShapes.length > 4 && (
-                <div className="text-xs text-gray-600">+{zone.sortedShapes.length - 4}</div>
-              )}
-            </div>
-          </div>
-        )}
+      <div className={`${baseClasses} ${shapeClasses[type]}`} onClick={() => handleDropZoneClick({ type: type as any, color, id })}>
+        {shapeSymbols[type as keyof typeof shapeSymbols]}
       </div>
     );
   };
@@ -323,7 +321,7 @@ const ShapeSorter = () => {
             🔷 Shape Sorter Challenge
           </h1>
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Drag and drop 10 shapes (5 different types) into their matching zones! Learn geometry while having fun!
+            Drag and drop shapes into their matching zones! Learn geometry while having fun with advanced drag & drop!
           </p>
         </div>
 
@@ -376,9 +374,24 @@ const ShapeSorter = () => {
               <div 
                 ref={gameAreaRef}
                 className="relative w-full h-full select-none"
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleMouseUp}
               >
                 {shapes.filter(s => !s.sorted).map((shape) => (
-                  <div key={shape.id}>
+                  <div
+                    key={shape.id}
+                    onMouseDown={(e) => handleMouseDown(e, shape)}
+                    onTouchStart={(e) => handleTouchStart(e, shape)}
+                    className="absolute"
+                    style={{
+                      left: `${shape.x}%`,
+                      top: `${shape.y}%`,
+                      transform: 'translate(-50%, -50%)'
+                    }}
+                  >
                     {getShapeElement(shape, draggedShape?.id === shape.id)}
                   </div>
                 ))}
@@ -405,9 +418,9 @@ const ShapeSorter = () => {
                     className="transition-transform duration-200 hover:scale-105 animate-fade-in"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    {getDropZoneShape(zone)}
+                    {getDropZoneShape(zone.type, zone.color, zone.id)}
                     <div className="font-comic text-sm text-gray-600 mt-2 capitalize text-center">
-                      {zone.type} ({zone.sortedShapes.length})
+                      {zone.type}
                     </div>
                   </div>
                 ))}
@@ -421,10 +434,10 @@ const ShapeSorter = () => {
             <div className="text-8xl mb-4 animate-bounce">🎯</div>
             <div className="font-fredoka text-3xl text-gray-700 mb-4">Ready to Sort Shapes?</div>
             <div className="font-comic text-gray-600 mb-4">
-              Drag 10 shapes (5 different types) to their matching zones!
+              Drag shapes to their matching zones with advanced drag & drop controls!
             </div>
             <div className="text-sm text-gray-500 font-comic">
-              💡 Tip: Drag and drop the shapes to their matching zones!
+              💡 Tip: Click and drag on desktop, touch and drag on mobile!
             </div>
           </Card>
         )}
@@ -464,11 +477,12 @@ const ShapeSorter = () => {
           <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4">🎮 How to Play:</h3>
           <ul className="font-comic text-gray-600 space-y-2">
             <li>• Drag shapes from the game area to their matching drop zones</li>
-            <li>• Each level shows 10 shapes using 5 random shape types out of 15 available</li>
             <li>• Each correct match earns you 15 × level points</li>
             <li>• Wrong matches reduce your score by 8 points</li>
             <li>• Complete all shapes to advance to the next level</li>
-            <li>• Master all 15 different shape types: circles, squares, triangles, rectangles, stars, hearts, diamonds, hexagons, ovals, pentagons, octagons, crosses, arrows, crescents, and butterflies!</li>
+            <li>• Higher levels have more shape types and better rewards</li>
+            <li>• Try different sizes: small, medium, and large shapes!</li>
+            <li>• Master all 10 different shape types: circles, squares, triangles, rectangles, stars, hearts, diamonds, hexagons, ovals, and pentagons!</li>
           </ul>
         </Card>
       </div>

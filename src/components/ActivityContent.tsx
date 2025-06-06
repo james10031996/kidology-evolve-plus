@@ -1,4 +1,3 @@
-
 import { TabsContent } from '@/components/ui/tabs';
 import StoryLibrary from './StoryLibrary';
 import MiniGameCard from './MiniGameCard';
@@ -62,7 +61,8 @@ const ActivityContent = () => {
       difficulty: 2,
       bestScore: 720,
       playCount: 950,
-      gradient: 'gradient-pink'
+      gradient: 'gradient-pink',
+      isLocked: true
     }
   ];
 
