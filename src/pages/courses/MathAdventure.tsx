@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -82,7 +81,7 @@ const MathAdventure = () => {
       {problems.map((prob, index) => (
         <Card key={index} className="p-8 text-center bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in" style={{ animationDelay: `${index * 0.2}s` }}>
           <div className="text-4xl mb-4">
-            {React.createElement(icon, { className: "w-12 h-12 mx-auto text-purple-600" })}
+            {icon && <icon className="w-12 h-12 mx-auto text-purple-600" />}
           </div>
           <div className="font-fredoka text-3xl font-bold text-purple-700 mb-4">
             {prob.problem} = {prob.answer}

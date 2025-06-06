@@ -1,9 +1,9 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, X, Sparkles, BookOpen, Gamepad2, Palette } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface SearchResult {
   id: string;
@@ -12,9 +12,11 @@ interface SearchResult {
   category: string;
   description: string;
   icon: React.ReactNode;
+  route: string;
 }
 
 const AnimatedSearchBar = () => {
+  const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showResults, setShowResults] = useState(false);
@@ -26,7 +28,8 @@ const AnimatedSearchBar = () => {
       type: 'course',
       category: 'Mathematics',
       description: 'Learn counting, addition, and subtraction',
-      icon: <BookOpen className="w-4 h-4" />
+      icon: <BookOpen className="w-4 h-4" />,
+      route: '/courses/math-basics'
     },
     {
       id: '2',
@@ -34,7 +37,8 @@ const AnimatedSearchBar = () => {
       type: 'game',
       category: 'Math Games',
       description: 'Pop bubbles in numerical order',
-      icon: <Gamepad2 className="w-4 h-4" />
+      icon: <Gamepad2 className="w-4 h-4" />,
+      route: '/activities/number-bubble-pop'
     },
     {
       id: '3',
@@ -42,7 +46,8 @@ const AnimatedSearchBar = () => {
       type: 'activity',
       category: 'Art & Creativity',
       description: 'Express your creativity with digital art',
-      icon: <Palette className="w-4 h-4" />
+      icon: <Palette className="w-4 h-4" />,
+      route: '/activities'
     },
     {
       id: '4',
@@ -50,7 +55,8 @@ const AnimatedSearchBar = () => {
       type: 'story',
       category: 'Stories',
       description: 'Join Luna on a magical counting adventure',
-      icon: <BookOpen className="w-4 h-4" />
+      icon: <BookOpen className="w-4 h-4" />,
+      route: '/activities'
     }
   ];
 
@@ -59,6 +65,13 @@ const AnimatedSearchBar = () => {
     result.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
     result.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleResultClick = (result: SearchResult) => {
+    navigate(result.route);
+    setSearchQuery('');
+    setIsExpanded(false);
+    setShowResults(false);
+  };
 
   const handleFocus = () => {
     setIsExpanded(true);
@@ -174,6 +187,7 @@ const AnimatedSearchBar = () => {
                   {filteredResults.map((result, index) => (
                     <div
                       key={result.id}
+                      onClick={() => handleResultClick(result)}
                       className={`p-3 rounded-lg border hover:shadow-md transition-all duration-200 cursor-pointer animate-fade-in hover:scale-102 ${
                         getTypeColor(result.type)
                       }`}

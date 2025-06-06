@@ -62,7 +62,7 @@ const Hero = () => {
                 </Button>
               </Link>
               
-              <Link to="/activities">
+              <Link to="/demo">
                 <Button 
                   size="lg" 
                   variant="outline" 
