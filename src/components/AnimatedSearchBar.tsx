@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -24,12 +25,12 @@ const AnimatedSearchBar = () => {
   const mockResults: SearchResult[] = [
     {
       id: '1',
-      title: 'Math Basics',
+      title: 'Math Adventure',
       type: 'course',
       category: 'Mathematics',
       description: 'Learn counting, addition, and subtraction',
       icon: <BookOpen className="w-4 h-4" />,
-      route: '/courses/math-basics'
+      route: '/courses/math-adventure'
     },
     {
       id: '2',
@@ -51,12 +52,12 @@ const AnimatedSearchBar = () => {
     },
     {
       id: '4',
-      title: 'The Magic Forest Adventure',
-      type: 'story',
-      category: 'Stories',
-      description: 'Join Luna on a magical counting adventure',
+      title: 'Reading Adventure',
+      type: 'course',
+      category: 'English',
+      description: 'Learn alphabets and reading skills',
       icon: <BookOpen className="w-4 h-4" />,
-      route: '/activities'
+      route: '/courses/reading-adventure'
     }
   ];
 
@@ -104,7 +105,7 @@ const AnimatedSearchBar = () => {
   };
 
   return (
-    <div className="relative w-full max-w-2xl mx-auto">
+    <div className="relative w-full max-w-2xl mx-auto z-50">
       {/* Search Bar Container */}
       <Card className={`relative overflow-hidden transition-all duration-500 ease-in-out ${
         isExpanded 
@@ -173,7 +174,7 @@ const AnimatedSearchBar = () => {
 
       {/* Search Results */}
       {showResults && (
-        <Card className={`absolute top-full left-0 right-0 mt-2 bg-white border border-purple-200 shadow-2xl z-50 transition-all duration-300 ${
+        <Card className={`absolute top-full left-0 right-0 mt-2 bg-white border border-purple-200 shadow-2xl z-[100] transition-all duration-300 ${
           searchQuery ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
         }`}>
           <div className="p-4">
