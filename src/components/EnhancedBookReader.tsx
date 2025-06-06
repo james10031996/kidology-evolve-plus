@@ -26,18 +26,27 @@ interface Poem {
 interface EnhancedBookReaderProps {
   story?: Story | null;
   poem?: Poem | null;
+  pages?: {
+    text: string;
+    animation: string;
+    backgroundColor: string;
+  }[];
+  title?: string;
   onClose: () => void;
 }
 
-const EnhancedBookReader = ({ story, poem, onClose }: EnhancedBookReaderProps) => {
+const EnhancedBookReader = ({ story, poem, pages, title, onClose }: EnhancedBookReaderProps) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const content = story || poem;
+  // Handle different data sources
+  const content = story || poem || (pages && title ? { title, pages } : null);
   if (!content) return null;
 
-  const totalPages = story ? story.pages.length : poem ? poem.verses.length : 0;
-  const isStory = !!story;
+  const totalPages = story ? story.pages.length : 
+                    poem ? poem.verses.length : 
+                    pages ? pages.length : 0;
+  const isStory = !!story || !!pages;
 
   const getCurrentContent = () => {
     if (story) {
@@ -48,6 +57,8 @@ const EnhancedBookReader = ({ story, poem, onClose }: EnhancedBookReaderProps) =
         animation: poem.animations[currentPage] || 'bounce',
         backgroundColor: 'from-purple-100 to-pink-100'
       };
+    } else if (pages) {
+      return pages[currentPage];
     }
     return null;
   };
@@ -134,7 +145,7 @@ const EnhancedBookReader = ({ story, poem, onClose }: EnhancedBookReaderProps) =
                     {content.title}
                   </h1>
                   <p className="font-comic text-lg text-gray-600 mb-6">
-                    by {content.author}
+                    by {story?.author || poem?.author || 'Anonymous'}
                   </p>
                   <div className="w-16 h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"></div>
                 </div>
