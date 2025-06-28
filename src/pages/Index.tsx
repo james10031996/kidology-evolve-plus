@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Gamepad2, Trophy, Users, Star, ArrowRight, Sparkles, Palette, Music, Beaker, Globe, Heart, Zap, Gift } from 'lucide-react';
-import Header from '@/components/Header';
-import AnimatedSearchBar from '@/components/AnimatedSearchBar';
+import Header from '@/components/home/Header';
+import AnimatedSearchBar from '@/components/home/AnimatedSearchBar';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
@@ -18,7 +18,7 @@ const Index = () => {
         <div className="absolute top-32 right-20 w-16 h-16 bg-pink-200 rounded-full opacity-30 animate-bounce delay-1000"></div>
         <div className="absolute bottom-20 left-20 w-24 h-24 bg-blue-200 rounded-full opacity-25 animate-pulse delay-2000"></div>
         <div className="absolute bottom-40 right-10 w-12 h-12 bg-purple-200 rounded-full opacity-20 animate-bounce delay-500"></div>
-        
+
         {/* Floating Icons */}
         <div className="absolute top-20 right-40 animate-float">
           <Star className="w-8 h-8 text-yellow-400 opacity-60" />
@@ -32,7 +32,7 @@ const Index = () => {
       </div>
 
       <Header />
-      
+
       {/* Enhanced Hero Section */}
       <section className="py-20 text-center relative">
         <div className="container mx-auto px-4">
@@ -45,7 +45,7 @@ const Index = () => {
                   <Sparkles className="absolute -top-2 -right-6 w-8 h-8 text-yellow-400 animate-spin" />
                 </span>! 🌟
               </h1>
-              
+
               {/* Decorative Elements */}
               <div className="absolute -top-4 left-1/4 animate-bounce delay-500">
                 <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
@@ -56,26 +56,32 @@ const Index = () => {
             </div>
 
             <p className="font-comic text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto animate-fade-in delay-300">
-              Where learning becomes an exciting adventure! Join thousands of kids exploring, 
+              Where learning becomes an exciting adventure! Join thousands of kids exploring,
               creating, and discovering amazing things every day.
             </p>
-            
+
             {/* Enhanced Search Bar */}
-            <div className="mb-12 animate-fade-in delay-500">
+            <div className="relative z-[50] mb-12 animate-fade-in delay-500">
               <AnimatedSearchBar />
             </div>
-            
+
             {!user && (
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 animate-fade-in delay-700">
-                <Button className="gradient-orange text-white font-comic font-bold px-8 py-4 text-lg rounded-full hover:scale-105 transition-all duration-300 shadow-lg">
-                  <Star className="w-5 h-5 mr-2" />
-                  Start Learning Free
-                </Button>
-                <Button variant="outline" className="font-comic font-bold px-8 py-4 text-lg rounded-full hover:scale-105 transition-all duration-300 border-2 border-purple-300 hover:border-purple-400">
-                  <Zap className="w-5 h-5 mr-2" />
-                  Watch Demo
-                </Button>
+                <Link to="/courses">
+                  <Button className="gradient-orange text-white font-comic font-bold px-8 py-4 text-lg rounded-full hover:scale-105 transition-all duration-300 shadow-lg">
+                    <Star className="w-5 h-5 mr-2" />
+                    Start Learning Free
+                  </Button>
+                </Link>
+                <Link to="/demo">
+                  <Button variant="outline" className="font-comic font-bold px-8 py-4 text-lg rounded-full hover:scale-105 transition-all duration-300 border-2 border-purple-300 hover:border-purple-400">
+                    <Zap className="w-5 h-5 mr-2" />
+                    Watch Demo
+                  </Button>
+                </Link>
               </div>
+
+
             )}
 
             {/* Enhanced Stats */}
@@ -119,28 +125,28 @@ const Index = () => {
                   <div className="absolute bottom-6 right-6 w-6 h-6 bg-indigo-400 rounded-full animate-pulse delay-1000"></div>
                   <div className="absolute top-16 right-8 w-4 h-4 bg-blue-300 rounded-full animate-pulse delay-500"></div>
                 </div>
-                
+
                 <div className="text-center relative z-10">
                   <div className="w-20 h-20 gradient-blue rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <BookOpen className="w-10 h-10 text-white" />
                   </div>
-                  
+
                   <h3 className="font-fredoka font-bold text-3xl text-gray-800 mb-4">
                     📚 Learning Courses
                   </h3>
-                  
+
                   <p className="font-comic text-gray-600 mb-6 text-lg">
                     Structured lessons in Math, English, Science,
                     Art and more! Track your progress and earn rewards.
                   </p>
-                  
+
                   <Button className="gradient-blue text-white font-comic font-bold px-6 py-2 rounded-full group-hover:scale-105 transition-all duration-300 shadow-lg">
                     Explore Courses <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </div>
               </Card>
             </Link>
-            
+
             {/* Enhanced Activities Card */}
             <Link to="/activities">
               <Card className="p-8 bg-gradient-to-br from-purple-50 to-pink-100 rounded-3xl shadow-xl border-0 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-4 group cursor-pointer relative overflow-hidden">
@@ -150,21 +156,21 @@ const Index = () => {
                   <div className="absolute bottom-4 left-6 w-6 h-6 bg-pink-400 rounded-full animate-pulse delay-300"></div>
                   <div className="absolute top-20 left-8 w-4 h-4 bg-purple-300 rounded-full animate-pulse delay-1200"></div>
                 </div>
-                
+
                 <div className="text-center relative z-10">
                   <div className="w-20 h-20 gradient-purple rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <Sparkles className="w-10 h-10 text-white" />
                   </div>
-                  
+
                   <h3 className="font-fredoka font-bold text-3xl text-gray-800 mb-4">
                     🎨 Fun Activities
                   </h3>
-                  
+
                   <p className="font-comic text-gray-600 mb-6 text-lg">
                     Interactive stories, creative projects, painting,
                     music and fun educational activities!
                   </p>
-                  
+
                   <Button className="gradient-purple text-white font-comic font-bold px-6 py-2 rounded-full group-hover:scale-105 transition-all duration-300 shadow-lg">
                     Try Activities <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -172,7 +178,7 @@ const Index = () => {
               </Card>
             </Link>
           </div>
-          
+
           {/* Enhanced Games Card */}
           <div className="max-w-5xl mx-auto">
             <Link to="/games">
@@ -183,21 +189,21 @@ const Index = () => {
                   <div className="absolute bottom-8 right-1/4 w-8 h-8 bg-teal-400 rounded-full animate-pulse delay-800"></div>
                   <div className="absolute top-1/2 right-8 w-6 h-6 bg-green-300 rounded-full animate-pulse delay-1100"></div>
                 </div>
-                
+
                 <div className="text-center relative z-10">
                   <div className="w-20 h-20 gradient-green rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <Gamepad2 className="w-10 h-10 text-white" />
                   </div>
-                  
+
                   <h3 className="font-fredoka font-bold text-3xl text-gray-800 mb-4">
                     🎮 Educational Games
                   </h3>
-                  
+
                   <p className="font-comic text-gray-600 mb-6 text-lg">
                     Have fun while learning with our collection of educational games!
                     Challenge yourself with math puzzles, language games, memory challenges and more.
                   </p>
-                  
+
                   <Button className="gradient-green text-white font-comic font-bold px-6 py-2 rounded-full group-hover:scale-105 transition-all duration-300 shadow-lg">
                     Play Games <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -284,7 +290,7 @@ const Index = () => {
               <div className="absolute top-1/2 left-1/4 w-6 h-6 bg-pink-300 rounded-full animate-pulse delay-500"></div>
               <div className="absolute bottom-1/3 right-1/3 w-10 h-10 bg-white rounded-full animate-bounce delay-1000"></div>
             </div>
-            
+
             <div className="text-center relative z-10">
               <div className="flex justify-center mb-6">
                 <div className="flex space-x-2">
@@ -293,14 +299,14 @@ const Index = () => {
                   <Sparkles className="w-8 h-8 text-yellow-300 animate-pulse" />
                 </div>
               </div>
-              
+
               <h2 className="font-fredoka font-bold text-3xl md:text-4xl text-white mb-4">
                 Ready to Start an Amazing Learning Adventure?
               </h2>
               <p className="font-comic text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
                 Join thousands of kids discovering the joy of learning every day!
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button className="bg-white text-indigo-600 hover:bg-indigo-50 font-comic font-bold text-lg px-8 py-4 rounded-full hover:scale-105 transition-all duration-300 shadow-lg">
                   <Star className="w-5 h-5 mr-2" />
@@ -319,7 +325,8 @@ const Index = () => {
           </Card>
         </div>
       </section>
-    </div>
+
+    </div >
   );
 };
 
