@@ -16,8 +16,8 @@ const Courses = () => {
   const courses = [
     {
       id: 'math-basics',
-      title: 'Math Adventure',
-      description: 'Learn counting, addition, subtraction, and basic geometry',
+      title: 'Math Basics',
+      description: 'Learn basics of maths',
       category: 'mathematics',
       difficulty: 'Beginner',
       duration: '45 min',
@@ -28,7 +28,39 @@ const Courses = () => {
       color: 'gradient-blue',
       topics: ['Numbers', 'Addition', 'Subtraction', 'Shapes', 'Patterns'],
       nextLesson: 'Learning Numbers 1-20',
+      route: '/courses/math-basics'
+    },
+    {
+      id: 'math-adventure',
+      title: 'Math Adventure',
+      description: 'Learn counting, addition, subtraction, and basic geometry',
+      category: 'mathematics',
+      difficulty: 'Beginner',
+      duration: '45 min',
+      lessons: 12,
+      rating: 4.9,
+      students: 2340,
+      progress: userData.progress.find(p => p.name === 'Mathematics')?.progress || 0,
+      color: 'bg-gradient-to-r from-yellow-300 via-pink-500 to-orange-600',
+      topics: ['Numbers', 'Addition', 'Subtraction', 'Shapes', 'Patterns'],
+      nextLesson: 'Learning Numbers 1-20',
       route: '/courses/math-adventure'
+    },
+    {
+      id: 'enhanced-math-adventure',
+      title: 'Enhanced Math Adventure',
+      description: 'Enhanced counting, addition, subtraction, and basic geometry',
+      category: 'mathematics',
+      difficulty: 'Beginner',
+      duration: '45 min',
+      lessons: 12,
+      rating: 4.9,
+      students: 2340,
+      progress: userData.progress.find(p => p.name === 'Mathematics')?.progress || 0,
+      color: 'bg-gradient-to-r from-teal-400 via-cyan-500 to-blue-600',
+      topics: ['Numbers', 'Addition', 'Subtraction', 'Shapes', 'Patterns'],
+      nextLesson: 'Learning Numbers 1-20',
+      route: '/courses/enhanced-math-adventure'
     },
     {
       id: 'reading-adventure',
@@ -89,7 +121,7 @@ const Courses = () => {
       rating: 4.6,
       students: 980,
       progress: userData.progress.find(p => p.name === 'Geography')?.progress || 0,
-      color: 'gradient-teal',
+      color: 'bg-gradient-to-r from-pink-300 via-rose-400 to-fuchsia-500',
       topics: ['Countries', 'Continents', 'Maps', 'Landmarks'],
       nextLesson: 'World Map Adventure',
       route: '/courses/geography-explorer'
@@ -121,7 +153,7 @@ const Courses = () => {
       rating: 4.8,
       students: 1100,
       progress: userData.progress.find(p => p.name === 'Social')?.progress || 0,
-      color: 'gradient-yellow',
+      color: 'bg-gradient-to-r from-green-300 via-emerald-400 to-teal-500',
       topics: ['Kindness', 'Sharing', 'Friendship', 'Respect'],
       nextLesson: 'Being Kind to Others',
       route: '/courses/social-moral'

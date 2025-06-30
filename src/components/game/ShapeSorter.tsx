@@ -5,6 +5,7 @@ import { ArrowLeft, Play, RotateCcw, Trophy, Star, Sparkles } from 'lucide-react
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import Header from '@/components/home/Header';
+import GameCompletionPopup from '@/components/game/game/GameCompletionPopup';
 
 interface Shape {
   id: number;
@@ -423,44 +424,61 @@ const ShapeSorter = () => {
             <div className="font-comic text-gray-600 mb-4">
               Drag 10 shapes (5 different types) to their matching zones!
             </div>
-            <div className="text-sm text-gray-500 font-comic">
+            <div className="text-sm text-gray-500 font-comic mb-4">
               💡 Tip: Drag and drop the shapes to their matching zones!
             </div>
+             {!gameActive && !gameCompleted && (
+            <Button 
+              onClick={startGame}
+              className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-all duration-300"
+            >
+              <Play className="w-5 h-5 mr-2" />
+              Start Sorting
+            </Button>
+          )}
           </Card>
         )}
 
         {gameCompleted && (
-          <Card className="p-8 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl text-center animate-scale-in">
-            <Trophy className="w-16 h-16 text-blue-600 mx-auto mb-4 animate-bounce" />
-            <h2 className="font-fredoka font-bold text-3xl text-gray-800 mb-4">
-              🎉 Geometry Master! 🎉
-            </h2>
-            <p className="font-comic text-lg text-gray-700 mb-4">
-              Final Score: <span className="font-bold text-blue-600">{score}</span>
-            </p>
-            <p className="font-comic text-lg text-gray-700 mb-6">
-              You completed {level - 1} levels and earned {Math.floor(score / 10)} stars!
-            </p>
-            <div className="flex justify-center space-x-4">
-              <Button 
-                onClick={startGame}
-                className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
-              >
-                <Play className="w-5 h-5 mr-2" />
-                Play Again
-              </Button>
-              <Button 
-                onClick={() => navigate('/games')}
-                className="gradient-purple text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
-              >
-                Try Another Game
-              </Button>
-            </div>
-          </Card>
+          <GameCompletionPopup
+                      isOpen={gameCompleted}
+                      onClose={() => setGameCompleted(false)}
+                      score={score}
+                      stars={Math.floor(score / 100)}
+                      gameName="Shape Sorter"
+                    />
+
+          // <Card className="p-8 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl text-center animate-scale-in">
+          //   <Trophy className="w-16 h-16 text-blue-600 mx-auto mb-4 animate-bounce" />
+          //   <h2 className="font-fredoka font-bold text-3xl text-gray-800 mb-4">
+          //     🎉 Geometry Master! 🎉
+          //   </h2>
+          //   <p className="font-comic text-lg text-gray-700 mb-4">
+          //     Final Score: <span className="font-bold text-blue-600">{score}</span>
+          //   </p>
+          //   <p className="font-comic text-lg text-gray-700 mb-6">
+          //     You completed {level - 1} levels and earned {Math.floor(score / 10)} stars!
+          //   </p>
+          //   <div className="flex justify-center space-x-4">
+          //     <Button 
+          //       onClick={startGame}
+          //       className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
+          //     >
+          //       <Play className="w-5 h-5 mr-2" />
+          //       Play Again
+          //     </Button>
+          //     <Button 
+          //       onClick={() => navigate('/games')}
+          //       className="gradient-purple text-white font-comic font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform"
+          //     >
+          //       Try Another Game
+          //     </Button>
+          //   </div>
+          // </Card>
         )}
 
         {/* Instructions */}
-        <Card className="p-6 bg-white rounded-2xl shadow-lg">
+        <Card className="p-6 bg-white rounded-2xl shadow-lg mt-8">
           <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4">🎮 How to Play:</h3>
           <ul className="font-comic text-gray-600 space-y-2">
             <li>• Drag shapes from the game area to their matching drop zones</li>

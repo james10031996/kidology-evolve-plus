@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookOpen, Plus, Trash2, Edit, Eye } from 'lucide-react';
 import AdminAddContent from './AdminAddContent';
 import EnhancedBookReader from '../activities/story/EnhancedBookReader';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 interface Story {
   id: string;
@@ -104,7 +105,7 @@ const AdminStoriesManager = () => {
       ...newContent,
       createdAt: new Date().toISOString().split('T')[0]
     };
-    
+
     setStories(prev => [...prev, newStory]);
     setSelectedTab('manage');
   };
@@ -120,23 +121,23 @@ const AdminStoriesManager = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-         <div>
-        <h2 className="text-3xl font-fredoka font-bold gradient-purple bg-clip-text text-transparent mb-2">
-          📚 Stories Management
-        </h2>
-        <p className="text-gray-600 font-comic">
-          Create and manage magical stories for children
-        </p>
+        <div>
+          <h2 className="text-3xl font-fredoka font-bold gradient-purple bg-clip-text text-transparent mb-2">
+            📚 Stories Management
+          </h2>
+          <p className="text-gray-600 font-comic">
+            Create and manage magical stories for children
+          </p>
         </div>
 
         <div className="flex space-x-2">
-          <Button 
-              onClick={() => setSelectedTab('add')}
-              className="gradient-purple text-white hover:opacity-90"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Story
-            </Button>
+          <Button
+            onClick={() => setSelectedTab('add')}
+            className="gradient-purple text-white hover:opacity-90"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Story
+          </Button>
         </div>
 
       </div>
@@ -157,7 +158,7 @@ const AdminStoriesManager = () => {
             <h3 className="text-xl font-fredoka font-bold text-gray-800">
               📚 Story Library ({stories.length})
             </h3>
-           
+
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -207,8 +208,8 @@ const AdminStoriesManager = () => {
                     <Edit className="w-3 h-3 mr-1" />
                     Edit
                   </Button>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="gradient-purple text-white text-xs"
                     onClick={() => handlePreviewStory(story)}
                   >
@@ -229,7 +230,7 @@ const AdminStoriesManager = () => {
               <p className="text-gray-500 font-comic mb-4">
                 Start creating magical stories for children!
               </p>
-              <Button 
+              <Button
                 onClick={() => setSelectedTab('add')}
                 className="gradient-purple text-white"
               >
@@ -246,14 +247,17 @@ const AdminStoriesManager = () => {
           </Card>
         </TabsContent>
       </Tabs>
-      {/* Story Preview Modal */}
 
-      {previewStory && (
-        <EnhancedBookReader
-          pages={previewStory.pages}
-          title={previewStory.title}
-          onClose={() => setPreviewStory(null)}
-        />
+      {/* Story Preview Modal */}
+      {previewStory && (<Dialog open={!!previewStory} onOpenChange={() => setPreviewStory(null)}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-xl">
+          <EnhancedBookReader
+            pages={previewStory.pages}
+            title={previewStory.title}
+            onClose={() => setPreviewStory(null)}
+          />
+        </DialogContent>
+      </Dialog>
       )}
     </div>
   );

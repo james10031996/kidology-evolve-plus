@@ -19,11 +19,15 @@ import NumberBubblePop from '@/components/game/NumberBubblePop';
 import LetterSafari from '@/components/game/LetterSafari';
 import MemoryPalace from '@/components/game/MemoryPalace';
 import ShapeSorter from '@/components/game/ShapeSorter';
-import MagicPaintStudio from '@/components/game/MagicPaintStudio';
+import PuzzleAssembly from '@/components/game/PuzzleAssembly';
+import SearchMissingObject from '@/components/game/SearchMissingObject';
+import MagicPaintStudio from '@/components/activities/MagicPaintStudio';
 
 // Course Pages
+import EnglishAdventure from '@/components/courses/english/EnglishAdventure';
 import MathBasics from '@/components/courses/maths/MathBasics';
 import MathAdventure from '@/components/courses/maths/MathAdventure';
+import EnhancedMathAdventure from '@/components/courses/maths/EnhancedMathAdventure';
 import ReadingAdventure from '@/components/courses/gk/ReadingAdventure';
 import ScienceExplorers from '@/components/courses/science/ScienceExplorers';
 
@@ -53,11 +57,14 @@ function App() {
                 <Route path="/activities/letter-safari" element={<LetterSafari />} />
                 <Route path="/activities/memory-palace" element={<MemoryPalace />} />
                 <Route path="/activities/shape-sorter" element={<ShapeSorter />} />
+                <Route path="/games/puzzle-assembly" element={<PuzzleAssembly />} />
+                <Route path="/games/search-missing-object" element={<SearchMissingObject />} />
                 <Route path="/activities/magic-paint-studio" element={<MagicPaintStudio />} />
                 
                 {/* Course Routes */}
                 <Route path="/courses/math-basics" element={<MathBasics />} />
                 <Route path="/courses/math-adventure" element={<MathAdventure />} />
+                <Route path="/courses/enhanced-math-adventure" element={<EnhancedMathAdventure />} />
                 <Route path="/courses/reading-adventure" element={<ReadingAdventure />} />
                 <Route path="/courses/science-explorers" element={<ScienceExplorers />} />
                 

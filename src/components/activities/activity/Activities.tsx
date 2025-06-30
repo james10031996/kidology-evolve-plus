@@ -98,7 +98,7 @@ const Activities = () => {
     ],
     creative: [
       {
-        id: 'paint-studio',
+        id: 'magic-paint-studio',
         title: 'Magic Paint Studio',
         description: 'Create beautiful artworks with magical brushes!',
         category: 'Art',

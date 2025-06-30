@@ -42,12 +42,12 @@ const MathAdventure = () => {
   const lessons = [
     { id: 'numbers', title: '🔢 Numbers 1-20', description: 'Learn to count and recognize numbers', color: 'gradient-blue' },
     { id: 'addition', title: '➕ Addition Magic', description: 'Add numbers with fun visuals', color: 'gradient-green' },
-    { id: 'subtraction', title: '➖ Subtraction Fun', description: 'Take away numbers playfully', color: 'gradient-red' },
+    { id: 'subtraction', title: '➖ Subtraction Fun', description: 'Take away numbers playfully', color: 'bg-gradient-to-r from-indigo-800 via-purple-700 to-pink-600' },
     { id: 'multiplication', title: '✖️ Multiplication', description: 'Multiply with repeated addition', color: 'gradient-purple' },
     { id: 'shapes', title: '🔷 Geometry Shapes', description: 'Discover basic shapes around us', color: 'gradient-orange' },
     { id: 'patterns', title: '🎨 Patterns', description: 'Create and continue patterns', color: 'gradient-pink' },
-    { id: 'measurement', title: '📏 Measurement', description: 'Learn about size, length, and weight', color: 'gradient-teal' },
-    { id: 'time', title: '⏰ Telling Time', description: 'Read clocks and understand time', color: 'gradient-yellow' }
+    { id: 'measurement', title: '📏 Measurement', description: 'Learn about size, length, and weight', color: 'bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-100' },
+    { id: 'time', title: '⏰ Telling Time', description: 'Read clocks and understand time', color: 'bg-gradient-to-r from-pink-300 via-rose-400 to-fuchsia-500' }
   ];
 
   const startLesson = (lessonId: string) => {

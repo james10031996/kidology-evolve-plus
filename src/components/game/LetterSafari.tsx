@@ -6,6 +6,7 @@ import { ArrowLeft, Play, Pause, RotateCcw, Star, Trophy, Info } from 'lucide-re
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import Header from '@/components/home/Header';
+import GameCompletionPopup from '@/components/game/game/GameCompletionPopup';
 
 interface LetterAnimal {
   id: number;
@@ -31,76 +32,652 @@ const LetterSafari = () => {
   const [animals, setAnimals] = useState<LetterAnimal[]>([]);
   const [targetLetter, setTargetLetter] = useState('A');
   const [gameCompleted, setGameCompleted] = useState(false);
-  const [foundLetters, setFoundLetters] = useState<string[]>([]);
+  const [foundLetters, setFoundLetters] = useState<LetterAnimal[]>([]);
   const [selectedAnimal, setSelectedAnimal] = useState<LetterAnimal | null>(null);
 
-  const allAnimals = [
-    { letter: 'A', animal: 'Alligator', emoji: '🐊', fullName: 'American Alligator', information: 'Large reptiles with powerful jaws and armored bodies. They live in freshwater swamps and rivers.', habitat: 'Freshwater swamps, rivers, and marshes', category: 'Reptile' },
-    { letter: 'B', animal: 'Bear', emoji: '🐻', fullName: 'Brown Bear', information: 'Large, powerful mammals with thick fur. They are omnivores and excellent swimmers.', habitat: 'Forests, mountains, and tundra', category: 'Mammal' },
-    { letter: 'C', animal: 'Cat', emoji: '🐱', fullName: 'Domestic Cat', information: 'Small carnivorous mammals that are popular pets. They are excellent hunters with sharp claws.', habitat: 'Homes and urban areas', category: 'Pet' },
-    { letter: 'D', animal: 'Dolphin', emoji: '🐬', fullName: 'Bottlenose Dolphin', information: 'Highly intelligent marine mammals known for their playful behavior and echolocation abilities.', habitat: 'Oceans and coastal waters', category: 'Marine Mammal' },
-    { letter: 'E', animal: 'Elephant', emoji: '🐘', fullName: 'African Elephant', information: 'The largest land mammals with long trunks, large ears, and tusks. They are very intelligent and social.', habitat: 'African savannas and forests', category: 'Mammal' },
-    { letter: 'F', animal: 'Fox', emoji: '🦊', fullName: 'Red Fox', information: 'Clever and adaptable small mammals with bushy tails. They are excellent hunters and problem solvers.', habitat: 'Forests, grasslands, and urban areas', category: 'Mammal' },
-    { letter: 'G', animal: 'Giraffe', emoji: '🦒', fullName: 'Masai Giraffe', information: 'The tallest mammals in the world with long necks that help them reach high tree leaves.', habitat: 'African savannas', category: 'Mammal' },
-    { letter: 'H', animal: 'Horse', emoji: '🐎', fullName: 'Arabian Horse', information: 'Strong and graceful animals that have been human companions for thousands of years.', habitat: 'Grasslands and farms', category: 'Domestic Animal' },
-    { letter: 'I', animal: 'Iguana', emoji: '🦎', fullName: 'Green Iguana', information: 'Large lizards that can change color and are excellent swimmers. They love basking in the sun.', habitat: 'Tropical rainforests and beaches', category: 'Reptile' },
-    { letter: 'J', animal: 'Jaguar', emoji: '🐆', fullName: 'South American Jaguar', information: 'Powerful big cats with the strongest bite of all felines. They are excellent swimmers.', habitat: 'Amazon rainforest and wetlands', category: 'Big Cat' },
-    { letter: 'K', animal: 'Koala', emoji: '🐨', fullName: 'Australian Koala', information: 'Cute marsupials that sleep up to 20 hours a day and only eat eucalyptus leaves.', habitat: 'Eucalyptus forests in Australia', category: 'Marsupial' },
-    { letter: 'L', animal: 'Lion', emoji: '🦁', fullName: 'African Lion', information: 'Majestic big cats known as the "King of the Jungle." They live in groups called prides.', habitat: 'African savannas and grasslands', category: 'Big Cat' },
-    { letter: 'M', animal: 'Monkey', emoji: '🐵', fullName: 'Capuchin Monkey', information: 'Intelligent primates with long tails and nimble hands. They use tools and live in social groups.', habitat: 'Tropical rainforests', category: 'Primate' },
-    { letter: 'N', animal: 'Narwhal', emoji: '🦄', fullName: 'Arctic Narwhal', information: 'Arctic whales famous for their long tusks. They are called "unicorns of the sea."', habitat: 'Arctic Ocean waters', category: 'Marine Mammal' },
-    { letter: 'O', animal: 'Owl', emoji: '🦉', fullName: 'Great Horned Owl', information: 'Nocturnal birds of prey with excellent night vision and silent flight. They have large, forward-facing eyes.', habitat: 'Forests, deserts, and urban areas', category: 'Bird' },
-    { letter: 'P', animal: 'Penguin', emoji: '🐧', fullName: 'Emperor Penguin', information: 'Flightless birds that are excellent swimmers. They live in colonies and slide on their bellies.', habitat: 'Antarctic ice and cold oceans', category: 'Bird' },
-    { letter: 'Q', animal: 'Quail', emoji: '🐦', fullName: 'California Quail', information: 'Small ground birds with distinctive head plumes. They live in groups called coveys.', habitat: 'Grasslands and scrublands', category: 'Bird' },
-    { letter: 'R', animal: 'Rabbit', emoji: '🐰', fullName: 'European Rabbit', information: 'Small mammals with long ears and powerful hind legs for hopping. They live in underground burrows.', habitat: 'Meadows, forests, and gardens', category: 'Mammal' },
-    { letter: 'S', animal: 'Shark', emoji: '🦈', fullName: 'Great White Shark', information: 'Powerful ocean predators with sharp teeth and excellent senses. They have been around for millions of years.', habitat: 'Ocean waters worldwide', category: 'Fish' },
-    { letter: 'T', animal: 'Tiger', emoji: '🐅', fullName: 'Siberian Tiger', information: 'The largest wild cats with distinctive orange and black stripes. Each tiger has a unique stripe pattern.', habitat: 'Asian forests and grasslands', category: 'Big Cat' },
-    { letter: 'U', animal: 'Unicorn', emoji: '🦄', fullName: 'Mythical Unicorn', information: 'Magical creatures with a single horn, symbolizing purity and grace in many cultures and stories.', habitat: 'Enchanted forests and fairy tales', category: 'Mythical' },
-    { letter: 'V', animal: 'Vulture', emoji: '🦅', fullName: 'Turkey Vulture', information: 'Large birds that help clean the environment by eating carrion. They have excellent eyesight.', habitat: 'Open areas and mountains', category: 'Bird' },
-    { letter: 'W', animal: 'Whale', emoji: '🐋', fullName: 'Blue Whale', information: 'The largest animals ever known to have lived on Earth. They can communicate across vast ocean distances.', habitat: 'All oceans worldwide', category: 'Marine Mammal' },
-    { letter: 'X', animal: 'X-ray Fish', emoji: '🐠', fullName: 'X-ray Tetra Fish', information: 'Small tropical fish with transparent bodies that allow you to see their internal organs.', habitat: 'Amazon River and tributaries', category: 'Fish' },
-    { letter: 'Y', animal: 'Yak', emoji: '🐂', fullName: 'Tibetan Yak', information: 'Large, hairy cattle that live in high mountains. They provide milk, meat, and wool to mountain people.', habitat: 'Himalayan mountains and plateaus', category: 'Mammal' },
-    { letter: 'Z', animal: 'Zebra', emoji: '🦓', fullName: 'Plains Zebra', information: 'Wild horses with distinctive black and white stripes. No two zebras have exactly the same stripe pattern.', habitat: 'African grasslands and savannas', category: 'Mammal' }
-  ];
 
+
+  const allAnimalsDatabase = {
+    A: [
+      { animal: 'Alligator', emoji: '🐊', fullName: 'American Alligator', information: 'Large reptile in freshwater swamps.', habitat: 'Freshwater', category: 'Reptile' },
+      { animal: 'Ant', emoji: '🐜', fullName: 'Fire Ant', information: 'Social insect working in colonies.', habitat: 'Underground', category: 'Insect' },
+      { animal: 'Alpaca', emoji: '🦙', fullName: 'Huacaya Alpaca', information: 'Woolly pack animal from Andes.', habitat: 'Mountain', category: 'Mammal' },
+      { animal: 'Angelfish', emoji: '🐠', fullName: 'Emperor Angelfish', information: 'Colorful reef fish.', habitat: 'Coral Reef', category: 'Fish' },
+      { animal: 'Anaconda', emoji: '🐍', fullName: 'Green Anaconda', information: 'Huge aquatic snake.', habitat: 'River', category: 'Reptile' },
+      { animal: 'Armadillo', emoji: '🦔', fullName: 'Nine-banded Armadillo', information: 'Armored mammal that rolls up.', habitat: 'Grassland', category: 'Mammal' },
+      { animal: 'Ape', emoji: '🦍', fullName: 'Mountain Gorilla', information: 'Great ape in forests.', habitat: 'Forest', category: 'Primate' },
+      { animal: 'Arctic Fox', emoji: '🦊', fullName: 'Arctic Fox', information: 'White fox in tundra.', habitat: 'Tundra', category: 'Mammal' },
+      { animal: 'Axolotl', emoji: '🦎', fullName: 'Mexican Axolotl', information: 'Regenerative salamander.', habitat: 'Lake', category: 'Amphibian' },
+      { animal: 'Albatross', emoji: '🕊️', fullName: 'Wandering Albatross', information: 'Large seabird with long wings.', habitat: 'Ocean', category: 'Bird' },
+      { animal: 'Amphioxus', emoji: '🐟', fullName: 'Lancelet', information: 'Primitive fish-like chordate.', habitat: 'Shallow Sea', category: 'Marine' },
+      { animal: 'Aye-aye', emoji: '🐒', fullName: 'Aye-aye Lemur', information: 'Night lemur with long finger.', habitat: 'Rainforest', category: 'Primate' },
+      { animal: 'Avocet', emoji: '🪶', fullName: 'American Avocet', information: 'Wading bird with upturned bill.', habitat: 'Wetlands', category: 'Bird' },
+      { animal: 'Anemone', emoji: '🌸', fullName: 'Sea Anemone', information: 'Marine animal that stings.', habitat: 'Coral Reef', category: 'Cnidarian' },
+      { animal: 'Agouti', emoji: '🐹', fullName: 'Central American Agouti', information: 'Forest rodent that buries seeds.', habitat: 'Forest', category: 'Mammal' },
+      { animal: 'Antlion', emoji: '🐞', fullName: 'Antlion Larva', information: 'Insect larva that traps ants.', habitat: 'Sand', category: 'Insect' },
+      { animal: 'Avahi', emoji: '🐒', fullName: 'Southern Woolly Lemur', information: 'Nocturnal lemur from Madagascar.', habitat: 'Forest', category: 'Primate' },
+      { animal: 'Axolotl', emoji: '🦎', fullName: 'Mexican Walking Fish', information: 'Unique salamander species.', habitat: 'Lake', category: 'Amphibian' },
+      { animal: 'Antechinus', emoji: '🐀', fullName: 'Yellow-footed Antechinus', information: 'Small carnivorous marsupial.', habitat: 'Forest', category: 'Mammal' },
+      { animal: 'Archerfish', emoji: '🐠', fullName: 'Archerfish', information: 'Fish that shoots water at insects.', habitat: 'Pond', category: 'Fish' },
+      { animal: 'Alligator', emoji: '🐊', fullName: 'American Alligator', information: 'Large reptiles with powerful jaws.', habitat: 'Swamps', category: 'Reptile' },
+      { animal: 'Antelope', emoji: '🦌', fullName: 'Springbok Antelope', information: 'Fast runners with graceful leaps.', habitat: 'Savannas', category: 'Mammal' },
+      { animal: 'Aye-Aye', emoji: '🙊', fullName: 'Madagascar Aye-Aye', information: 'Nocturnal primate with long fingers.', habitat: 'Rainforest', category: 'Primate' },
+      { animal: 'Axolotl', emoji: '🦎', fullName: 'Mexican Axolotl', information: 'Can regrow body parts.', habitat: 'Lakes', category: 'Amphibian' },
+      { animal: 'Anaconda', emoji: '🐍', fullName: 'Green Anaconda', information: 'Huge water-dwelling snake.', habitat: 'Rivers', category: 'Reptile' },
+      { animal: 'Arctic Fox', emoji: '🦊', fullName: 'Arctic Fox', information: 'White fur helps in snowy climates.', habitat: 'Tundra', category: 'Mammal' },
+      { animal: 'Alpaca', emoji: '🦙', fullName: 'Huacaya Alpaca', information: 'Fluffy and gentle.', habitat: 'Mountains', category: 'Mammal' },
+      { animal: 'Angelfish', emoji: '🐠', fullName: 'Emperor Angelfish', information: 'Bright reef fish.', habitat: 'Coral reefs', category: 'Fish' },
+      { animal: 'African Grey', emoji: '🦜', fullName: 'African Grey Parrot', information: 'Very smart talking bird.', habitat: 'Rainforest', category: 'Bird' },
+      { animal: 'Army Ant', emoji: '🐜', fullName: 'Army Ant', information: 'March in giant colonies.', habitat: 'Underground', category: 'Insect' },
+      { animal: 'Atlantic Puffin', emoji: '🐧', fullName: 'Atlantic Puffin', information: 'Looks like a tiny penguin.', habitat: 'Cliffs', category: 'Bird' },
+      { animal: 'Asian Elephant', emoji: '🐘', fullName: 'Asian Elephant', information: 'Gentle giants with big ears.', habitat: 'Forests', category: 'Mammal' },
+      { animal: 'Australian Terrier', emoji: '🐶', fullName: 'Australian Terrier', information: 'Small energetic dog.', habitat: 'Homes', category: 'Pet' },
+      { animal: 'Armadillo', emoji: '🦔', fullName: 'Nine-banded Armadillo', information: 'Rolls into a ball.', habitat: 'Grasslands', category: 'Mammal' },
+      { animal: 'Aardvark', emoji: '🐗', fullName: 'Aardvark', information: 'Loves eating ants!', habitat: 'Underground burrows', category: 'Mammal' },
+      { animal: 'American Bison', emoji: '🦬', fullName: 'American Bison', information: 'Once roamed wild plains.', habitat: 'Grasslands', category: 'Mammal' },
+      { animal: 'Arctic Hare', emoji: '🐇', fullName: 'Arctic Hare', information: 'Fast runners with white fur.', habitat: 'Snowfields', category: 'Mammal' },
+      { animal: 'Asian Koel', emoji: '🐦', fullName: 'Asian Koel', information: 'Known for loud singing.', habitat: 'Urban trees', category: 'Bird' },
+      { animal: 'Albatross', emoji: '🕊️', fullName: 'Wandering Albatross', information: 'Giant seabird.', habitat: 'Open oceans', category: 'Bird' },
+      { animal: 'Anemone Shrimp', emoji: '🦐', fullName: 'Spotted Anemone Shrimp', information: 'Tiny shrimp living with sea anemones.', habitat: 'Coral reefs', category: 'Crustacean' }
+    ],
+
+    B: [
+      { animal: 'Bear', emoji: '🐻', fullName: 'Brown Bear', information: 'Large omnivore in forests.', habitat: 'Forest', category: 'Mammal' },
+      { animal: 'Bee', emoji: '🐝', fullName: 'Honey Bee', information: 'Pollinating insect in hives.', habitat: 'Garden', category: 'Insect' },
+      { animal: 'Beaver', emoji: '🦫', fullName: 'North American Beaver', information: 'Dam-building rodent.', habitat: 'River', category: 'Mammal' },
+      { animal: 'Butterfly', emoji: '🦋', fullName: 'Monarch Butterfly', information: 'Colorful migratory insect.', habitat: 'Meadow', category: 'Insect' },
+      { animal: 'Bison', emoji: '🦬', fullName: 'American Bison', information: 'Large grassland grazer.', habitat: 'Prairie', category: 'Mammal' },
+      { animal: 'Bat', emoji: '🦇', fullName: 'Flying Fox', information: 'Fruit bat that flies at night.', habitat: 'Cave', category: 'Mammal' },
+      { animal: 'Barracuda', emoji: '🐟', fullName: 'Great Barracuda', information: 'Fast predatory fish.', habitat: 'Ocean', category: 'Fish' },
+      { animal: 'Blue Jay', emoji: '🐦', fullName: 'Blue Jay', information: 'Clever backyard bird.', habitat: 'Forest', category: 'Bird' },
+      { animal: 'Bobcat', emoji: '🐆', fullName: 'North American Bobcat', information: 'Wild cat of forests.', habitat: 'Woodland', category: 'Mammal' },
+      { animal: 'Badger', emoji: '🦡', fullName: 'European Badger', information: 'Burrowing mammal.', habitat: 'Grassland', category: 'Mammal' },
+      { animal: 'Beluga', emoji: '🐋', fullName: 'Beluga Whale', information: 'White whale of Arctic seas.', habitat: 'Ocean', category: 'Marine Mammal' },
+      { animal: 'Blackbird', emoji: '🐦‍⬛', fullName: 'Common Blackbird', information: 'Songbird of woodlands.', habitat: 'Forest', category: 'Bird' },
+      { animal: 'Bengal Tiger', emoji: '🐅', fullName: 'Bengal Tiger', information: 'Endangered big cat.', habitat: 'Jungle', category: 'Mammal' },
+      { animal: 'Budgerigar', emoji: '🦜', fullName: 'Budgerigar', information: 'Colorful pet parakeet.', habitat: 'Home', category: 'Pet Bird' },
+      { animal: 'Barramundi', emoji: '🐟', fullName: 'Australian Barramundi', information: 'Popular game fish.', habitat: 'River', category: 'Fish' },
+      { animal: 'Boa', emoji: '🐍', fullName: 'Boa Constrictor', information: 'Non-venomous snake.', habitat: 'Forest', category: 'Reptile' },
+      { animal: 'Box Jellyfish', emoji: '🌊', fullName: 'Box Jellyfish', information: 'Venomous marine invertebrate.', habitat: 'Ocean', category: 'Cnidarian' },
+      { animal: 'Blue Whale', emoji: '🐳', fullName: 'Blue Whale', information: 'The largest animal on Earth.', habitat: 'Ocean', category: 'Marine Mammal' },
+      { animal: 'Bushbaby', emoji: '🐒', fullName: 'Galago', information: 'Nocturnal primate.', habitat: 'Forest', category: 'Primate' },
+      { animal: 'Bullfrog', emoji: '🐸', fullName: 'American Bullfrog', information: 'Large frog near water.', habitat: 'Pond', category: 'Amphibian' }
+    ],
+
+    C: [
+      { animal: 'Cat', emoji: '🐱', fullName: 'Domestic Cat', information: 'Common pet with hunting instincts.', habitat: 'Home', category: 'Pet' },
+      { animal: 'Cheetah', emoji: '🐆', fullName: 'African Cheetah', information: 'Fastest land animal.', habitat: 'Savanna', category: 'Mammal' },
+      { animal: 'Camel', emoji: '🐪', fullName: 'Dromedary Camel', information: 'One-humped desert ship.', habitat: 'Desert', category: 'Mammal' },
+      { animal: 'Crab', emoji: '🦀', fullName: 'Hermit Crab', information: 'Shelled beach crustacean.', habitat: 'Beach', category: 'Crustacean' },
+      { animal: 'Crow', emoji: '🐦‍⬛', fullName: 'American Crow', information: 'Smart black bird.', habitat: 'Urban', category: 'Bird' },
+      { animal: 'Chameleon', emoji: '🦎', fullName: 'Panther Chameleon', information: 'Camouflaging lizard.', habitat: 'Forest', category: 'Reptile' },
+      { animal: 'Chicken', emoji: '🐓', fullName: 'Red Junglefowl', information: 'Common farm bird.', habitat: 'Farm', category: 'Bird' },
+      { animal: 'Chinchilla', emoji: '🐭', fullName: 'Long-tailed Chinchilla', information: 'Soft-furred rodent.', habitat: 'Mountain', category: 'Mammal' },
+      { animal: 'Cobra', emoji: '🐍', fullName: 'King Cobra', information: 'Venomous hooded snake.', habitat: 'Forest', category: 'Reptile' },
+      { animal: 'Coyote', emoji: '🐺', fullName: 'American Coyote', information: 'Versatile canine.', habitat: 'Plains', category: 'Mammal' },
+      { animal: 'Cougar', emoji: '🐆', fullName: 'Mountain Lion', information: 'Solitary big cat.', habitat: 'Mountains', category: 'Mammal' },
+      { animal: 'Cuttlefish', emoji: '🐙', fullName: 'Cuttlefish', information: 'Intelligent cephalopod.', habitat: 'Ocean', category: 'Mollusk' },
+      { animal: 'Cardinal', emoji: '🐦', fullName: 'Northern Cardinal', information: 'Red songbird.', habitat: 'Forest', category: 'Bird' },
+      { animal: 'Cicada', emoji: '🐞', fullName: 'Cicada', information: 'Loud summer insect.', habitat: 'Tree', category: 'Insect' },
+      { animal: 'Carp', emoji: '🐟', fullName: 'Common Carp', information: 'Freshwater pond fish.', habitat: 'Pond', category: 'Fish' },
+      { animal: 'Camelopard', emoji: '🦒', fullName: 'Reticulated Giraffe', information: 'Tall savanna herbivore.', habitat: 'Savanna', category: 'Mammal' },
+      { animal: 'Comet (Goldfish)', emoji: '🐟', fullName: 'Comet Goldfish', information: 'Popular pet fish.', habitat: 'Home Aquarium', category: 'Fish' },
+      { animal: 'Caiman', emoji: '🐊', fullName: 'Spectacled Caiman', information: 'Small crocodilian.', habitat: 'Swamp', category: 'Reptile' },
+      { animal: 'Cotton-top Tamarin', emoji: '🐒', fullName: 'Cotton-top Tamarin', information: 'Tiny whiteheaded monkey.', habitat: 'Rainforest', category: 'Primate' },
+      { animal: 'Clownfish', emoji: '🐠', fullName: 'Clownfish', information: 'Symbiotic reef fish.', habitat: 'Coral Reef', category: 'Fish' }
+    ],
+
+    D: [
+      { animal: 'Dog', emoji: '🐶', fullName: 'Golden Retriever', information: 'Loyal pet dog.', habitat: 'Home', category: 'Pet' },
+      { animal: 'Dolphin', emoji: '🐬', fullName: 'Bottlenose Dolphin', information: 'Playful marine mammal.', habitat: 'Ocean', category: 'Marine Mammal' },
+      { animal: 'Duck', emoji: '🦆', fullName: 'Mallard Duck', information: 'Common waterfowl.', habitat: 'Wetland', category: 'Bird' },
+      { animal: 'Deer', emoji: '🦌', fullName: 'White-tailed Deer', information: 'Graceful forest herbivore.', habitat: 'Forest', category: 'Mammal' },
+      { animal: 'Dugong', emoji: '🐬', fullName: 'Dugong', information: 'Sea cow in warm coastal waters.', habitat: 'Coastal', category: 'Marine Mammal' },
+      { animal: 'Dragonfly', emoji: '🐉', fullName: 'Common Dragonfly', information: 'Fast insect above water.', habitat: 'Pond', category: 'Insect' },
+      { animal: 'Dingo', emoji: '🐕', fullName: 'Australian Dingo', information: 'Wild dog of Australia.', habitat: 'Outback', category: 'Mammal' },
+      { animal: 'Dugite', emoji: '🐍', fullName: 'Western Tiger Snake', information: 'Venomous Australian snake.', habitat: 'Grassland', category: 'Reptile' },
+      { animal: 'Dove', emoji: '🕊️', fullName: 'Rock Dove', information: 'Common city bird.', habitat: 'Urban', category: 'Bird' },
+      { animal: 'Drongo', emoji: '🐦', fullName: 'Black Drongo', information: 'Aggressive insectivorous bird.', habitat: 'Field', category: 'Bird' },
+      { animal: 'Dik-dik', emoji: '🐐', fullName: 'Gerenuk', information: 'Small forest antelope.', habitat: 'Forest', category: 'Mammal' },
+      { animal: 'Dromedary', emoji: '🐪', fullName: 'One-humped Camel', information: 'Desert caravan animal.', habitat: 'Desert', category: 'Mammal' },
+      { animal: 'Duckling', emoji: '🦆', fullName: 'Baby Duck', information: 'Young mallard.', habitat: 'Wetland', category: 'Bird' },
+      { animal: 'Death Adder', emoji: '🐍', fullName: 'Australian Death Adder', information: 'Ambush viper.', habitat: 'Forest', category: 'Reptile' },
+      { animal: 'Dhole', emoji: '🐕', fullName: 'Asian Wild Dog', information: 'Pack hunting canine.', habitat: 'Forest', category: 'Mammal' },
+      { animal: 'Damselfly', emoji: '🐉', fullName: 'Azure Damselfly', information: 'Delicate pond insect.', habitat: 'Pond', category: 'Insect' },
+      { animal: 'Deinonychus', emoji: '🦖', fullName: 'Deinonychus', information: 'Feathered raptor dinosaur.', habitat: 'Fossil', category: 'Fossil' },
+      { animal: 'Degu', emoji: '🐀', fullName: 'Chilean Degu', information: 'Social rodent.', habitat: 'Forest', category: 'Mammal' },
+      { animal: 'Dart Frog', emoji: '🐸', fullName: 'Poison Dart Frog', information: 'Bright poisonous amphibian.', habitat: 'Rainforest', category: 'Amphibian' }
+    ],
+
+    E: [
+      { animal: 'Elephant', emoji: '🐘', fullName: 'African Elephant', information: 'Largest land mammal.', habitat: 'Savanna', category: 'Mammal' },
+      { animal: 'Eagle', emoji: '🦅', fullName: 'Bald Eagle', information: 'Powerful bird of prey.', habitat: 'Mountains', category: 'Bird' },
+      { animal: 'Eel', emoji: '🐟', fullName: 'Moray Eel', information: 'Slender marine fish.', habitat: 'Ocean', category: 'Fish' },
+      { animal: 'Echidna', emoji: '🐾', fullName: 'Short-beaked Echidna', information: 'Spiny monotreme.', habitat: 'Forest', category: 'Mammal' },
+      { animal: 'Emu', emoji: '🐦', fullName: 'Emu', information: 'Large flightless bird.', habitat: 'Australian Outback', category: 'Bird' },
+      { animal: 'Earthworm', emoji: '🐛', fullName: 'Common Earthworm', information: 'Soil-processing annelid.', habitat: 'Underground', category: 'Invertebrate' },
+      { animal: 'Egret', emoji: '🐦', fullName: 'Great Egret', information: 'Wading bird in wetlands.', habitat: 'Wetland', category: 'Bird' },
+      { animal: 'Electric Ray', emoji: '⚡', fullName: 'Torpedo Ray', information: 'Generates electric shocks.', habitat: 'Ocean Floor', category: 'Fish' },
+      { animal: 'Eland', emoji: '🦌', fullName: 'Common Eland', information: 'Large African antelope.', habitat: 'Savanna', category: 'Mammal' },
+      { animal: 'Earthstar Fungi', emoji: '🍄', fullName: 'Earthstar Fungus', information: 'Not animal but fungus—skip or keep?', habitat: 'Forest Floor', category: 'Fungus' }
+      // Add 10 more for E through habitat categories
+    ],
+    F: [
+      { animal: 'Fox', emoji: '🦊', fullName: 'Red Fox', information: 'Cunning and adaptable mammals known for their bushy tails.', habitat: 'Forests, meadows, and urban areas', category: 'Mammal' },
+      { animal: 'Frog', emoji: '🐸', fullName: 'Tree Frog', information: 'Amphibians that croak and jump with strong legs.', habitat: 'Wetlands, rainforests, ponds', category: 'Amphibian' },
+      { animal: 'Falcon', emoji: '🦅', fullName: 'Peregrine Falcon', information: 'The fastest bird, known for high-speed dives.', habitat: 'Cliffs, cities, open spaces', category: 'Bird' },
+      { animal: 'Flamingo', emoji: '🦩', fullName: 'Greater Flamingo', information: 'Pink birds that stand on one leg and feed in shallow water.', habitat: 'Lakes, lagoons, wetlands', category: 'Bird' },
+      { animal: 'Flying Squirrel', emoji: '🐿️', fullName: 'Northern Flying Squirrel', information: 'Gliding mammals that leap from tree to tree.', habitat: 'Forests', category: 'Mammal' },
+      { animal: 'Fiddler Crab', emoji: '🦀', fullName: 'Atlantic Fiddler Crab', information: 'Small crabs with one oversized claw.', habitat: 'Sandy or muddy shores', category: 'Crustacean' },
+      { animal: 'Firefly', emoji: '✨', fullName: 'Lightning Bug', information: 'Glowing insects that flash in the night.', habitat: 'Meadows, forests, near water', category: 'Insect' },
+      { animal: 'Fossa', emoji: '🐆', fullName: 'Fossa', information: 'A cat-like predator native to Madagascar.', habitat: 'Tropical forests', category: 'Mammal' },
+      { animal: 'Frigatebird', emoji: '🕊️', fullName: 'Magnificent Frigatebird', information: 'Seabirds with long wings and inflatable red throats.', habitat: 'Coastal oceans and islands', category: 'Bird' },
+      { animal: 'Flatfish', emoji: '🐟', fullName: 'Flounder', information: 'Fish with both eyes on one side of their head.', habitat: 'Ocean floor', category: 'Fish' },
+      { animal: 'Ferret', emoji: '🦦', fullName: 'Domestic Ferret', information: 'Playful pets and rodent hunters.', habitat: 'Homes and burrows', category: 'Pet' },
+      { animal: 'Fire Salamander', emoji: '🔥', fullName: 'Salamandra salamandra', information: 'Bright black and yellow amphibians.', habitat: 'Damp forests in Europe', category: 'Amphibian' },
+      { animal: 'Flying Fish', emoji: '🐠', fullName: 'Exocoetidae', information: 'Fish that leap from water and glide through air.', habitat: 'Tropical oceans', category: 'Fish' },
+      { animal: 'Feather Star', emoji: '🌟', fullName: 'Crinoid', information: 'Marine animals with feather-like arms.', habitat: 'Coral reefs and deep sea', category: 'Echinoderm' },
+      { animal: 'Fruit Bat', emoji: '🦇', fullName: 'Flying Fox', information: 'Large bats that feed on fruit and nectar.', habitat: 'Tropical forests', category: 'Mammal' },
+      { animal: 'Fox Snake', emoji: '🐍', fullName: 'Eastern Fox Snake', information: 'Non-venomous snakes that mimic rattlesnakes.', habitat: 'Grasslands and prairies', category: 'Reptile' },
+      { animal: 'Fangtooth Fish', emoji: '🐡', fullName: 'Anoplogaster cornuta', information: 'Deep sea fish with oversized teeth.', habitat: 'Abyssal ocean depths', category: 'Fish' },
+      { animal: 'Field Mouse', emoji: '🐭', fullName: 'Wood Mouse', information: 'Small rodents with big eyes and quick feet.', habitat: 'Fields, forests, and gardens', category: 'Mammal' },
+      { animal: 'French Bulldog', emoji: '🐶', fullName: 'Frenchie', information: 'Popular small dog breed with bat-like ears.', habitat: 'Homes', category: 'Pet' },
+      { animal: 'Frill-necked Lizard', emoji: '🦎', fullName: 'Chlamydosaurus kingii', information: 'Lizard that opens a large frill when threatened.', habitat: 'Australian woodlands', category: 'Reptile' }
+    ],
+    G: [
+      { animal: 'Giraffe', emoji: '🦒', fullName: 'Masai Giraffe', information: 'Tallest land animal.', habitat: 'Savanna', category: 'Mammal' },
+      { animal: 'Goat', emoji: '🐐', fullName: 'Mountain Goat', information: 'Great climbers.', habitat: 'Mountains', category: 'Mammal' },
+      { animal: 'Gecko', emoji: '🦎', fullName: 'Tokay Gecko', information: 'Sticky toes help climb walls.', habitat: 'Tropical forests', category: 'Reptile' },
+      { animal: 'Gannet', emoji: '🐦', fullName: 'Northern Gannet', information: 'Dive-bombing seabird.', habitat: 'Ocean cliffs', category: 'Bird' },
+      { animal: 'Guinea Pig', emoji: '🐹', fullName: 'Domestic Guinea Pig', information: 'Gentle and vocal pets.', habitat: 'Pet homes', category: 'Mammal' },
+      { animal: 'Galapagos Tortoise', emoji: '🐢', fullName: 'Giant Tortoise', information: 'Can live over 100 years.', habitat: 'Islands', category: 'Reptile' },
+      { animal: 'Gorilla', emoji: '🦍', fullName: 'Western Gorilla', information: 'Strong and gentle giants.', habitat: 'Rainforest', category: 'Primate' },
+      { animal: 'Guppy', emoji: '🐟', fullName: 'Rainbow Guppy', information: 'Colorful aquarium fish.', habitat: 'Freshwater', category: 'Fish' },
+      { animal: 'Goldfish', emoji: '🐠', fullName: 'Common Goldfish', information: 'Popular aquarium pet.', habitat: 'Bowls & tanks', category: 'Fish' },
+      { animal: 'Grasshopper', emoji: '🦗', fullName: 'Field Grasshopper', information: 'Can jump 20x its length.', habitat: 'Fields & gardens', category: 'Insect' },
+      { animal: 'Gibbon', emoji: '🙉', fullName: 'White-handed Gibbon', information: 'Great swingers of the treetops.', habitat: 'Rainforest', category: 'Primate' },
+      { animal: 'Green Tree Frog', emoji: '🐸', fullName: 'American Green Tree Frog', information: 'Sticky-toed climbers.', habitat: 'Wetlands', category: 'Amphibian' },
+      { animal: 'Galago', emoji: '🦧', fullName: 'Bush Baby', information: 'Tiny primates with big eyes.', habitat: 'Forest canopy', category: 'Primate' },
+      { animal: 'Glowworm', emoji: '✨', fullName: 'Firefly Larva', information: 'Bioluminescent insect.', habitat: 'Forests', category: 'Insect' },
+      { animal: 'Goblin Shark', emoji: '🦈', fullName: 'Deep Sea Goblin Shark', information: 'Rare deep-sea predator.', habitat: 'Ocean deep', category: 'Fish' },
+      { animal: 'Gaur', emoji: '🐃', fullName: 'Indian Bison', information: 'Largest wild cattle.', habitat: 'Tropical forests', category: 'Mammal' },
+      { animal: 'Goshawk', emoji: '🦅', fullName: 'Northern Goshawk', information: 'Fast forest hunters.', habitat: 'Forests', category: 'Bird' },
+      { animal: 'Gila Monster', emoji: '🦎', fullName: 'Venomous Gila Lizard', information: 'One of few venomous lizards.', habitat: 'Deserts', category: 'Reptile' },
+      { animal: 'Goby', emoji: '🐠', fullName: 'Neon Goby', information: 'Tiny reef-cleaning fish.', habitat: 'Coral reefs', category: 'Fish' },
+      { animal: 'Grouse', emoji: '🐤', fullName: 'Spruce Grouse', information: 'Ground-dwelling bird.', habitat: 'Boreal forests', category: 'Bird' }
+    ],
+    H: [
+      { animal: 'Hamster', emoji: '🐹', fullName: 'Syrian Hamster', information: 'Small nocturnal rodents popular as pets.', habitat: 'Cages and grasslands', category: 'Pet' },
+      { animal: 'Hawk', emoji: '🦅', fullName: 'Red-tailed Hawk', information: 'Birds of prey with sharp vision.', habitat: 'Forests and plains', category: 'Bird' },
+      { animal: 'Hedgehog', emoji: '🦔', fullName: 'European Hedgehog', information: 'Spiny mammals that curl into balls for defense.', habitat: 'Gardens and meadows', category: 'Mammal' },
+      { animal: 'Heron', emoji: '🐦', fullName: 'Great Blue Heron', information: 'Tall wading birds that hunt fish in shallow water.', habitat: 'Wetlands and shores', category: 'Bird' },
+      { animal: 'Horse', emoji: '🐴', fullName: 'Arabian Horse', information: 'Strong, graceful animals used for riding and work.', habitat: 'Grasslands and farms', category: 'Mammal' },
+      { animal: 'Hornet', emoji: '🐝', fullName: 'Asian Giant Hornet', information: 'Large and aggressive wasps with painful stings.', habitat: 'Forests and gardens', category: 'Insect' },
+      { animal: 'Hippopotamus', emoji: '🦛', fullName: 'Common Hippopotamus', information: 'Large semi-aquatic mammals with huge mouths.', habitat: 'African rivers', category: 'Mammal' },
+      { animal: 'Hyena', emoji: '🐕', fullName: 'Spotted Hyena', information: 'Scavenging carnivores with a laughing call.', habitat: 'Savannas of Africa', category: 'Mammal' },
+      { animal: 'Hummingbird', emoji: '🐦', fullName: 'Ruby-throated Hummingbird', information: 'Tiny birds that hover and sip nectar.', habitat: 'Gardens and forests', category: 'Bird' },
+      { animal: 'Horseshoe Crab', emoji: '🦀', fullName: 'Atlantic Horseshoe Crab', information: 'Ancient marine arthropods with a hard shell.', habitat: 'Ocean floors', category: 'Marine Arthropod' },
+      { animal: 'Hammerhead Shark', emoji: '🦈', fullName: 'Great Hammerhead', information: 'Sharks with distinctive T-shaped heads.', habitat: 'Warm coastal waters', category: 'Fish' },
+      { animal: 'Hoopoe', emoji: '🐦', fullName: 'Eurasian Hoopoe', information: 'Colorful birds with a unique crown of feathers.', habitat: 'Woodlands and savannas', category: 'Bird' },
+      { animal: 'Harpy Eagle', emoji: '🦅', fullName: 'Harpy Eagle', information: 'Powerful eagles with massive talons.', habitat: 'Tropical rainforests', category: 'Bird' },
+      { animal: 'Honeybee', emoji: '🐝', fullName: 'Western Honeybee', information: 'Important pollinators that produce honey.', habitat: 'Gardens and hives', category: 'Insect' },
+      { animal: 'Hagfish', emoji: '🐟', fullName: 'Atlantic Hagfish', information: 'Jawless fish known for producing slime.', habitat: 'Deep sea', category: 'Fish' },
+      { animal: 'Hornbill', emoji: '🐦', fullName: 'Great Hornbill', information: 'Tropical birds with large curved bills.', habitat: 'Rainforests', category: 'Bird' },
+      { animal: 'Howler Monkey', emoji: '🐒', fullName: 'Black Howler Monkey', information: 'Loud primates known for their howls.', habitat: 'South American forests', category: 'Primate' },
+      { animal: 'Hawk Moth', emoji: '🦋', fullName: 'Hummingbird Hawk Moth', information: 'Moths that hover like hummingbirds.', habitat: 'Gardens and meadows', category: 'Insect' },
+      { animal: 'Haddock', emoji: '🐟', fullName: 'North Atlantic Haddock', information: 'Fish known for its role in fish and chips.', habitat: 'Cold ocean waters', category: 'Fish' },
+      { animal: 'Harbor Seal', emoji: '🦭', fullName: 'Common Seal', information: 'Seals that live along coastlines and haul onto land.', habitat: 'Cold coasts and beaches', category: 'Marine Mammal' }
+    ],
+    I: [
+      { animal: 'Iguana', emoji: '🦎', fullName: 'Green Iguana', information: 'Large lizards that love to bask in the sun.', habitat: 'Tropical forests and trees', category: 'Reptile' },
+      { animal: 'Indian Cobra', emoji: '🐍', fullName: 'Spectacled Cobra', information: 'Venomous snake famous for its hood.', habitat: 'Grasslands and forests in India', category: 'Reptile' },
+      { animal: 'Indian Star Tortoise', emoji: '🐢', fullName: 'Star Tortoise', information: 'Known for its star-like shell pattern.', habitat: 'Dry areas and scrublands', category: 'Reptile' },
+      { animal: 'Indian Elephant', emoji: '🐘', fullName: 'Asian Elephant', information: 'Smaller-eared cousin of the African elephant.', habitat: 'Forests and grasslands', category: 'Mammal' },
+      { animal: 'Indian Peafowl', emoji: '🦚', fullName: 'Peacock', information: 'National bird of India with a colorful tail.', habitat: 'Open forests and villages', category: 'Bird' },
+      { animal: 'Indian Pangolin', emoji: '🦔', fullName: 'Thick-tailed Pangolin', information: 'Scaly mammals that eat ants.', habitat: 'Grasslands and forests', category: 'Mammal' },
+      { animal: 'Indian Mongoose', emoji: '🐾', fullName: 'Common Mongoose', information: 'Snake-fighting mammals with agility.', habitat: 'Rural and forest areas', category: 'Mammal' },
+      { animal: 'Indian Bullfrog', emoji: '🐸', fullName: 'Hoplobatrachus tigerinus', information: 'Bright yellow during mating season.', habitat: 'Ponds and rice fields', category: 'Amphibian' },
+      { animal: 'Indian Krait', emoji: '🐍', fullName: 'Common Krait', information: 'Highly venomous nocturnal snake.', habitat: 'Fields and forests', category: 'Reptile' },
+      { animal: 'Indian Cormorant', emoji: '🐦', fullName: 'Little Cormorant', information: 'Water birds that dive for fish.', habitat: 'Lakes and rivers', category: 'Bird' },
+      { animal: 'Indian Bison', emoji: '🐃', fullName: 'Gaur', information: 'Massive wild cattle with a humped back.', habitat: 'Indian jungles', category: 'Mammal' },
+      { animal: 'Indian Scops Owl', emoji: '🦉', fullName: 'Otus bakkamoena', information: 'Tiny owl that blends with bark.', habitat: 'Woodlands', category: 'Bird' },
+      { animal: 'Indian Palm Squirrel', emoji: '🐿️', fullName: 'Three-striped Palm Squirrel', information: 'Active daytime climbers.', habitat: 'Urban parks and trees', category: 'Mammal' },
+      { animal: 'Indian Gharial', emoji: '🐊', fullName: 'Gavialis gangeticus', information: 'Crocodile-like reptile with a long snout.', habitat: 'Rivers in India and Nepal', category: 'Reptile' },
+      { animal: 'Indian Cobra Moth', emoji: '🦋', fullName: 'Attacus atlas', information: 'One of the world’s largest moths.', habitat: 'Tropical forests', category: 'Insect' },
+      { animal: 'Indian Roller', emoji: '🐦', fullName: 'Coracias benghalensis', information: 'Beautiful blue birds with acrobatic flight.', habitat: 'Open countryside', category: 'Bird' },
+      { animal: 'Indian Jackal', emoji: '🐕', fullName: 'Golden Jackal', information: 'Cunning scavengers of the night.', habitat: 'Grasslands and woodlands', category: 'Mammal' },
+      { animal: 'Indian Pipefish', emoji: '🐟', fullName: 'Freshwater Pipefish', information: 'Elongated fish related to seahorses.', habitat: 'Streams and estuaries', category: 'Fish' },
+      { animal: 'Indian Tree Frog', emoji: '🐸', fullName: 'Polypedates leucomystax', information: 'Can climb leaves and walls.', habitat: 'Tropical and subtropical forests', category: 'Amphibian' },
+      { animal: 'Indian Starling', emoji: '🐦', fullName: 'Common Myna', information: 'Noisy birds often seen near humans.', habitat: 'Urban and rural settings', category: 'Bird' }
+    ],
+    J: [
+      { animal: 'Jaguar', emoji: '🐆', fullName: 'Panthera onca', information: 'Powerful cats that love water and climb trees.', habitat: 'Rainforests of South America', category: 'Big Cat' },
+      { animal: 'Jellyfish', emoji: '🌊', fullName: 'Moon Jellyfish', information: 'Soft-bodied creatures that pulse through the ocean.', habitat: 'Oceans', category: 'Cnidarian' },
+      { animal: 'Jackrabbit', emoji: '🐇', fullName: 'Black-tailed Jackrabbit', information: 'Long-eared hares that leap fast.', habitat: 'Deserts and plains', category: 'Mammal' },
+      { animal: 'Jackal', emoji: '🐕', fullName: 'Golden Jackal', information: 'Fox-like scavengers with sharp senses.', habitat: 'Grasslands and scrub', category: 'Mammal' },
+      { animal: 'Javan Rhino', emoji: '🦏', fullName: 'Rhinoceros sondaicus', information: 'One of the rarest rhinos on Earth.', habitat: 'Tropical forests of Java', category: 'Mammal' },
+      { animal: 'Japanese Macaque', emoji: '🐵', fullName: 'Snow Monkey', information: 'Loves hot springs during snow season.', habitat: 'Mountains of Japan', category: 'Primate' },
+      { animal: 'Junglefowl', emoji: '🐔', fullName: 'Red Junglefowl', information: 'Ancestor of domestic chickens.', habitat: 'Tropical forests', category: 'Bird' },
+      { animal: 'Japanese Spider Crab', emoji: '🦀', fullName: 'Macrocheira kaempferi', information: 'Largest leg span of any arthropod.', habitat: 'Deep waters near Japan', category: 'Crustacean' },
+      { animal: 'Jewel Beetle', emoji: '🪲', fullName: 'Buprestidae', information: 'Metallic beetles with shiny shells.', habitat: 'Forests', category: 'Insect' },
+      { animal: 'Jabiru', emoji: '🕊️', fullName: 'Jabiru Stork', information: 'Large stork with a black head and red neck.', habitat: 'Wetlands and marshes', category: 'Bird' },
+      { animal: 'Javelina', emoji: '🐗', fullName: 'Collared Peccary', information: 'Pig-like mammals that live in herds.', habitat: 'Southwestern deserts', category: 'Mammal' },
+      { animal: 'Jungle Cat', emoji: '🐈', fullName: 'Felis chaus', information: 'Wild cats found in reed beds and wetlands.', habitat: 'Marshes and river valleys', category: 'Mammal' },
+      { animal: 'Jungle Nymph', emoji: '🦗', fullName: 'Heteropteryx dilatata', information: 'Large stick insects from Malaysia.', habitat: 'Rainforests', category: 'Insect' },
+      { animal: 'Java Sparrow', emoji: '🐦', fullName: 'Lonchura oryzivora', information: 'Colorful songbirds kept as pets.', habitat: 'Rice fields and grasslands', category: 'Bird' },
+      { animal: 'Japanese Rat Snake', emoji: '🐍', fullName: 'Elaphe climacophora', information: 'Non-venomous climbers in rural Japan.', habitat: 'Forests and farms', category: 'Reptile' },
+      { animal: 'Jungle Babbler', emoji: '🐤', fullName: 'Turdoides striata', information: 'Noisy social birds known as “seven sisters”.', habitat: 'Scrub and forest', category: 'Bird' },
+      { animal: 'Javan Slow Loris', emoji: '🦥', fullName: 'Nycticebus javanicus', information: 'Nocturnal primates with toxic bites.', habitat: 'Tropical forests', category: 'Primate' },
+      { animal: 'Japanese Quail', emoji: '🐣', fullName: 'Coturnix japonica', information: 'Ground birds raised for eggs.', habitat: 'Grasslands and farms', category: 'Bird' },
+      { animal: 'Javan Hawk-Eagle', emoji: '🦅', fullName: 'Nisaetus bartelsi', information: 'Endangered raptors of Java’s rainforests.', habitat: 'Mountain forests', category: 'Bird' },
+      { animal: 'Jellycat', emoji: '🐱', fullName: 'Fantasy Plush Pet', information: 'Mythical, soft animal from imagination.', habitat: 'Cuddle world', category: 'Fantasy' }
+    ],
+    K: [
+      { animal: 'Koala', emoji: '🐨', fullName: 'Phascolarctos cinereus', information: 'Sleepy eucalyptus eaters from Australia.', habitat: 'Eucalyptus forests', category: 'Mammal' },
+      { animal: 'Kingfisher', emoji: '🐦', fullName: 'Common Kingfisher', information: 'Bright birds that dive for fish.', habitat: 'Riverbanks and wetlands', category: 'Bird' },
+      { animal: 'Kangaroo', emoji: '🦘', fullName: 'Red Kangaroo', information: 'Australia’s hopping marsupials.', habitat: 'Outback grasslands', category: 'Mammal' },
+      { animal: 'Kudu', emoji: '🦌', fullName: 'Greater Kudu', information: 'Spiral-horned antelope with stripes.', habitat: 'African woodlands', category: 'Mammal' },
+      { animal: 'Killer Whale', emoji: '🐳', fullName: 'Orca', information: 'Top predators of the sea.', habitat: 'All oceans', category: 'Marine Mammal' },
+      { animal: 'Kiwi', emoji: '🥝', fullName: 'Brown Kiwi', information: 'Flightless birds with long beaks.', habitat: 'New Zealand forests', category: 'Bird' },
+      { animal: 'Komodo Dragon', emoji: '🦎', fullName: 'Varanus komodoensis', information: 'World’s largest lizard.', habitat: 'Indonesian islands', category: 'Reptile' },
+      { animal: 'Koi Fish', emoji: '🐠', fullName: 'Cyprinus rubrofuscus', information: 'Colorful ornamental fish.', habitat: 'Ponds and lakes', category: 'Fish' },
+      { animal: 'Katydid', emoji: '🦗', fullName: 'Bush Cricket', information: 'Leaf-like insects with musical chirps.', habitat: 'Tropical forests', category: 'Insect' },
+      { animal: 'Kakapo', emoji: '🦜', fullName: 'Strigops habroptilus', information: 'Flightless parrot from NZ.', habitat: 'Forests of New Zealand', category: 'Bird' },
+      { animal: 'Kermode Bear', emoji: '🐻', fullName: 'Spirit Bear', information: 'White-coated black bear.', habitat: 'Pacific Northwest forests', category: 'Mammal' },
+      { animal: 'Kouprey', emoji: '🐂', fullName: 'Bos sauveli', information: 'Rare wild cattle of Southeast Asia.', habitat: 'Forest and plains', category: 'Mammal' },
+      { animal: 'Kitti’s Hog-nosed Bat', emoji: '🦇', fullName: 'Craseonycteris thonglongyai', information: 'World’s smallest mammal.', habitat: 'Caves in Thailand', category: 'Mammal' },
+      { animal: 'Kangaroo Rat', emoji: '🐭', fullName: 'Dipodomys', information: 'Desert rodents that hop.', habitat: 'North American deserts', category: 'Mammal' },
+      { animal: 'Kelp Gull', emoji: '🐦', fullName: 'Larus dominicanus', information: 'Seabirds that scavenge coastlines.', habitat: 'Seashores and islands', category: 'Bird' },
+      { animal: 'Knifefish', emoji: '🐟', fullName: 'Electric Knifefish', information: 'Use electric pulses to sense.', habitat: 'Amazon rivers', category: 'Fish' },
+      { animal: 'Kangaroo Island Emu', emoji: '🕊️', fullName: 'Extinct Emu Subspecies', information: 'Smaller than mainland emus.', habitat: 'Kangaroo Island', category: 'Bird (Extinct)' },
+      { animal: 'Kashmir Stag', emoji: '🦌', fullName: 'Hangul', information: 'Rare deer of the Himalayas.', habitat: 'Mountain forests', category: 'Mammal' },
+      { animal: 'Kakarratul', emoji: '🐾', fullName: 'Northern Marsupial Mole', information: 'Blind tunneling mammals.', habitat: 'Australian deserts', category: 'Mammal' },
+      { animal: 'Kirk’s Dik-dik', emoji: '🦌', fullName: 'Tiny antelope', information: 'Small antelope that whistles.', habitat: 'Savannas of East Africa', category: 'Mammal' }
+    ],
+    L: [
+      { animal: 'Lion', emoji: '🦁', fullName: 'African Lion', information: 'The king of the savanna with a mighty roar.', habitat: 'African grasslands', category: 'Big Cat' },
+      { animal: 'Leopard', emoji: '🐆', fullName: 'African Leopard', information: 'Spotted stealthy predators and excellent climbers.', habitat: 'Forests and savannas', category: 'Big Cat' },
+      { animal: 'Lynx', emoji: '🐱', fullName: 'Eurasian Lynx', information: 'Wild cats with tufts on ears and short tails.', habitat: 'Forests and mountains', category: 'Mammal' },
+      { animal: 'Lemur', emoji: '🐒', fullName: 'Ring-tailed Lemur', information: 'Endemic to Madagascar with striped tails.', habitat: 'Tropical forests', category: 'Primate' },
+      { animal: 'Lizard', emoji: '🦎', fullName: 'Common Wall Lizard', information: 'Fast reptiles often seen basking in sun.', habitat: 'Rocks, forests, deserts', category: 'Reptile' },
+      { animal: 'Lobster', emoji: '🦞', fullName: 'American Lobster', information: 'Crustaceans with strong claws.', habitat: 'Ocean floor and reefs', category: 'Crustacean' },
+      { animal: 'Loon', emoji: '🐦', fullName: 'Common Loon', information: 'Diving birds with haunting calls.', habitat: 'Lakes and northern rivers', category: 'Bird' },
+      { animal: 'Liger', emoji: '🦁', fullName: 'Lion-Tiger Hybrid', information: 'Cross between lion and tiger.', habitat: 'Captivity', category: 'Hybrid' },
+      { animal: 'Leafcutter Ant', emoji: '🐜', fullName: 'Atta cephalotes', information: 'Ants that harvest leaves to grow fungus.', habitat: 'Tropical forests', category: 'Insect' },
+      { animal: 'Lamprey', emoji: '🌀', fullName: 'Sea Lamprey', information: 'Jawless parasitic fish.', habitat: 'Fresh and salt water', category: 'Fish' },
+      { animal: 'Labrador Retriever', emoji: '🐶', fullName: 'Labrador Retriever', information: 'Friendly dogs that love swimming.', habitat: 'Homes', category: 'Pet' },
+      { animal: 'Ladybug', emoji: '🐞', fullName: 'Seven-spot Ladybird', information: 'Spotted beetles helpful to gardeners.', habitat: 'Gardens, forests', category: 'Insect' },
+      { animal: 'Langur', emoji: '🐒', fullName: 'Hanuman Langur', information: 'Long-tailed leaf-eating monkeys.', habitat: 'Indian forests', category: 'Primate' },
+      { animal: 'Lappet-faced Vulture', emoji: '🦅', fullName: 'Torgos tracheliotos', information: 'Large African scavenger birds.', habitat: 'Savannas', category: 'Bird' },
+      { animal: 'Leafy Sea Dragon', emoji: '🐉', fullName: 'Phycodurus eques', information: 'Camouflaged relatives of seahorses.', habitat: 'Australian reefs', category: 'Fish' },
+      { animal: 'Loggerhead Turtle', emoji: '🐢', fullName: 'Caretta caretta', information: 'Marine turtles with strong jaws.', habitat: 'Tropical and subtropical oceans', category: 'Reptile' },
+      { animal: 'Lark', emoji: '🐦', fullName: 'Skylark', information: 'Singing birds with beautiful melodies.', habitat: 'Grasslands', category: 'Bird' },
+      { animal: 'Loris', emoji: '🦊', fullName: 'Slow Loris', information: 'Nocturnal primates with toxic bites.', habitat: 'Asian rainforests', category: 'Primate' },
+      { animal: 'Lionfish', emoji: '🐠', fullName: 'Pterois', information: 'Spiny, venomous coral reef fish.', habitat: 'Tropical reefs', category: 'Fish' },
+      { animal: 'Longhorn Beetle', emoji: '🪲', fullName: 'Cerambycidae', information: 'Insects with long antennae.', habitat: 'Forests and woodlands', category: 'Insect' }
+    ],
+    M: [
+      { animal: 'Moose', emoji: '🦌', fullName: 'North American Moose', information: 'Large deer with broad antlers.', habitat: 'Forests and wetlands', category: 'Mammal' },
+      { animal: 'Macaw', emoji: '🦜', fullName: 'Blue-and-yellow Macaw', information: 'Colorful parrots known for their intelligence.', habitat: 'Rainforests', category: 'Bird' },
+      { animal: 'Manatee', emoji: '🐋', fullName: 'West Indian Manatee', information: 'Gentle giants also known as sea cows.', habitat: 'Warm coastal waters', category: 'Marine Mammal' },
+      { animal: 'Mantis', emoji: '🦗', fullName: 'Praying Mantis', information: 'Insects known for their folded arms and hunting skills.', habitat: 'Gardens and grasslands', category: 'Insect' },
+      { animal: 'Mole', emoji: '🐾', fullName: 'Eastern Mole', information: 'Digging mammals with poor eyesight.', habitat: 'Underground tunnels', category: 'Mammal' },
+      { animal: 'Manta Ray', emoji: '🌊', fullName: 'Giant Oceanic Manta Ray', information: 'Large graceful rays that glide through ocean waters.', habitat: 'Tropical oceans', category: 'Fish' },
+      { animal: 'Magpie', emoji: '🐦', fullName: 'Black-billed Magpie', information: 'Intelligent birds with striking black and white feathers.', habitat: 'Open woodlands and towns', category: 'Bird' },
+      { animal: 'Millipede', emoji: '🐛', fullName: 'African Giant Millipede', information: 'Creepy crawlers with many legs.', habitat: 'Underground and forest floors', category: 'Insect' },
+      { animal: 'Mandrill', emoji: '🐒', fullName: 'Mandrill', information: 'Colorful-faced primates with powerful builds.', habitat: 'Tropical African forests', category: 'Primate' },
+      { animal: 'Musk Ox', emoji: '🐂', fullName: 'Ovibos moschatus', information: 'Hairy herd animals with strong horns.', habitat: 'Arctic tundra', category: 'Mammal' },
+      { animal: 'Marmot', emoji: '🐿️', fullName: 'Alpine Marmot', information: 'Chubby rodents that whistle to warn of danger.', habitat: 'Mountain meadows', category: 'Mammal' },
+      { animal: 'Mongoose', emoji: '🐾', fullName: 'Indian Grey Mongoose', information: 'Fast mammals known for fighting snakes.', habitat: 'Grasslands and forests', category: 'Mammal' },
+      { animal: 'Moray Eel', emoji: '🐍', fullName: 'Green Moray Eel', information: 'Long, snake-like fish hiding in coral reefs.', habitat: 'Tropical oceans', category: 'Fish' },
+      { animal: 'Moth', emoji: '🦋', fullName: 'Luna Moth', information: 'Nocturnal winged insects with fuzzy bodies.', habitat: 'Forests and woodlands', category: 'Insect' },
+      { animal: 'Mudskipper', emoji: '🐟', fullName: 'Amphibious Mudskipper', information: 'Fish that can walk and breathe on land.', habitat: 'Mangrove swamps', category: 'Fish' },
+      { animal: 'Mouse', emoji: '🐁', fullName: 'House Mouse', information: 'Tiny rodents with quick reflexes.', habitat: 'Fields and homes', category: 'Mammal' },
+      { animal: 'Mountain Goat', emoji: '🐐', fullName: 'Rocky Mountain Goat', information: 'Sure-footed climbers with shaggy coats.', habitat: 'Mountain cliffs', category: 'Mammal' },
+      { animal: 'Maned Wolf', emoji: '🦊', fullName: 'Chrysocyon brachyurus', information: 'Tall-legged wild dogs from South America.', habitat: 'Grasslands and savannas', category: 'Mammal' },
+      { animal: 'Malayan Tapir', emoji: '🐘', fullName: 'Tapirus indicus', information: 'Odd mammals with short trunks and two-tone coats.', habitat: 'Rainforests', category: 'Mammal' },
+      { animal: 'Moorhen', emoji: '🦢', fullName: 'Common Moorhen', information: 'Birds with red beaks and long toes.', habitat: 'Freshwater ponds and wetlands', category: 'Bird' }
+    ],
+    N: [
+      { animal: 'Narwhal', emoji: '🦄', fullName: 'Narwhal Whale', information: 'Marine mammals with long spiral tusks.', habitat: 'Arctic seas', category: 'Marine Mammal' },
+      { animal: 'Nighthawk', emoji: '🦅', fullName: 'Common Nighthawk', information: 'Birds that hunt insects at twilight.', habitat: 'Forests and grasslands', category: 'Bird' },
+      { animal: 'Newt', emoji: '🦎', fullName: 'Eastern Newt', information: 'Amphibians with lizard-like bodies.', habitat: 'Ponds and wetlands', category: 'Amphibian' },
+      { animal: 'Numbat', emoji: '🦔', fullName: 'Banded Anteater', information: 'Insect-eating marsupials with striped backs.', habitat: 'Australian forests', category: 'Mammal' },
+      { animal: 'Nautilus', emoji: '🐚', fullName: 'Chambered Nautilus', information: 'Spiral-shelled sea creatures.', habitat: 'Deep ocean reefs', category: 'Mollusk' },
+      { animal: 'Nene', emoji: '🦆', fullName: 'Hawaiian Goose', information: 'State bird of Hawaii, a rare goose species.', habitat: 'Volcanic grasslands', category: 'Bird' },
+      { animal: 'Northern Cardinal', emoji: '🐦', fullName: 'Cardinalis cardinalis', information: 'Bright red songbirds.', habitat: 'Backyards and woodlands', category: 'Bird' },
+      { animal: 'Nile Crocodile', emoji: '🐊', fullName: 'Crocodylus niloticus', information: 'Massive African reptiles.', habitat: 'Rivers and lakes', category: 'Reptile' },
+      { animal: 'Naked Mole Rat', emoji: '🐀', fullName: 'Heterocephalus glaber', information: 'Underground mammals with no fur.', habitat: 'Subterranean tunnels', category: 'Mammal' },
+      { animal: 'Nightcrawler', emoji: '🪱', fullName: 'Common Earthworm', information: 'Worms that enrich soil.', habitat: 'Underground', category: 'Invertebrate' },
+      { animal: 'Nectar Bat', emoji: '🦇', fullName: 'Glossophaga soricina', information: 'Pollinating bats with long tongues.', habitat: 'Rainforests', category: 'Mammal' },
+      { animal: 'Neon Tetra', emoji: '🐠', fullName: 'Paracheirodon innesi', information: 'Small glowing fish.', habitat: 'Freshwater rivers', category: 'Fish' },
+      { animal: 'Natterjack Toad', emoji: '🐸', fullName: 'Epidalea calamita', information: 'Toads with loud calls.', habitat: 'Heathlands and dunes', category: 'Amphibian' },
+      { animal: 'Northern Pike', emoji: '🐟', fullName: 'Esox lucius', information: 'Freshwater fish with sharp teeth.', habitat: 'Lakes and rivers', category: 'Fish' },
+      { animal: 'Norfolk Terrier', emoji: '🐶', fullName: 'Small companion dog', information: 'Bold and loving dog breed.', habitat: 'Homes and farms', category: 'Pet' },
+      { animal: 'Nile Monitor', emoji: '🦎', fullName: 'Varanus niloticus', information: 'Large African lizards.', habitat: 'Wetlands and riversides', category: 'Reptile' },
+      { animal: 'Northern Fur Seal', emoji: '🦭', fullName: 'Callorhinus ursinus', information: 'Marine mammals with thick fur.', habitat: 'North Pacific coastlines', category: 'Marine Mammal' },
+      { animal: 'Nutria', emoji: '🦫', fullName: 'Coypu', information: 'Large rodents similar to beavers.', habitat: 'Freshwater marshes', category: 'Mammal' },
+      { animal: 'Nicator', emoji: '🎶', fullName: 'Western Nicator', information: 'Songbirds of Africa.', habitat: 'Tropical woodlands', category: 'Bird' },
+      { animal: 'Northern Goshawk', emoji: '🦉', fullName: 'Accipiter gentilis', information: 'Fierce raptor birds.', habitat: 'Conifer forests', category: 'Bird' }
+    ],
+    O: [
+      { animal: 'Octopus', emoji: '🐙', fullName: 'Common Octopus', information: 'Smart sea creatures with 8 arms.', habitat: 'Ocean reefs and caves', category: 'Cephalopod' },
+      { animal: 'Orca', emoji: '🐳', fullName: 'Killer Whale', information: 'Top ocean predators.', habitat: 'All oceans', category: 'Marine Mammal' },
+      { animal: 'Owl', emoji: '🦉', fullName: 'Barn Owl', information: 'Silent hunters with big eyes.', habitat: 'Forests, barns, cities', category: 'Bird' },
+      { animal: 'Ostrich', emoji: '🪿', fullName: 'Common Ostrich', information: 'Largest flightless bird.', habitat: 'African savannas', category: 'Bird' },
+      { animal: 'Otter', emoji: '🦦', fullName: 'Sea Otter', information: 'Playful water mammals.', habitat: 'Coasts and rivers', category: 'Mammal' },
+      { animal: 'Okapi', emoji: '🦓', fullName: 'Okapia johnstoni', information: 'Giraffe’s cousin with zebra legs.', habitat: 'Congo rainforests', category: 'Mammal' },
+      { animal: 'Ocelot', emoji: '🐆', fullName: 'Leopardus pardalis', information: 'Wild cats with golden coats.', habitat: 'Rainforests', category: 'Mammal' },
+      { animal: 'Opossum', emoji: '🐀', fullName: 'Virginia Opossum', information: 'Marsupials that “play dead.”', habitat: 'Forests and urban areas', category: 'Mammal' },
+      { animal: 'Orangutan', emoji: '🦧', fullName: 'Bornean Orangutan', information: 'Red-haired forest apes.', habitat: 'Tropical forests', category: 'Primate' },
+      { animal: 'Ox', emoji: '🐂', fullName: 'Domestic Ox', information: 'Working animals with great strength.', habitat: 'Farms and plains', category: 'Mammal' },
+      { animal: 'Oarfish', emoji: '🐉', fullName: 'Regalecus glesne', information: 'Deep sea ribbon fish.', habitat: 'Abyssal zones', category: 'Fish' },
+      { animal: 'Oilbird', emoji: '🕊️', fullName: 'Steatornis caripensis', information: 'Nocturnal fruit-eating bird.', habitat: 'South American caves', category: 'Bird' },
+      { animal: 'Orange Roughy', emoji: '🐠', fullName: 'Deep Sea Perch', information: 'Long-lived fish species.', habitat: 'Deep sea', category: 'Fish' },
+      { animal: 'Oriental Fire-bellied Toad', emoji: '🐸', fullName: 'Bombina orientalis', information: 'Bright belly amphibian.', habitat: 'Ponds and streams', category: 'Amphibian' },
+      { animal: 'Ortolan Bunting', emoji: '🐦', fullName: 'Emberiza hortulana', information: 'Small songbird of Europe.', habitat: 'Grasslands and fields', category: 'Bird' },
+      { animal: 'Olingo', emoji: '🦝', fullName: 'Bassaricyon', information: 'Nocturnal tree-dwelling mammal.', habitat: 'Rainforests of Central America', category: 'Mammal' },
+      { animal: 'Olive Baboon', emoji: '🐒', fullName: 'Papio anubis', information: 'African monkeys in large troops.', habitat: 'Savannas and forests', category: 'Primate' },
+      { animal: 'Orfe', emoji: '🐟', fullName: 'Golden Orfe', information: 'Freshwater fish often found in ponds.', habitat: 'Lakes and slow rivers', category: 'Fish' },
+      { animal: 'Olm', emoji: '🦎', fullName: 'Proteus anguinus', information: 'Blind cave-dwelling salamander.', habitat: 'Underground water systems', category: 'Amphibian' },
+      { animal: 'Oystercatcher', emoji: '🪶', fullName: 'Eurasian Oystercatcher', information: 'Shorebirds with strong beaks.', habitat: 'Coastal wetlands', category: 'Bird' }
+    ],
+    P: [
+      { animal: 'Penguin', emoji: '🐧', fullName: 'Emperor Penguin', information: 'Flightless birds that swim.', habitat: 'Antarctic ice', category: 'Bird' },
+      { animal: 'Panda', emoji: '🐼', fullName: 'Giant Panda', information: 'Bamboo-eating bears.', habitat: 'Chinese mountain forests', category: 'Mammal' },
+      { animal: 'Parrot', emoji: '🦜', fullName: 'African Grey Parrot', information: 'Colorful, intelligent talkers.', habitat: 'Rainforests', category: 'Bird' },
+      { animal: 'Peacock', emoji: '🦚', fullName: 'Indian Peafowl', information: 'Birds with fancy feather fans.', habitat: 'Forests and parks', category: 'Bird' },
+      { animal: 'Pufferfish', emoji: '🐡', fullName: 'Porcupine Fish', information: 'Fish that inflate when threatened.', habitat: 'Tropical seas', category: 'Fish' },
+      { animal: 'Panther', emoji: '🐆', fullName: 'Black Leopard', information: 'Mysterious black big cats.', habitat: 'Forests and jungles', category: 'Mammal' },
+      { animal: 'Platypus', emoji: '🦆', fullName: 'Duck-billed Platypus', information: 'Egg-laying mammal with webbed feet.', habitat: 'Freshwater streams', category: 'Mammal' },
+      { animal: 'Puma', emoji: '🐈‍⬛', fullName: 'Mountain Lion', information: 'Powerful cats of the Americas.', habitat: 'Mountains and deserts', category: 'Mammal' },
+      { animal: 'Pigeon', emoji: '🕊️', fullName: 'Rock Dove', information: 'City birds and message carriers.', habitat: 'Urban rooftops and cliffs', category: 'Bird' },
+      { animal: 'Prairie Dog', emoji: '🦫', fullName: 'Cynomys', information: 'Burrowing rodents with social calls.', habitat: 'Grasslands', category: 'Mammal' },
+      { animal: 'Pangolin', emoji: '🦎', fullName: 'Scaly Anteater', information: 'Covered in protective scales.', habitat: 'Forests and savannas', category: 'Mammal' },
+      { animal: 'Porcupine', emoji: '🦔', fullName: 'North American Porcupine', information: 'Spiky rodents with defensive quills.', habitat: 'Forests and woodlands', category: 'Mammal' },
+      { animal: 'Piranha', emoji: '🐟', fullName: 'Red-bellied Piranha', information: 'Sharp-toothed schooling fish.', habitat: 'Amazon rivers', category: 'Fish' },
+      { animal: 'Polar Bear', emoji: '🐻‍❄️', fullName: 'Ursus maritimus', information: 'Arctic hunters and swimmers.', habitat: 'Sea ice and coasts', category: 'Mammal' },
+      { animal: 'Poison Dart Frog', emoji: '🐸', fullName: 'Dendrobates tinctorius', information: 'Brightly colored and toxic.', habitat: 'Rainforests', category: 'Amphibian' },
+      { animal: 'Pelican', emoji: '🪿', fullName: 'Brown Pelican', information: 'Fish-catching birds with throat pouches.', habitat: 'Coasts and rivers', category: 'Bird' },
+      { animal: 'Pika', emoji: '🐭', fullName: 'Ochotona', information: 'Tiny mountain herbivores.', habitat: 'Rocky slopes', category: 'Mammal' },
+      { animal: 'Parakeet', emoji: '🦜', fullName: 'Budgerigar', information: 'Small, playful pet birds.', habitat: 'Homes and grasslands', category: 'Pet' },
+      { animal: 'Paddlefish', emoji: '🐟', fullName: 'American Paddlefish', information: 'Fish with long snouts.', habitat: 'Mississippi River Basin', category: 'Fish' },
+      { animal: 'Pink Fairy Armadillo', emoji: '🌸', fullName: 'Chlamyphorus truncatus', information: 'Smallest and rarest armadillo.', habitat: 'Argentine deserts', category: 'Mammal' }
+    ],
+    Q: [
+      { animal: 'Quokka', emoji: '🦘', fullName: 'Quokka', information: 'Smiling marsupials known for their friendly faces.', habitat: 'Islands in Australia', category: 'Mammal' },
+      { animal: 'Quail', emoji: '🐤', fullName: 'California Quail', information: 'Small ground-dwelling birds with curved head feathers.', habitat: 'Grasslands and shrublands', category: 'Bird' },
+      { animal: 'Queen Angelfish', emoji: '🐠', fullName: 'Queen Angelfish', information: 'Brightly colored reef fish with blue and yellow hues.', habitat: 'Coral reefs in the Atlantic', category: 'Fish' },
+      { animal: 'Quelea', emoji: '🐦', fullName: 'Red-billed Quelea', information: 'The most abundant wild bird species, forming huge flocks.', habitat: 'Savannas and farmlands', category: 'Bird' },
+      { animal: 'Quoll', emoji: '🦡', fullName: 'Spotted-tailed Quoll', information: 'Spotted carnivorous marsupials from Australia.', habitat: 'Forests and rocky areas', category: 'Mammal' },
+      { animal: 'Quahog', emoji: '🦪', fullName: 'Hard Clam (Quahog)', information: 'Edible clams found along the eastern coasts.', habitat: 'Ocean seabeds', category: 'Mollusk' },
+      { animal: 'Quetzal', emoji: '🕊️', fullName: 'Resplendent Quetzal', information: 'Beautiful birds with long tail feathers.', habitat: 'Cloud forests in Central America', category: 'Bird' },
+      { animal: 'Quagga', emoji: '🦓', fullName: 'Quagga (extinct)', information: 'Half-striped zebras that once roamed South Africa.', habitat: 'Grasslands', category: 'Mammal' },
+      { animal: 'Queensland Grouper', emoji: '🐟', fullName: 'Giant Grouper', information: 'Huge reef fish that can weigh over 400 kg.', habitat: 'Warm coastal reefs', category: 'Fish' },
+      { animal: 'Queen Butterfly', emoji: '🦋', fullName: 'Queen Butterfly', information: 'Closely related to monarchs, with dark brown wings.', habitat: 'Meadows and fields', category: 'Insect' },
+      { animal: 'Quillfish', emoji: '🐟', fullName: 'Quillfish', information: 'Slender deep-sea fish with bioluminescence.', habitat: 'Ocean depths', category: 'Fish' },
+      { animal: 'Quokka Rat', emoji: '🐭', fullName: 'Rakali (Water Rat)', information: 'Australian water-loving rat species.', habitat: 'Wetlands and rivers', category: 'Mammal' },
+      { animal: 'Quinquespinosus', emoji: '🦀', fullName: 'Spiny Crab (Quinquespinosus)', information: 'Small crabs with spiny exoskeletons.', habitat: 'Rocky sea floors', category: 'Crustacean' },
+      { animal: 'Queen Termite', emoji: '🐜', fullName: 'Termite Queen', information: 'Lays thousands of eggs each day in colonies.', habitat: 'Underground nests', category: 'Insect' },
+      { animal: 'Quacking Frog', emoji: '🐸', fullName: 'Quacking Frog', information: 'Australian frogs known for duck-like calls.', habitat: 'Swamps and ponds', category: 'Amphibian' },
+      { animal: 'Queen Snake', emoji: '🐍', fullName: 'Queen Snake', information: 'Nonvenomous reptiles feeding on crayfish.', habitat: 'Streams and rivers', category: 'Reptile' },
+      { animal: 'Queen Triggerfish', emoji: '🐟', fullName: 'Queen Triggerfish', information: 'Colorful reef dwellers with strong jaws.', habitat: 'Tropical reefs', category: 'Fish' },
+      { animal: 'Quartz Mite', emoji: '🕷️', fullName: 'Quartz Rock Mite', information: 'Tiny creatures that live in rocky crevices.', habitat: 'Underground rocks', category: 'Arachnid' },
+      { animal: 'Queen Coral', emoji: '🪸', fullName: 'Queen Coral', information: 'Colorful corals providing shelter to fish.', habitat: 'Tropical coral reefs', category: 'Cnidarian' },
+      { animal: 'Queensland Lungfish', emoji: '🐟', fullName: 'Australian Lungfish', information: 'Ancient fish that can breathe air.', habitat: 'Freshwater rivers', category: 'Fish' }
+    ],
+    R: [
+      { animal: 'Rabbit', emoji: '🐇', fullName: 'European Rabbit', information: 'Fast and fluffy animals with strong hind legs.', habitat: 'Grasslands and forests', category: 'Mammal' },
+      { animal: 'Raccoon', emoji: '🦝', fullName: 'North American Raccoon', information: 'Clever animals with masked faces and nimble paws.', habitat: 'Forests, cities, and wetlands', category: 'Mammal' },
+      { animal: 'Raven', emoji: '🐦', fullName: 'Common Raven', information: 'Intelligent birds known for mimicry and problem-solving.', habitat: 'Forests and mountains', category: 'Bird' },
+      { animal: 'Red Panda', emoji: '🦊', fullName: 'Red Panda', information: 'Tree-dwelling mammals with fluffy tails and reddish fur.', habitat: 'Himalayan forests', category: 'Mammal' },
+      { animal: 'Rattlesnake', emoji: '🐍', fullName: 'Western Diamondback', information: 'Venomous snakes that warn with their rattles.', habitat: 'Deserts and rocky hills', category: 'Reptile' },
+      { animal: 'Red Fox', emoji: '🦊', fullName: 'Red Fox', information: 'Smart and adaptable mammals with bushy tails.', habitat: 'Forests and grasslands', category: 'Mammal' },
+      { animal: 'Red-Eyed Tree Frog', emoji: '🐸', fullName: 'Agalychnis callidryas', information: 'Bright green frogs with bulging red eyes.', habitat: 'Rainforests of Central America', category: 'Amphibian' },
+      { animal: 'Reindeer', emoji: '🦌', fullName: 'Caribou', information: 'Antlered mammals that migrate in herds.', habitat: 'Tundra and boreal forests', category: 'Mammal' },
+      { animal: 'Red-Crowned Crane', emoji: '🐦', fullName: 'Japanese Crane', information: 'Elegant birds known for mating dances.', habitat: 'Wetlands and marshes', category: 'Bird' },
+      { animal: 'Rhinoceros', emoji: '🦏', fullName: 'White Rhinoceros', information: 'Thick-skinned mammals with large horns.', habitat: 'African savannas', category: 'Mammal' },
+      { animal: 'Rockhopper Penguin', emoji: '🐧', fullName: 'Southern Rockhopper', information: 'Small penguins that hop on rocky cliffs.', habitat: 'Sub-Antarctic islands', category: 'Bird' },
+      { animal: 'Rainbow Trout', emoji: '🐟', fullName: 'Rainbow Trout', information: 'Colorful fish with a pink stripe.', habitat: 'Cool freshwater rivers and lakes', category: 'Fish' },
+      { animal: 'Red Lionfish', emoji: '🦈', fullName: 'Pterois volitans', information: 'Venomous fish with bold stripes and long fins.', habitat: 'Tropical reefs', category: 'Fish' },
+      { animal: 'Red Velvet Ant', emoji: '🐜', fullName: 'Dasymutilla occidentalis', information: 'Wingless wasps with a painful sting.', habitat: 'Dry sandy areas', category: 'Insect' },
+      { animal: 'Ring-tailed Lemur', emoji: '🐒', fullName: 'Lemur catta', information: 'Social primates with striped tails.', habitat: 'Madagascar forests', category: 'Primate' },
+      { animal: 'Ragdoll Cat', emoji: '🐱', fullName: 'Ragdoll Cat', information: 'Gentle and affectionate indoor cats.', habitat: 'Domesticated homes', category: 'Pet' },
+      { animal: 'Redback Spider', emoji: '🕷️', fullName: 'Latrodectus hasselti', information: 'Venomous spiders with red stripe on the back.', habitat: 'Dry sheltered places', category: 'Arachnid' },
+      { animal: 'Ribbon Eel', emoji: '🐍', fullName: 'Rhinomuraena quaesita', information: 'Bright blue eel with ribbon-like body.', habitat: 'Tropical reefs', category: 'Fish' },
+      { animal: 'Rock Crab', emoji: '🦀', fullName: 'Red Rock Crab', information: 'Hard-shelled crustaceans on rocky shores.', habitat: 'Coastal areas and tide pools', category: 'Crustacean' },
+      { animal: 'Rosy Boa', emoji: '🐍', fullName: 'Lichanura trivirgata', information: 'Docile snakes with pretty pink stripes.', habitat: 'Desert regions', category: 'Reptile' }
+    ],
+    S: [
+      { animal: 'Snake', emoji: '🐍', fullName: 'Corn Snake', information: 'Non-venomous snakes popular as pets.', habitat: 'Grasslands and forests', category: 'Reptile' },
+      { animal: 'Sloth', emoji: '🦥', fullName: 'Three-Toed Sloth', information: 'Slow-moving animals that hang upside down.', habitat: 'Rainforests in Central and South America', category: 'Mammal' },
+      { animal: 'Seahorse', emoji: '🐠', fullName: 'Pacific Seahorse', information: 'Tiny marine creatures that swim upright.', habitat: 'Coastal reefs and seagrass beds', category: 'Fish' },
+      { animal: 'Starfish', emoji: '🌟', fullName: 'Common Starfish', information: 'Marine animals with five arms and no brain.', habitat: 'Ocean floor and tide pools', category: 'Echinoderm' },
+      { animal: 'Scorpion', emoji: '🦂', fullName: 'Desert Scorpion', information: 'Arachnids with a venomous sting.', habitat: 'Deserts and rocky areas', category: 'Arachnid' },
+      { animal: 'Swan', emoji: '🦢', fullName: 'Mute Swan', information: 'Graceful birds known for their beauty and loyalty.', habitat: 'Lakes and ponds', category: 'Bird' },
+      { animal: 'Salmon', emoji: '🐟', fullName: 'Atlantic Salmon', information: 'Fish that swim upstream to spawn.', habitat: 'Rivers and oceans', category: 'Fish' },
+      { animal: 'Squirrel', emoji: '🐿️', fullName: 'Eastern Gray Squirrel', information: 'Tree-climbing rodents with bushy tails.', habitat: 'Forests and parks', category: 'Mammal' },
+      { animal: 'Snow Leopard', emoji: '🐆', fullName: 'Panthera uncia', information: 'Elusive big cats of the mountains.', habitat: 'Himalayas and Central Asia', category: 'Big Cat' },
+      { animal: 'Shrimp', emoji: '🦐', fullName: 'Tiger Shrimp', information: 'Small crustaceans that swim backwards.', habitat: 'Oceans and estuaries', category: 'Crustacean' },
+      { animal: 'Siamese Cat', emoji: '🐱', fullName: 'Siamese Cat', information: 'Elegant, vocal cats with blue eyes.', habitat: 'Homes and apartments', category: 'Pet' },
+      { animal: 'Swordfish', emoji: '🐟', fullName: 'Broadbill Swordfish', information: 'Fast fish with a sword-like nose.', habitat: 'Open oceans', category: 'Fish' },
+      { animal: 'Skunk', emoji: '🦨', fullName: 'Striped Skunk', information: 'Mammals known for their strong smell.', habitat: 'Forests and suburbs', category: 'Mammal' },
+      { animal: 'Sea Otter', emoji: '🦦', fullName: 'Northern Sea Otter', information: 'Playful marine mammals that use tools.', habitat: 'Kelp forests and coastal waters', category: 'Marine Mammal' },
+      { animal: 'Sandpiper', emoji: '🐦', fullName: 'Least Sandpiper', information: 'Small shorebirds with quick steps.', habitat: 'Beaches and wetlands', category: 'Bird' },
+      { animal: 'Spider Monkey', emoji: '🐒', fullName: 'Black Spider Monkey', information: 'Long-limbed monkeys that swing from trees.', habitat: 'Rainforests', category: 'Primate' },
+      { animal: 'Snowy Owl', emoji: '🦉', fullName: 'Snowy Owl', information: 'White owls that thrive in the Arctic.', habitat: 'Tundra and open fields', category: 'Bird' },
+      { animal: 'Stingray', emoji: '🐟', fullName: 'Southern Stingray', information: 'Flat-bodied fish with long tails.', habitat: 'Warm coastal waters', category: 'Fish' },
+      { animal: 'Slug', emoji: '🐌', fullName: 'Garden Slug', information: 'Soft-bodied mollusks that crawl slowly.', habitat: 'Gardens and moist areas', category: 'Mollusk' },
+      { animal: 'Saola', emoji: '🦌', fullName: 'Asian Unicorn', information: 'Rare forest-dwelling antelope-like species.', habitat: 'Annamite Mountains', category: 'Mammal' }
+    ],
+    T: [
+      { animal: 'Tiger', emoji: '🐯', fullName: 'Bengal Tiger', information: 'Powerful striped big cats.', habitat: 'Forests and grasslands', category: 'Big Cat' },
+      { animal: 'Tortoise', emoji: '🐢', fullName: 'Galápagos Tortoise', information: 'Long-living reptiles with heavy shells.', habitat: 'Islands and deserts', category: 'Reptile' },
+      { animal: 'Toucan', emoji: '🦜', fullName: 'Toco Toucan', information: 'Birds with large, colorful beaks.', habitat: 'Tropical rainforests', category: 'Bird' },
+      { animal: 'Tapir', emoji: '🐗', fullName: 'Brazilian Tapir', information: 'Odd-looking animals with short trunks.', habitat: 'Rainforests and swamps', category: 'Mammal' },
+      { animal: 'Tuna', emoji: '🐟', fullName: 'Bluefin Tuna', information: 'Large fast-swimming fish.', habitat: 'Open oceans', category: 'Fish' },
+      { animal: 'Termite', emoji: '🐜', fullName: 'Subterranean Termite', information: 'Insects that build large colonies and digest wood.', habitat: 'Underground and wood structures', category: 'Insect' },
+      { animal: 'Tarsier', emoji: '🐵', fullName: 'Philippine Tarsier', information: 'Tiny primates with big eyes.', habitat: 'Rainforests in Southeast Asia', category: 'Primate' },
+      { animal: 'Turkey', emoji: '🦃', fullName: 'Wild Turkey', information: 'Ground birds known for their gobble.', habitat: 'Forests and farmlands', category: 'Bird' },
+      { animal: 'Tiger Shark', emoji: '🦈', fullName: 'Tiger Shark', information: 'Striped sharks with big appetites.', habitat: 'Tropical seas', category: 'Fish' },
+      { animal: 'Tree Frog', emoji: '🐸', fullName: 'Red-Eyed Tree Frog', information: 'Bright frogs that live in trees.', habitat: 'Rainforests', category: 'Amphibian' },
+      { animal: 'Tasmanian Devil', emoji: '🦘', fullName: 'Tasmanian Devil', information: 'Fierce marsupials known for their growls.', habitat: 'Tasmania', category: 'Mammal' },
+      { animal: 'Thresher Shark', emoji: '🦈', fullName: 'Common Thresher Shark', information: 'Sharks with long tails used for stunning prey.', habitat: 'Deep oceans', category: 'Fish' },
+      { animal: 'Tamaraw', emoji: '🐃', fullName: 'Mindoro Dwarf Buffalo', information: 'Endangered species of small buffalo.', habitat: 'Philippines', category: 'Mammal' },
+      { animal: 'Tree Kangaroo', emoji: '🦘', fullName: 'Matschie’s Tree Kangaroo', information: 'Arboreal kangaroos of Papua.', habitat: 'Rainforests', category: 'Marsupial' },
+      { animal: 'Tern', emoji: '🐦', fullName: 'Arctic Tern', information: 'Birds known for the longest migrations.', habitat: 'Coasts and oceans', category: 'Bird' },
+      { animal: 'Tiger Beetle', emoji: '🐞', fullName: 'Cicindela campestris', information: 'Fast-running beetles.', habitat: 'Fields and grasslands', category: 'Insect' },
+      { animal: 'Tick', emoji: '🕷️', fullName: 'Deer Tick', information: 'Blood-sucking arachnids.', habitat: 'Grassy areas and woods', category: 'Arachnid' },
+      { animal: 'Takin', emoji: '🐐', fullName: 'Golden Takin', information: 'Large goat-antelope of the Himalayas.', habitat: 'Mountain forests', category: 'Mammal' },
+      { animal: 'Tetra', emoji: '🐠', fullName: 'Neon Tetra', information: 'Small, colorful aquarium fish.', habitat: 'Freshwater rivers', category: 'Fish' },
+      { animal: 'Treecreeper', emoji: '🐦', fullName: 'Eurasian Treecreeper', information: 'Small birds that spiral up tree trunks.', habitat: 'Woodlands', category: 'Bird' }
+    ],
+    U: [
+      { animal: 'Umbrellabird', emoji: '🐦', fullName: 'Amazonian Umbrellabird', information: 'Bird with umbrella-like crest.', habitat: 'Rainforests', category: 'Bird' },
+      { animal: 'Urial', emoji: '🐏', fullName: 'Shapo Urial', information: 'Wild sheep with curved horns.', habitat: 'Mountainous regions of Central Asia', category: 'Mammal' },
+      { animal: 'Uromastyx', emoji: '🦎', fullName: 'Spiny-Tailed Lizard', information: 'Desert lizards with spiky tails.', habitat: 'Arid rocky deserts', category: 'Reptile' },
+      { animal: 'Uakari', emoji: '🐵', fullName: 'Bald Uakari Monkey', information: 'Red-faced monkeys.', habitat: 'Amazon basin', category: 'Primate' },
+      { animal: 'Upland Goose', emoji: '🪿', fullName: 'Chloephaga picta', information: 'Ground-nesting geese of South America.', habitat: 'Patagonian grasslands', category: 'Bird' },
+      { animal: 'Urchin', emoji: '🌊', fullName: 'Sea Urchin', information: 'Spiny marine animals.', habitat: 'Ocean floors', category: 'Echinoderm' },
+      { animal: 'Utahraptor', emoji: '🦖', fullName: 'Utahraptor', information: 'Large feathered dinosaur.', habitat: 'Cretaceous forests', category: 'Dinosaur' },
+      { animal: 'Upland Sandpiper', emoji: '🐦', fullName: 'Bartramia longicauda', information: 'Grassland shorebird.', habitat: 'North American plains', category: 'Bird' },
+      { animal: 'Ulysses Butterfly', emoji: '🦋', fullName: 'Blue Mountain Butterfly', information: 'Bright blue tropical butterfly.', habitat: 'Rainforests of Australia', category: 'Insect' },
+      { animal: 'Upland Chorus Frog', emoji: '🐸', fullName: 'Pseudacris feriarum', information: 'Tiny frogs with trilling calls.', habitat: 'Wetlands and forests', category: 'Amphibian' },
+      { animal: 'Uinta Chipmunk', emoji: '🐿️', fullName: 'Tamias umbrinus', information: 'Striped chipmunk of western USA.', habitat: 'Forests and meadows', category: 'Mammal' },
+      { animal: 'Upland Pipit', emoji: '🐦', fullName: 'Anthus sylvanus', information: 'Inconspicuous bird of grassy slopes.', habitat: 'Asia and Himalayas', category: 'Bird' },
+      { animal: 'Ugandan Kob', emoji: '🦌', fullName: 'Kobus kob thomasi', information: 'Elegant antelope with curved horns.', habitat: 'East African savannas', category: 'Mammal' },
+      { animal: 'Unicorn Fish', emoji: '🐠', fullName: 'Naso unicornis', information: 'Fish with horn-like forehead.', habitat: 'Tropical reefs', category: 'Fish' },
+      { animal: 'Urutu', emoji: '🐍', fullName: 'Bothrops alternatus', information: 'Venomous pit viper.', habitat: 'South America', category: 'Reptile' },
+      { animal: 'Ultramarine Flycatcher', emoji: '🐦', fullName: 'Ficedula superciliaris', information: 'Tiny blue forest bird.', habitat: 'Himalayan foothills', category: 'Bird' },
+      { animal: 'Upland Buzzard', emoji: '🦅', fullName: 'Buteo hemilasius', information: 'Large birds of prey.', habitat: 'Mongolian steppes', category: 'Bird' },
+      { animal: 'Urchin Crab', emoji: '🦀', fullName: 'Dorippe frascone', information: 'Crabs that carry urchins on their back.', habitat: 'Tropical ocean floors', category: 'Crustacean' },
+      { animal: 'Upland Vole', emoji: '🐭', fullName: 'Microtus montanus', information: 'Burrowing rodents of highlands.', habitat: 'Mountains of North America', category: 'Mammal' },
+      { animal: 'Unau', emoji: '🦥', fullName: 'Two-toed Sloth', information: 'Nocturnal and slow tree-dwellers.', habitat: 'Rainforests of South America', category: 'Mammal' }
+    ],
+    V: [
+      { animal: 'Vulture', emoji: '🦅', fullName: 'Griffon Vulture', information: 'Large birds of prey known for scavenging.', habitat: 'Mountains and savannas', category: 'Bird' },
+      { animal: 'Viper', emoji: '🐍', fullName: 'Gaboon Viper', information: 'Venomous snakes with large fangs.', habitat: 'Tropical forests', category: 'Reptile' },
+      { animal: 'Vicuna', emoji: '🦙', fullName: 'Andean Vicuña', information: 'Camel relatives producing soft wool.', habitat: 'High Andes mountains', category: 'Mammal' },
+      { animal: 'Vaquita', emoji: '🐬', fullName: 'Vaquita Porpoise', information: 'Rare marine mammals with rounded heads.', habitat: 'Northern Gulf of California', category: 'Marine Mammal' },
+      { animal: 'Vervet Monkey', emoji: '🐒', fullName: 'Vervet Monkey', information: 'Social monkeys with expressive faces.', habitat: 'African savannas', category: 'Primate' },
+      { animal: 'Violet Turaco', emoji: '🐦', fullName: 'Violet Turaco', information: 'Colorful birds with striking plumage.', habitat: 'West African forests', category: 'Bird' },
+      { animal: 'Velvet Worm', emoji: '🪱', fullName: 'Peripatus Velvet Worm', information: 'Soft-bodied predators with sticky slime.', habitat: 'Underground in moist forests', category: 'Invertebrate' },
+      { animal: 'Variegated Squirrel', emoji: '🐿️', fullName: 'Sciurus variegatoides', information: 'Colorful squirrels with striped tails.', habitat: 'Central American forests', category: 'Mammal' },
+      { animal: 'Vine Snake', emoji: '🐍', fullName: 'Green Vine Snake', information: 'Thin snakes with excellent camouflage.', habitat: 'Tropical trees', category: 'Reptile' },
+      { animal: 'Vietnamese Mossy Frog', emoji: '🐸', fullName: 'Theloderma corticale', information: 'Masters of camouflage with moss-like skin.', habitat: 'Caves and forest creeks', category: 'Amphibian' },
+      { animal: 'Vampire Bat', emoji: '🦇', fullName: 'Common Vampire Bat', information: 'Bats that feed on blood using sharp teeth.', habitat: 'Caves in tropical regions', category: 'Mammal' },
+      { animal: 'Velvet Ant', emoji: '🐜', fullName: 'Dasymutilla occidentalis', information: 'Fuzzy wasp known as “cow killer”.', habitat: 'Sandy fields', category: 'Insect' },
+      { animal: 'Vlei Rat', emoji: '🐁', fullName: 'Otomys irroratus', information: 'African rodents adapted to wetlands.', habitat: 'Swamps and marshes', category: 'Mammal' },
+      { animal: 'Volcano Rabbit', emoji: '🐇', fullName: 'Romerolagus diazi', information: 'Rare rabbits from Mexican volcanoes.', habitat: 'High-altitude grasslands', category: 'Mammal' },
+      { animal: 'Vancouver Island Marmot', emoji: '🐿️', fullName: 'Marmota vancouverensis', information: 'Critically endangered ground squirrel.', habitat: 'Canadian mountains', category: 'Mammal' },
+      { animal: 'Violet-crowned Hummingbird', emoji: '🐦', fullName: 'Amazilia violiceps', information: 'Tiny birds with bright violet heads.', habitat: 'Desert canyons and forests', category: 'Bird' },
+      { animal: 'Variegated Fairywren', emoji: '🐤', fullName: 'Malurus lamberti', information: 'Small colorful bird with blue plumage.', habitat: 'Shrublands in Australia', category: 'Bird' },
+      { animal: 'Valley Quail', emoji: '🐦', fullName: 'California Quail', information: 'Bird with a head plume and spotted belly.', habitat: 'Hills and valleys', category: 'Bird' },
+      { animal: 'Visayan Warty Pig', emoji: '🐗', fullName: 'Sus cebifrons', information: 'Rare wild pigs with a mohawk mane.', habitat: 'Philippine forests', category: 'Mammal' },
+      { animal: 'Vanikoro Flying Fox', emoji: '🦇', fullName: 'Pteropus tuberculatus', information: 'Fruit bats with large wings.', habitat: 'Vanikoro Islands forest', category: 'Mammal' }
+    ],
+    W: [
+      { animal: 'Wolf', emoji: '🐺', fullName: 'Gray Wolf', information: 'Social hunters known for howling.', habitat: 'Forests and tundra', category: 'Mammal' },
+      { animal: 'Walrus', emoji: '🐘', fullName: 'Pacific Walrus', information: 'Marine mammals with long tusks.', habitat: 'Arctic ice and sea', category: 'Marine Mammal' },
+      { animal: 'Weasel', emoji: '🦊', fullName: 'Least Weasel', information: 'Small carnivores with long bodies.', habitat: 'Grasslands and farms', category: 'Mammal' },
+      { animal: 'Wolverine', emoji: '🐾', fullName: 'Gulo gulo', information: 'Strong scavengers resembling small bears.', habitat: 'Boreal forests', category: 'Mammal' },
+      { animal: 'Warthog', emoji: '🐗', fullName: 'Common Warthog', information: 'Wild pigs with face warts and tusks.', habitat: 'African grasslands', category: 'Mammal' },
+      { animal: 'Whale Shark', emoji: '🦈', fullName: 'Rhincodon typus', information: 'Largest fish in the sea, filter feeders.', habitat: 'Tropical oceans', category: 'Fish' },
+      { animal: 'Wallaby', emoji: '🦘', fullName: 'Agile Wallaby', information: 'Mini kangaroos with strong legs.', habitat: 'Australian bushland', category: 'Mammal' },
+      { animal: 'White Tiger', emoji: '🐅', fullName: 'Bengal White Tiger', information: 'Rare tigers with white fur and blue eyes.', habitat: 'Dense forests', category: 'Big Cat' },
+      { animal: 'Woodpecker', emoji: '🐦', fullName: 'Pileated Woodpecker', information: 'Birds that drum trees for bugs.', habitat: 'Woodlands', category: 'Bird' },
+      { animal: 'Wildebeest', emoji: '🐃', fullName: 'Blue Wildebeest', information: 'Migratory antelope forming huge herds.', habitat: 'African savannas', category: 'Mammal' },
+      { animal: 'Wrasse', emoji: '🐠', fullName: 'Cleaner Wrasse', information: 'Small reef fish that clean others.', habitat: 'Coral reefs', category: 'Fish' },
+      { animal: 'Wombat', emoji: '🐻', fullName: 'Common Wombat', information: 'Burrowing marsupials with cube-shaped poop.', habitat: 'Australian forests', category: 'Mammal' },
+      { animal: 'White Rhino', emoji: '🦏', fullName: 'Ceratotherium simum', information: 'Massive horned herbivores.', habitat: 'African plains', category: 'Mammal' },
+      { animal: 'Whiptail Lizard', emoji: '🦎', fullName: 'Desert Whiptail', information: 'Fast lizards found in hot climates.', habitat: 'Deserts and drylands', category: 'Reptile' },
+      { animal: 'White Stork', emoji: '🕊️', fullName: 'Ciconia ciconia', information: 'Migratory birds with long legs and beaks.', habitat: 'Wetlands and meadows', category: 'Bird' },
+      { animal: 'Weta', emoji: '🦗', fullName: 'Giant Weta', information: 'Large cricket-like insects from New Zealand.', habitat: 'Caves and forests', category: 'Insect' },
+      { animal: 'Wolf Eel', emoji: '🐟', fullName: 'Anarrhichthys ocellatus', information: 'Long fish with strong jaws.', habitat: 'Cold Pacific waters', category: 'Fish' },
+      { animal: 'Wryneck', emoji: '🐦', fullName: 'Eurasian Wryneck', information: 'Woodpeckers that twist their necks.', habitat: 'Open forests', category: 'Bird' },
+      { animal: 'Wandering Albatross', emoji: '🕊️', fullName: 'Diomedea exulans', information: 'Birds with the longest wingspan.', habitat: 'Southern Ocean', category: 'Bird' },
+      { animal: 'White-tailed Deer', emoji: '🦌', fullName: 'Odocoileus virginianus', information: 'Common deer with fluffy tails.', habitat: 'North American forests', category: 'Mammal' }
+    ],
+    X: [
+      { animal: 'X-Ray Tetra', emoji: '🐟', fullName: 'Pristella maxillaris', information: 'Tiny transparent fish often seen in aquariums.', habitat: 'Amazon river basin', category: 'Fish' },
+      { animal: 'Xenops', emoji: '🐦', fullName: 'Plain Xenops', information: 'Small birds that forage by pecking tree bark.', habitat: 'Tropical rainforests', category: 'Bird' },
+      { animal: 'Xenopus', emoji: '🐸', fullName: 'African Clawed Frog', information: 'Aquatic frogs used in scientific research.', habitat: 'Freshwater ponds', category: 'Amphibian' },
+      { animal: 'Xoloitzcuintli', emoji: '🐶', fullName: 'Mexican Hairless Dog', information: 'Ancient breed known for loyalty and no fur.', habitat: 'Domesticated homes', category: 'Pet' },
+      { animal: 'Xantus’s Hummingbird', emoji: '🐦', fullName: 'Basilinna xantusii', information: 'Shiny green hummingbird with long bill.', habitat: 'Baja California', category: 'Bird' },
+      { animal: 'Xenoceratops', emoji: '🦖', fullName: 'Xenoceratops foremostensis', information: 'Horned dinosaur from the late Cretaceous.', habitat: 'Fossil records, Canada', category: 'Dinosaur' },
+      { animal: 'Xenopus laevis', emoji: '🐸', fullName: 'African Clawed Frog', information: 'Model species for embryology studies.', habitat: 'African water bodies', category: 'Amphibian' },
+      { animal: 'Xylocopa', emoji: '🐝', fullName: 'Carpenter Bee', information: 'Large bees that tunnel into wood.', habitat: 'Wooded areas', category: 'Insect' },
+      { animal: 'Xantus’s Murrelet', emoji: '🐧', fullName: 'Synthliboramphus hypoleucus', information: 'Small seabird that dives for fish.', habitat: 'Pacific coastlines', category: 'Bird' },
+      { animal: 'Xingu Corydoras', emoji: '🐠', fullName: 'Corydoras xinguensis', information: 'Bottom-dwelling catfish in freshwater.', habitat: 'Xingu River, Brazil', category: 'Fish' },
+      { animal: 'Xenodermus javanicus', emoji: '🐍', fullName: 'Dragon Snake', information: 'Rare snake with keeled scales.', habitat: 'Southeast Asia', category: 'Reptile' },
+      { animal: 'Xerus', emoji: '🐿️', fullName: 'African Ground Squirrel', information: 'Energetic burrowing rodents.', habitat: 'African savannas', category: 'Mammal' },
+      { animal: 'Xolo Pup', emoji: '🐶', fullName: 'Xoloitzcuintli Puppy', information: 'Cute puppies of hairless breed.', habitat: 'Domesticated', category: 'Pet' },
+      { animal: 'Xestobium rufovillosum', emoji: '🪲', fullName: 'Deathwatch Beetle', information: 'Wood-boring beetle found in old buildings.', habitat: 'Woodwork and timber', category: 'Insect' },
+      { animal: 'Xenohyla truncata', emoji: '🐸', fullName: 'Brazilian Tree Frog', information: 'Omnivorous frog that eats fruit.', habitat: 'Brazilian forests', category: 'Amphibian' },
+      { animal: 'Xenopus tropicalis', emoji: '🐸', fullName: 'Western Clawed Frog', information: 'Frog used in genomics.', habitat: 'Tropical Africa', category: 'Amphibian' },
+      { animal: 'Xolmis', emoji: '🐦', fullName: 'White Monjita', information: 'Flycatcher bird with snowy feathers.', habitat: 'South American savanna', category: 'Bird' },
+      { animal: 'Xenarthra', emoji: '🦥', fullName: 'Giant Anteater (Order Xenarthra)', information: 'Includes sloths, anteaters, and armadillos.', habitat: 'Central/South America', category: 'Mammal' },
+      { animal: 'Xingu River Ray', emoji: '🐠', fullName: 'Freshwater Ray', information: 'Beautiful ray with unique patterns.', habitat: 'Xingu River, Brazil', category: 'Fish' },
+      { animal: 'Xiphias gladius', emoji: '🐟', fullName: 'Swordfish', information: 'Fast swimmers with long bills.', habitat: 'Open oceans', category: 'Fish' }
+    ],
+    Y: [
+      { animal: 'Yak', emoji: '🐃', fullName: 'Domestic Yak', information: 'Woolly animals adapted to cold climates.', habitat: 'Himalayas and plateaus', category: 'Mammal' },
+      { animal: 'Yellow Tang', emoji: '🐠', fullName: 'Zebrasoma flavescens', information: 'Bright yellow reef fish.', habitat: 'Coral reefs', category: 'Fish' },
+      { animal: 'Yellowhammer', emoji: '🐤', fullName: 'Emberiza citrinella', information: 'Songbird with bright yellow plumage.', habitat: 'Open countryside', category: 'Bird' },
+      { animal: 'Yellow-Bellied Marmot', emoji: '🐿️', fullName: 'Marmota flaviventris', information: 'Rodent with a yellow belly.', habitat: 'Rocky mountains', category: 'Mammal' },
+      { animal: 'Yabby', emoji: '🦞', fullName: 'Cherax destructor', information: 'Freshwater crayfish found in Australia.', habitat: 'Rivers and ponds', category: 'Crustacean' },
+      { animal: 'Yellow Mongoose', emoji: '🦊', fullName: 'Cynictis penicillata', information: 'Small carnivores with reddish-yellow fur.', habitat: 'Southern African plains', category: 'Mammal' },
+      { animal: 'Yellowfin Tuna', emoji: '🐟', fullName: 'Thunnus albacares', information: 'Large tuna prized in fishing.', habitat: 'Tropical oceans', category: 'Fish' },
+      { animal: 'Yellowtail Snapper', emoji: '🐠', fullName: 'Ocyurus chrysurus', information: 'Tropical reef fish with yellow stripe.', habitat: 'Coral reefs', category: 'Fish' },
+      { animal: 'Yunnan Hare', emoji: '🐇', fullName: 'Lepus comus', information: 'Fast and shy rabbit species.', habitat: 'Yunnan province, China', category: 'Mammal' },
+      { animal: 'Yellowthroat', emoji: '🐦', fullName: 'Common Yellowthroat', information: 'Warblers with black masks.', habitat: 'Wet meadows', category: 'Bird' },
+      { animal: 'Yellow Anaconda', emoji: '🐍', fullName: 'Eunectes notaeus', information: 'Smaller cousin of green anaconda.', habitat: 'Swamps in South America', category: 'Reptile' },
+      { animal: 'Yellow-Naped Amazon', emoji: '🦜', fullName: 'Amazona auropalliata', information: 'Smart parrots with talking ability.', habitat: 'Central America', category: 'Bird' },
+      { animal: 'Yellow-Crowned Night Heron', emoji: '🪶', fullName: 'Nyctanassa violacea', information: 'Nocturnal bird with crown of yellow.', habitat: 'Marshes and coasts', category: 'Bird' },
+      { animal: 'Yucatan Jay', emoji: '🐦', fullName: 'Cyanocorax yucatanicus', information: 'Colorful and noisy tropical bird.', habitat: 'Yucatan Peninsula', category: 'Bird' },
+      { animal: 'Yemen Chameleon', emoji: '🦎', fullName: 'Chamaeleo calyptratus', information: 'Lizard with vivid colors and big casque.', habitat: 'Arabian trees and shrubs', category: 'Reptile' },
+      { animal: 'Yellow-Headed Caracara', emoji: '🦅', fullName: 'Milvago chimachima', information: 'Bird of prey often seen scavenging.', habitat: 'Savannas and open plains', category: 'Bird' },
+      { animal: 'Yellow-Cheeked Gibbon', emoji: '🦧', fullName: 'Nomascus gabriellae', information: 'Endangered singing primate.', habitat: 'Southeast Asian forests', category: 'Primate' },
+      { animal: 'Yellow Mud Turtle', emoji: '🐢', fullName: 'Kinosternon flavescens', information: 'Small turtle with yellow undershell.', habitat: 'Shallow ponds', category: 'Reptile' },
+      { animal: 'Yellow-Backed Duiker', emoji: '🦌', fullName: 'Cephalophus silvicultor', information: 'Shy forest antelope.', habitat: 'African rainforests', category: 'Mammal' },
+      { animal: 'Yellow-Bellied Sapsucker', emoji: '🪶', fullName: 'Sphyrapicus varius', information: 'Woodpecker that drills sap wells.', habitat: 'North American forests', category: 'Bird' }
+    ],
+    Z: [
+      { animal: 'Zebra', emoji: '🦓', fullName: 'Plains Zebra', information: 'Striped horses of the African savanna.', habitat: 'Grasslands', category: 'Mammal' },
+      { animal: 'Zebu', emoji: '🐂', fullName: 'Humped Zebu Cattle', information: 'Hardy cattle with distinctive humps.', habitat: 'Tropical farms', category: 'Mammal' },
+      { animal: 'Zorilla', emoji: '🦨', fullName: 'Striped Polecat', information: 'Skunk-like African mammal.', habitat: 'Savanna and grasslands', category: 'Mammal' },
+      { animal: 'Zebra Shark', emoji: '🦈', fullName: 'Stegostoma fasciatum', information: 'Spotted fish, stripes as juveniles.', habitat: 'Tropical coral reefs', category: 'Fish' },
+      { animal: 'Zebra Finch', emoji: '🐦', fullName: 'Taeniopygia guttata', information: 'Tiny finches with orange cheeks.', habitat: 'Australian grasslands', category: 'Bird' },
+      { animal: 'Zokor', emoji: '🐀', fullName: 'Chinese Zokor', information: 'Burrowing rodent adapted to digging.', habitat: 'Mountains of China', category: 'Mammal' },
+      { animal: 'Zebra Duiker', emoji: '🦌', fullName: 'Cephalophus zebra', information: 'Forest antelope with striped back.', habitat: 'West African forests', category: 'Mammal' },
+      { animal: 'Zebra Moray Eel', emoji: '🐍', fullName: 'Gymnomuraena zebra', information: 'Marine eel with striped pattern.', habitat: 'Coral reefs', category: 'Fish' },
+      { animal: 'Zenaida Dove', emoji: '🕊️', fullName: 'Zenaida aurita', information: 'Soft cooing birds of warm coasts.', habitat: 'Caribbean islands', category: 'Bird' },
+      { animal: 'Zarudny’s Jird', emoji: '🐁', fullName: 'Meriones zarudnyi', information: 'Desert rodent from Central Asia.', habitat: 'Dry steppes', category: 'Mammal' },
+      { animal: 'Zeren', emoji: '🦌', fullName: 'Mongolian Gazelle', information: 'Swift antelope in large herds.', habitat: 'Mongolian plains', category: 'Mammal' },
+      { animal: 'Zorro', emoji: '🦊', fullName: 'South American Fox', information: 'Fox-like wild canids.', habitat: 'South American highlands', category: 'Mammal' },
+      { animal: 'Zagros Newt', emoji: '🦎', fullName: 'Neurergus kaiseri', information: 'Endangered black-white salamander.', habitat: 'Iranian streams', category: 'Amphibian' },
+      { animal: 'Zingel', emoji: '🐟', fullName: 'Zingel zingel', information: 'Rare European fish.', habitat: 'Danube River', category: 'Fish' },
+      { animal: 'Zanzibar Red Colobus', emoji: '🐒', fullName: 'Piliocolobus kirkii', information: 'Rare primate with red fur.', habitat: 'Zanzibar forests', category: 'Primate' },
+      { animal: 'Zambian Mole Rat', emoji: '🐀', fullName: 'Cryptomys ansellii', information: 'Blind rodents digging underground.', habitat: 'Underground', category: 'Mammal' },
+      { animal: 'Zambesi Shark', emoji: '🦈', fullName: 'Bull Shark', information: 'Shark that swims up rivers.', habitat: 'Rivers and coastal seas', category: 'Fish' },
+      { animal: 'Zoropsis Spider', emoji: '🕷️', fullName: 'Zoropsis spinimana', information: 'Large spiders in homes.', habitat: 'Mediterranean forests', category: 'Insect' },
+      { animal: 'Zebra Pleco', emoji: '🐠', fullName: 'Hypancistrus zebra', information: 'Popular striped aquarium catfish.', habitat: 'Xingu River, Brazil', category: 'Fish' },
+      { animal: 'Zebra Seahorse', emoji: '🦄', fullName: 'Hippocampus zebra', information: 'Tiny seahorse with stripes.', habitat: 'Australian waters', category: 'Fish' }
+    ],
+  };
+
+
+  // Generate a random selection of animals from the database
   const generateAnimals = () => {
-    // Select 10 random animals from A-Z
-    const shuffledAnimals = [...allAnimals].sort(() => Math.random() - 0.5).slice(0, 10);
-    // Sort them alphabetically for gameplay
-    shuffledAnimals.sort((a, b) => a.letter.localeCompare(b.letter));
-    
+    // Step 1: Get all letters (A–Z) that exist in the database
+    const allLetters = Object.keys(allAnimalsDatabase);
+
+    // Step 2: Shuffle and pick 10 distinct letters
+    const selectedLetters = allLetters.sort(() => Math.random() - 0.5).slice(0, 10);
+
     const newAnimals: LetterAnimal[] = [];
 
-    shuffledAnimals.forEach((animal, index) => {
+    selectedLetters.forEach((letter, index) => {
+      const animalsForLetter = allAnimalsDatabase[letter];
+      if (!animalsForLetter || animalsForLetter.length === 0) return;
+
+      // Step 3: Randomly pick ONE animal from the selected letter group
+      const randomAnimal = animalsForLetter[Math.floor(Math.random() * animalsForLetter.length)];
+
       let x, y;
       let attempts = 0;
-      
+
       do {
         x = Math.random() * 75 + 5;
         y = Math.random() * 65 + 10;
         attempts++;
-      } while (attempts < 10 && newAnimals.some(existing => 
-        Math.abs(existing.x - x) < 12 && Math.abs(existing.y - y) < 12
-      ));
+      } while (
+        attempts < 10 &&
+        newAnimals.some(existing => Math.abs(existing.x - x) < 12 && Math.abs(existing.y - y) < 12)
+      );
 
       newAnimals.push({
         id: index,
-        letter: animal.letter,
-        animal: animal.animal,
-        emoji: animal.emoji,
-        fullName: animal.fullName,
-        information: animal.information,
-        habitat: animal.habitat,
-        category: animal.category,
+        letter,
+        animal: randomAnimal.animal,
+        emoji: randomAnimal.emoji,
+        fullName: randomAnimal.fullName,
+        information: randomAnimal.information,
+        habitat: randomAnimal.habitat,
+        category: randomAnimal.category,
         x,
         y,
         found: false
       });
     });
 
+    // Sort alphabetically if you want ordered gameplay
+    newAnimals.sort((a, b) => a.letter.localeCompare(b.letter));
+
     setAnimals(newAnimals);
     setTargetLetter(newAnimals[0]?.letter || 'A');
   };
+
 
   const startGame = () => {
     setGameActive(true);
@@ -117,18 +694,18 @@ const LetterSafari = () => {
     if (!gameActive || animal.found) return;
 
     if (animal.letter === targetLetter) {
-      setAnimals(prev => prev.map(a => 
+      setAnimals(prev => prev.map(a =>
         a.id === animal.id ? { ...a, found: true } : a
       ));
       setScore(prev => prev + (level * 15));
-      setFoundLetters(prev => [...prev, animal.letter]);
+      setFoundLetters(prev => [...prev, animal]);
       setSelectedAnimal(animal);
-      
+
       // Find next letter
       const sortedAnimals = animals.sort((a, b) => a.letter.localeCompare(b.letter));
       const currentIndex = sortedAnimals.findIndex(a => a.letter === targetLetter);
       const nextAnimal = sortedAnimals[currentIndex + 1];
-      
+
       if (nextAnimal) {
         setTargetLetter(nextAnimal.letter);
       } else {
@@ -174,11 +751,11 @@ const LetterSafari = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-yellow-50 to-orange-50">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center mb-6">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             onClick={() => navigate('/games')}
             className="mr-4 font-comic"
           >
@@ -217,7 +794,7 @@ const LetterSafari = () => {
 
         <div className="flex justify-center space-x-4 mb-8">
           {!gameActive && !gameCompleted && (
-            <Button 
+            <Button
               onClick={startGame}
               className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full"
             >
@@ -225,9 +802,9 @@ const LetterSafari = () => {
               Start Safari
             </Button>
           )}
-          
+
           {gameActive && (
-            <Button 
+            <Button
               onClick={() => setGameActive(false)}
               className="gradient-orange text-white font-comic font-bold px-8 py-3 rounded-full"
             >
@@ -235,8 +812,8 @@ const LetterSafari = () => {
               Pause
             </Button>
           )}
-          
-          <Button 
+
+          <Button
             onClick={resetGame}
             variant="outline"
             className="font-comic font-bold px-8 py-3 rounded-full"
@@ -253,9 +830,8 @@ const LetterSafari = () => {
                 <button
                   key={animal.id}
                   onClick={() => findAnimal(animal)}
-                  className={`absolute w-20 h-20 bg-white rounded-full flex flex-col items-center justify-center font-fredoka font-bold shadow-lg transform transition-all duration-200 hover:scale-110 ${
-                    animal.found ? 'opacity-30 scale-75' : 'animate-pulse'
-                  }`}
+                  className={`absolute w-20 h-20 bg-white rounded-full flex flex-col items-center justify-center font-fredoka font-bold shadow-lg transform transition-all duration-200 hover:scale-110 ${animal.found ? 'opacity-30 scale-75' : 'animate-pulse'
+                    }`}
                   style={{
                     left: `${animal.x}%`,
                     top: `${animal.y}%`,
@@ -269,13 +845,22 @@ const LetterSafari = () => {
               ))}
             </div>
           )}
-          
+
           {!gameActive && !gameCompleted && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
                 <div className="text-8xl mb-4">🌍</div>
                 <div className="font-fredoka text-3xl text-gray-700 mb-4">Ready for Safari Adventure?</div>
-                <div className="font-comic text-gray-600">Find 10 amazing animals in alphabetical order!</div>
+                <div className="font-comic text-gray-600 mb-4">Find 10 amazing animals in alphabetical order!</div>
+                {!gameActive && !gameCompleted && (
+                  <Button
+                    onClick={startGame}
+                    className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full"
+                  >
+                    <Play className="w-5 h-5 mr-2" />
+                    Start Safari
+                  </Button>
+                )}
               </div>
             </div>
           )}
@@ -318,44 +903,54 @@ const LetterSafari = () => {
         {foundLetters.length > 0 && (
           <Card className="p-4 mb-8 bg-green-50 rounded-2xl">
             <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">Found Animals:</h3>
-            <div className="flex flex-wrap gap-2">
-              {foundLetters.map((letter) => (
-                <Badge key={letter} className="bg-green-500 text-white font-comic">
-                  {letter}
-                </Badge>
+            <div className="flex flex-col gap-2">
+              {foundLetters.map((animal) => (
+                <div key={animal.letter} className="flex items-center gap-3 text-sm font-comic text-gray-800">
+                  <Badge className="bg-green-500 text-white px-2">{animal.letter}</Badge>
+                  <span className="text-xl">{animal.emoji}</span>
+                  <span>{animal.fullName}</span>
+                </div>
               ))}
             </div>
           </Card>
         )}
 
+
         {gameCompleted && (
-          <Card className="p-8 bg-gradient-to-r from-yellow-100 to-green-100 rounded-2xl text-center">
-            <Trophy className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
-            <h2 className="font-fredoka font-bold text-3xl text-gray-800 mb-4">
-              🎉 Safari Complete! 🎉
-            </h2>
-            <p className="font-comic text-lg text-gray-700 mb-4">
-              Final Score: <span className="font-bold text-green-600">{score}</span>
-            </p>
-            <p className="font-comic text-lg text-gray-700 mb-6">
-              You found {foundLetters.length} animals and earned {Math.floor(score / 15)} stars!
-            </p>
-            <div className="flex justify-center space-x-4">
-              <Button 
-                onClick={startGame}
-                className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full"
-              >
-                <Play className="w-5 h-5 mr-2" />
-                Play Again
-              </Button>
-              <Button 
-                onClick={() => navigate('/games')}
-                className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full"
-              >
-                Try Another Game
-              </Button>
-            </div>
-          </Card>
+          <GameCompletionPopup
+            isOpen={gameCompleted}
+            onClose={() => setGameCompleted(false)}
+            score={score}
+            stars={Math.floor(score / 100)}
+            gameName="Letter Safari"
+          />
+          // <Card className="p-8 bg-gradient-to-r from-yellow-100 to-green-100 rounded-2xl text-center">
+          //   <Trophy className="w-16 h-16 text-yellow-600 mx-auto mb-4" />
+          //   <h2 className="font-fredoka font-bold text-3xl text-gray-800 mb-4">
+          //     🎉 Safari Complete! 🎉
+          //   </h2>
+          //   <p className="font-comic text-lg text-gray-700 mb-4">
+          //     Final Score: <span className="font-bold text-green-600">{score}</span>
+          //   </p>
+          //   <p className="font-comic text-lg text-gray-700 mb-6">
+          //     You found {foundLetters.length} animals and earned {Math.floor(score / 15)} stars!
+          //   </p>
+          //   <div className="flex justify-center space-x-4">
+          //     <Button
+          //       onClick={startGame}
+          //       className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full"
+          //     >
+          //       <Play className="w-5 h-5 mr-2" />
+          //       Play Again
+          //     </Button>
+          //     <Button
+          //       onClick={() => navigate('/games')}
+          //       className="gradient-blue text-white font-comic font-bold px-8 py-3 rounded-full"
+          //     >
+          //       Try Another Game
+          //     </Button>
+          //   </div>
+          // </Card>
         )}
       </div>
     </div>

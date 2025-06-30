@@ -48,11 +48,11 @@ const ScienceExplorers = () => {
   const lessons = [
     { id: 'experiments', title: '🧪 Fun Experiments', description: 'Safe and exciting science experiments', color: 'gradient-purple' },
     { id: 'planets', title: '🪐 Solar System', description: 'Explore planets and space', color: 'gradient-blue' },
-    { id: 'weather', title: '🌦️ Weather Patterns', description: 'Understand different weather types', color: 'gradient-cyan' },
+    { id: 'weather', title: '🌦️ Weather Patterns', description: 'Understand different weather types', color: 'bg-gradient-to-r from-pink-300 via-rose-400 to-fuchsia-500' },
     { id: 'animals', title: '🦁 Animal Habitats', description: 'Where different animals live', color: 'gradient-green' },
     { id: 'plants', title: '🌱 Plant Life', description: 'How plants grow and live', color: 'gradient-green' },
-    { id: 'human-body', title: '🫀 Human Body', description: 'Amazing facts about our body', color: 'gradient-red' },
-    { id: 'rocks', title: '🪨 Rocks and Minerals', description: 'Earth\'s building blocks', color: 'gradient-brown' },
+    { id: 'human-body', title: '🫀 Human Body', description: 'Amazing facts about our body', color: 'bg-gradient-to-r from-green-300 via-emerald-400 to-teal-500' },
+    { id: 'rocks', title: '🪨 Rocks and Minerals', description: 'Earth\'s building blocks', color: 'bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-100' },
     { id: 'water-cycle', title: '💧 Water Cycle', description: 'Journey of water on Earth', color: 'gradient-blue' }
   ];
 

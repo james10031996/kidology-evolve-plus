@@ -39,10 +39,10 @@ const ReadingAdventure = () => {
     { id: 'body', title: '👤 Body Parts', description: 'Know your body from head to toe', color: 'gradient-green' },
     { id: 'animals', title: '🦁 Animals', description: 'Meet 20 amazing animals', color: 'gradient-orange' },
     { id: 'birds', title: '🦅 Birds', description: 'Fly with 20 beautiful birds', color: 'gradient-purple' },
-    { id: 'fruits', title: '🍎 Fruits', description: 'Taste 20 delicious fruits', color: 'gradient-red' },
+    { id: 'fruits', title: '🍎 Fruits', description: 'Taste 20 delicious fruits', color: 'bg-gradient-to-r from-red-500 via-orange-500 to-yellow-400' },
     { id: 'vegetables', title: '🥕 Vegetables', description: 'Grow with 20 healthy vegetables', color: 'gradient-green' },
-    { id: 'furniture', title: '🪑 Furniture', description: 'Furnish your home with 20 items', color: 'gradient-brown' },
-    { id: 'relatives', title: '👨‍👩‍👧‍👦 Family', description: 'Meet your family members', color: 'gradient-yellow' }
+    { id: 'furniture', title: '🪑 Furniture', description: 'Furnish your home with 20 items', color: 'bg-gradient-to-r from-pink-300 via-rose-400 to-fuchsia-500' },
+    { id: 'relatives', title: '👨‍👩‍👧‍👦 Family', description: 'Meet your family members', color: 'bg-gradient-to-r from-green-300 via-emerald-400 to-teal-500' }
   ];
 
   const startLesson = (lessonId: string) => {

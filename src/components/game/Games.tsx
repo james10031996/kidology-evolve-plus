@@ -76,7 +76,40 @@ const Games = () => {
     }
   ];
 
-  const allGames = [...mathGames, ...languageGames, ...memoryGames, ...logicGames];
+  const SearchMissingObject = [
+    {
+      id: 'search-missing-object',
+      title: 'Search Missing Object',
+      description: 'Search the missing object, find and drag to correct position!',
+      difficulty: 2,
+      duration: '4 min',
+      bestScore: 720,
+      playCount: 950,
+      gradient: 'bg-gradient-to-r from-purple-300 via-violet-400 to-pink-500',
+      stars: 10,
+      route: '/games/search-missing-object',
+      icon: '🔷'
+    }
+  ];
+
+  const PuzzleAssembly = [
+    {
+      id: 'puzzle-assembly',
+      title: 'Shape Sorter',
+      description: 'Drag the puzzle pieces to the right location!',
+      difficulty: 2,
+      duration: '4 min',
+      bestScore: 720,
+      playCount: 950,
+      gradient: 'bg-gradient-to-r from-yellow-300 via-pink-500 to-orange-600',
+      stars: 10,
+      route: '/games/puzzle-assembly',
+      icon: '🔷'
+    }
+  ];
+
+
+  const allGames = [...mathGames, ...languageGames, ...memoryGames, ...logicGames, ...SearchMissingObject, ...PuzzleAssembly];
 
   const playGame = (game: any) => {
     if (game.route) {
