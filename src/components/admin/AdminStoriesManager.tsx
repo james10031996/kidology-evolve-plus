@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, Plus, Trash2, Edit, Eye } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import AdminAddContent from './AdminAddContent';
 import EnhancedBookReader from '../activities/story/EnhancedBookReader';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import StoryCard from './stories/StoryCard';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface Story {
   id: string;
@@ -63,26 +64,6 @@ const AdminStoriesManager = () => {
           backgroundColor: "from-purple-100 to-pink-100"
         }
       ]
-    },
-    {
-      id: '2',
-      title: 'Space Explorer Mission',
-      type: 'story',
-      author: 'Captain Cosmo',
-      createdBy: 'admin@example.com',
-      createdAt: '2024-01-20',
-      pages: [
-        {
-          text: "Captain Cosmo puts on his shiny space suit, ready for the greatest adventure in the galaxy!",
-          animation: "scale-in",
-          backgroundColor: "from-blue-100 to-indigo-100"
-        },
-        {
-          text: "His rocket ship zooms past twinkling stars and colorful planets spinning in the cosmic dance.",
-          animation: "shooting-star",
-          backgroundColor: "from-purple-100 to-blue-100"
-        }
-      ]
     }
   ]);
 
@@ -102,7 +83,6 @@ const AdminStoriesManager = () => {
     createdBy?: string;
   }) => {
     if (editingStory) {
-      // Update existing story
       const updatedStory: Story = {
         ...editingStory,
         ...newContent,
@@ -113,7 +93,6 @@ const AdminStoriesManager = () => {
       ));
       setEditingStory(null);
     } else {
-      // Add new story
       const newStory: Story = {
         id: Date.now().toString(),
         ...newContent,
@@ -159,9 +138,7 @@ const AdminStoriesManager = () => {
             Add Story
           </Button>
         </div>
-
       </div>
-
 
       <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-purple-100 rounded-xl p-1">
@@ -178,71 +155,17 @@ const AdminStoriesManager = () => {
             <h3 className="text-xl font-fredoka font-bold text-gray-800">
               📚 Story Library ({stories.length})
             </h3>
-
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {stories.map((story) => (
-              <Card key={story.id} className="p-4 border-purple-200 hover:shadow-lg transition-all duration-300">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-400 rounded-lg flex items-center justify-center">
-                      <BookOpen className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-gray-800 font-comic text-sm">
-                        {story.title}
-                      </h4>
-                      <p className="text-xs text-gray-500 font-comic">
-                        {story.type === 'story' ? '📖 Story' : '🎭 Poem'}
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    onClick={() => handleDeleteStory(story.id)}
-                    size="sm"
-                    variant="destructive"
-                    className="opacity-70 hover:opacity-100"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
-                </div>
-
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 font-comic">Author:</span>
-                    <span className="font-bold text-gray-700">{story.author || 'Anonymous'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 font-comic">Pages:</span>
-                    <span className="font-bold text-purple-600">{story.pages.length}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 font-comic">Created:</span>
-                    <span className="font-bold text-gray-700">{story.createdAt}</span>
-                  </div>
-                </div>
-
-                <div className="flex justify-between mt-4 pt-3 border-t border-purple-100">
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="text-xs border-purple-200"
-                    onClick={() => handleEditStory(story)}
-                  >
-                    <Edit className="w-3 h-3 mr-1" />
-                    Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="gradient-purple text-white text-xs"
-                    onClick={() => handlePreviewStory(story)}
-                  >
-                    <Eye className="w-3 h-3 mr-1" />
-                    Preview
-                  </Button>
-                </div>
-              </Card>
+              <StoryCard
+                key={story.id}
+                story={story}
+                onEdit={handleEditStory}
+                onDelete={handleDeleteStory}
+                onPreview={handlePreviewStory}
+              />
             ))}
           </div>
 

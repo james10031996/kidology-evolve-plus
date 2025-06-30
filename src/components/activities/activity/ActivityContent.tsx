@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { TabsContent } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
@@ -9,13 +10,13 @@ import {
   Lightbulb, Microscope, Globe, Heart, Headphones
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import EnhancedBookReader from '../story/EnhancedBookReader';
+import StorySection from './StorySection';
+import ActivitySection from './ActivitySection';
 import CreativeTools from '../creative/CreativeTools';
 import StoryBuilder from '../creative/StoryBuilder';
 
 const ActivityContent = () => {
   const navigate = useNavigate();
-  const [selectedStory, setSelectedStory] = useState<any>(null);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [showStoryBuilder, setShowStoryBuilder] = useState(false);
 
@@ -116,23 +117,6 @@ const ActivityContent = () => {
     }
   ];
 
-  const mathActivities = [
-    {
-      title: 'Counting Fun',
-      description: 'Learn to count with colorful objects',
-      icon: '🔢',
-      difficulty: 'Easy',
-      route: '/courses/math-adventure'
-    },
-    {
-      title: 'Shape Explorer',
-      description: 'Discover different shapes around us',
-      icon: '🔺',
-      difficulty: 'Easy',
-      route: '/courses/math-adventure'
-    }
-  ];
-
   const artActivities = [
     {
       title: 'Magic Paint Studio',
@@ -212,132 +196,31 @@ const ActivityContent = () => {
     }
   ];
 
-  const openStory = (story: any) => {
-    setSelectedStory(story);
-  };
-
-  const renderActivityCard = (activity: any, index: number) => (
-    <Card key={index} className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-      <div className="flex items-center justify-between mb-4">
-        <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-400 rounded-2xl flex items-center justify-center text-2xl">
-          {typeof activity.icon === 'string' ? activity.icon : activity.icon}
-        </div>
-        <Badge className="bg-green-100 text-green-700 font-comic">
-          {activity.difficulty}
-        </Badge>
-      </div>
-      
-      <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">
-        {activity.title}
-      </h3>
-      <p className="font-comic text-gray-600 text-sm mb-4">
-        {activity.description}
-      </p>
-      
-      <Button 
-        className="w-full gradient-purple text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200"
-        onClick={() => {
-          if (activity.route) {
-            navigate(activity.route);
-          } else if (activity.action) {
-            activity.action();
-          } else {
-            alert('Coming soon! 🎉');
-          }
-        }}
-      >
-        <Play className="w-4 h-4 mr-2" />
-        Start Creating
-      </Button>
-    </Card>
-  );
+  const mathActivities = [
+    {
+      title: 'Counting Fun',
+      description: 'Learn to count with colorful objects',
+      icon: '🔢',
+      difficulty: 'Easy',
+      action: () => navigate('/courses/math-adventure')
+    },
+    {
+      title: 'Shape Explorer',
+      description: 'Discover different shapes around us',
+      icon: '🔺',
+      difficulty: 'Easy',
+      action: () => navigate('/courses/math-adventure')
+    }
+  ];
 
   return (
     <>
       <TabsContent value="stories" className="space-y-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {stories.map((story) => (
-            <Card key={story.id} className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-400 rounded-2xl flex items-center justify-center">
-                  <BookOpen className="w-8 h-8 text-white" />
-                </div>
-                <Badge className="bg-blue-100 text-blue-700 font-comic">
-                  {story.difficulty}
-                </Badge>
-              </div>
-              
-              <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">
-                {story.title}
-              </h3>
-              <p className="font-comic text-gray-600 text-sm mb-4">
-                {story.description}
-              </p>
-              
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center space-x-2">
-                  <Clock className="w-4 h-4 text-gray-500" />
-                  <span className="font-comic text-sm text-gray-600">{story.duration}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                  <span className="font-comic text-sm font-bold text-gray-700">{story.rating}</span>
-                </div>
-              </div>
-              
-              <Button 
-                className="w-full gradient-orange text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200"
-                onClick={() => openStory(story)}
-              >
-                <Play className="w-4 h-4 mr-2" />
-                Read Story
-              </Button>
-            </Card>
-          ))}
-        </div>
+        <StorySection stories={stories} type="stories" />
       </TabsContent>
 
       <TabsContent value="poems-stories" className="space-y-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {poems.map((poem) => (
-            <Card key={poem.id} className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-rose-400 to-pink-400 rounded-2xl flex items-center justify-center">
-                  <Heart className="w-8 h-8 text-white" />
-                </div>
-                <Badge className="bg-rose-100 text-rose-700 font-comic">
-                  {poem.difficulty}
-                </Badge>
-              </div>
-              
-              <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">
-                {poem.title}
-              </h3>
-              <p className="font-comic text-gray-600 text-sm mb-4">
-                {poem.description}
-              </p>
-              
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center space-x-2">
-                  <Clock className="w-4 h-4 text-gray-500" />
-                  <span className="font-comic text-sm text-gray-600">{poem.duration}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                  <span className="font-comic text-sm font-bold text-gray-700">{poem.rating}</span>
-                </div>
-              </div>
-              
-              <Button 
-                className="w-full gradient-rose text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200"
-                onClick={() => openStory(poem)}
-              >
-                <Play className="w-4 h-4 mr-2" />
-                Read Poem
-              </Button>
-            </Card>
-          ))}
-        </div>
+        <StorySection stories={poems} type="poems" />
       </TabsContent>
 
       <TabsContent value="games" className="space-y-8">
@@ -384,39 +267,21 @@ const ActivityContent = () => {
       </TabsContent>
 
       <TabsContent value="math" className="space-y-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mathActivities.map((activity, index) => renderActivityCard(activity, index))}
-        </div>
+        <ActivitySection activities={mathActivities} gradientClass="gradient-purple" />
       </TabsContent>
 
       <TabsContent value="art" className="space-y-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {artActivities.map((activity, index) => renderActivityCard(activity, index))}
-        </div>
+        <ActivitySection activities={artActivities} gradientClass="gradient-purple" />
       </TabsContent>
 
       <TabsContent value="science" className="space-y-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {scienceActivities.map((activity, index) => renderActivityCard(activity, index))}
-        </div>
+        <ActivitySection activities={scienceActivities} gradientClass="gradient-purple" />
       </TabsContent>
 
       <TabsContent value="music" className="space-y-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {musicActivities.map((activity, index) => renderActivityCard(activity, index))}
-        </div>
+        <ActivitySection activities={musicActivities} gradientClass="gradient-purple" />
       </TabsContent>
 
-      {/* Story Reader Modal */}
-      {selectedStory && (
-        <EnhancedBookReader
-          pages={selectedStory.pages}
-          title={selectedStory.title}
-          onClose={() => setSelectedStory(null)}
-        />
-      )}
-
-      {/* Creative Tools Modal */}
       {selectedTool && (
         <CreativeTools
           tool={selectedTool}
@@ -424,7 +289,6 @@ const ActivityContent = () => {
         />
       )}
 
-      {/* Story Builder Modal */}
       {showStoryBuilder && (
         <StoryBuilder
           onClose={() => setShowStoryBuilder(false)}

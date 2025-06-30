@@ -31,6 +31,9 @@ import MathAdventure from '@/components/courses/maths/MathAdventure';
 import EnhancedMathAdventure from '@/components/courses/maths/EnhancedMathAdventure';
 import ReadingAdventure from '@/components/courses/gk/ReadingAdventure';
 import ScienceExplorers from '@/components/courses/science/ScienceExplorers';
+import HistoryAdventures from '@/components/courses/history/HistoryAdventures';
+import SocialMoral from '@/components/courses/social/SocialMoral';
+import NatureExplorer from '@/components/courses/nature/NatureExplorer';
 
 import './App.css';
 
@@ -69,6 +72,9 @@ function App() {
                 <Route path="/courses/enhanced-math-adventure" element={<EnhancedMathAdventure />} />
                 <Route path="/courses/reading-adventure" element={<ReadingAdventure />} />
                 <Route path="/courses/science-explorers" element={<ScienceExplorers />} />
+                <Route path="/courses/history-adventures" element={<HistoryAdventures />} />
+                <Route path="/courses/social-moral" element={<SocialMoral />} />
+                <Route path="/courses/nature-explorer" element={<NatureExplorer />} />
                 
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -7,6 +7,7 @@ import { ArrowLeft, Play, Beaker, Star, Microscope } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import Header from '@/components/home/Header';
+import ScienceLessons from './ScienceLessons';
 
 const ScienceExplorers = () => {
   const navigate = useNavigate();
@@ -53,7 +54,8 @@ const ScienceExplorers = () => {
     { id: 'plants', title: '🌱 Plant Life', description: 'How plants grow and live', color: 'gradient-green' },
     { id: 'human-body', title: '🫀 Human Body', description: 'Amazing facts about our body', color: 'bg-gradient-to-r from-green-300 via-emerald-400 to-teal-500' },
     { id: 'rocks', title: '🪨 Rocks and Minerals', description: 'Earth\'s building blocks', color: 'bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-100' },
-    { id: 'water-cycle', title: '💧 Water Cycle', description: 'Journey of water on Earth', color: 'gradient-blue' }
+    { id: 'water-life', title: '🐠 Water Life', description: 'Amazing creatures that live in water', color: 'gradient-blue' },
+    { id: 'universe', title: '🌌 Universe', description: 'Explore the vast cosmos and stars', color: 'bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-500' }
   ];
 
   const startLesson = (lessonId: string) => {
@@ -168,6 +170,12 @@ const ScienceExplorers = () => {
             </p>
           </div>
 
+          {(selectedLesson === 'plants' || selectedLesson === 'human-body' || 
+            selectedLesson === 'rocks' || selectedLesson === 'water-life' || 
+            selectedLesson === 'universe') && (
+            <ScienceLessons lessonType={selectedLesson} />
+          )}
+          
           {selectedLesson === 'experiments' && renderExperimentsLesson()}
           {selectedLesson === 'planets' && renderPlanetsLesson()}
           {selectedLesson === 'weather' && renderWeatherLesson()}
