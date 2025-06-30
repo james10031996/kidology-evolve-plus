@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -231,14 +232,18 @@ const AdminAddContent = ({ onAdd, editingContent, onCancel }: AdminAddContentPro
                     </label>
                     <Select
                       value={page.animation}
-                      onChange={(e) => updatePage(index, 'animation', e.target.value)}
-                      className="w-full p-2 border border-purple-200 rounded-md focus:border-purple-400 focus:outline-none text-sm"
+                      onValueChange={(value) => updatePage(index, 'animation', value)}
                     >
-                      {animations.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
+                      <SelectTrigger className="w-full border-purple-200 focus:border-purple-400">
+                        <SelectValue placeholder="Select animation" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {animations.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </div>
 
@@ -248,14 +253,18 @@ const AdminAddContent = ({ onAdd, editingContent, onCancel }: AdminAddContentPro
                     </label>
                     <Select
                       value={page.backgroundColor}
-                      onChange={(e) => updatePage(index, 'backgroundColor', e.target.value)}
-                      className="w-full p-2 border border-purple-200 rounded-md focus:border-purple-400 focus:outline-none text-sm"
+                      onValueChange={(value) => updatePage(index, 'backgroundColor', value)}
                     >
-                      {backgrounds.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
+                      <SelectTrigger className="w-full border-purple-200 focus:border-purple-400">
+                        <SelectValue placeholder="Select background" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {backgrounds.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </div>
                 </div>
