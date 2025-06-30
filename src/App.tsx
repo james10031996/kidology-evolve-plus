@@ -22,6 +22,7 @@ import ShapeSorter from '@/components/game/ShapeSorter';
 import PuzzleAssembly from '@/components/game/PuzzleAssembly';
 import SearchMissingObject from '@/components/game/SearchMissingObject';
 import MagicPaintStudio from '@/components/activities/MagicPaintStudio';
+import MusicMovement from '@/components/activities/MusicMovement';
 
 // Course Pages
 import EnglishAdventure from '@/components/courses/english/EnglishAdventure';
@@ -57,9 +58,10 @@ function App() {
                 <Route path="/activities/letter-safari" element={<LetterSafari />} />
                 <Route path="/activities/memory-palace" element={<MemoryPalace />} />
                 <Route path="/activities/shape-sorter" element={<ShapeSorter />} />
+                <Route path="/activities/magic-paint-studio" element={<MagicPaintStudio />} />
+                <Route path="/activities/music-movement" element={<MusicMovement />} />
                 <Route path="/games/puzzle-assembly" element={<PuzzleAssembly />} />
                 <Route path="/games/search-missing-object" element={<SearchMissingObject />} />
-                <Route path="/activities/magic-paint-studio" element={<MagicPaintStudio />} />
                 
                 {/* Course Routes */}
                 <Route path="/courses/math-basics" element={<MathBasics />} />

@@ -11,11 +11,13 @@ import {
 import { useNavigate } from 'react-router-dom';
 import EnhancedBookReader from '../story/EnhancedBookReader';
 import CreativeTools from '../creative/CreativeTools';
+import StoryBuilder from '../creative/StoryBuilder';
 
 const ActivityContent = () => {
   const navigate = useNavigate();
   const [selectedStory, setSelectedStory] = useState<any>(null);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
+  const [showStoryBuilder, setShowStoryBuilder] = useState(false);
 
   const stories = [
     {
@@ -133,6 +135,13 @@ const ActivityContent = () => {
 
   const artActivities = [
     {
+      title: 'Magic Paint Studio',
+      description: 'Create beautiful digital artwork with magic brushes',
+      icon: <Brush className="w-6 h-6" />,
+      difficulty: 'Easy',
+      action: () => navigate('/activities/magic-paint-studio')
+    },
+    {
       title: 'Digital Drawing',
       description: 'Create beautiful digital artwork',
       icon: <Brush className="w-6 h-6" />,
@@ -152,6 +161,13 @@ const ActivityContent = () => {
       icon: <Scissors className="w-6 h-6" />,
       difficulty: 'Medium',
       action: () => setSelectedTool('Paper Crafts')
+    },
+    {
+      title: 'Story Builder',
+      description: 'Create your own interactive stories',
+      icon: <BookOpen className="w-6 h-6" />,
+      difficulty: 'Medium',
+      action: () => setShowStoryBuilder(true)
     }
   ];
 
@@ -173,6 +189,13 @@ const ActivityContent = () => {
   ];
 
   const musicActivities = [
+    {
+      title: 'Music Movement',
+      description: 'Dance and move to fun music',
+      icon: <Music className="w-6 h-6" />,
+      difficulty: 'Easy',
+      action: () => navigate('/activities/music-movement')
+    },
     {
       title: 'Rhythm Maker',
       description: 'Create beats and rhythms',
@@ -398,6 +421,13 @@ const ActivityContent = () => {
         <CreativeTools
           tool={selectedTool}
           onClose={() => setSelectedTool(null)}
+        />
+      )}
+
+      {/* Story Builder Modal */}
+      {showStoryBuilder && (
+        <StoryBuilder
+          onClose={() => setShowStoryBuilder(false)}
         />
       )}
     </>

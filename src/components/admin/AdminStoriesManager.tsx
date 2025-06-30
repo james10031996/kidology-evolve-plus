@@ -88,6 +88,7 @@ const AdminStoriesManager = () => {
 
   const [selectedTab, setSelectedTab] = useState('manage');
   const [previewStory, setPreviewStory] = useState<Story | null>(null);
+  const [editingStory, setEditingStory] = useState<Story | null>(null);
 
   const handleAddStory = (newContent: {
     title: string;
@@ -100,18 +101,37 @@ const AdminStoriesManager = () => {
     author?: string;
     createdBy?: string;
   }) => {
-    const newStory: Story = {
-      id: Date.now().toString(),
-      ...newContent,
-      createdAt: new Date().toISOString().split('T')[0]
-    };
+    if (editingStory) {
+      // Update existing story
+      const updatedStory: Story = {
+        ...editingStory,
+        ...newContent,
+      };
 
-    setStories(prev => [...prev, newStory]);
+      setStories(prev => prev.map(story => 
+        story.id === editingStory.id ? updatedStory : story
+      ));
+      setEditingStory(null);
+    } else {
+      // Add new story
+      const newStory: Story = {
+        id: Date.now().toString(),
+        ...newContent,
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+
+      setStories(prev => [...prev, newStory]);
+    }
     setSelectedTab('manage');
   };
 
   const handleDeleteStory = (id: string) => {
     setStories(prev => prev.filter(story => story.id !== id));
+  };
+
+  const handleEditStory = (story: Story) => {
+    setEditingStory(story);
+    setSelectedTab('add');
   };
 
   const handlePreviewStory = (story: Story) => {
@@ -149,7 +169,7 @@ const AdminStoriesManager = () => {
             📖 Manage Stories
           </TabsTrigger>
           <TabsTrigger value="add" className="rounded-lg font-comic font-bold data-[state=active]:bg-white data-[state=active]:text-purple-600">
-            ✨ Add New Story
+            {editingStory ? '✏️ Edit Story' : '✨ Add New Story'}
           </TabsTrigger>
         </TabsList>
 
@@ -204,7 +224,12 @@ const AdminStoriesManager = () => {
                 </div>
 
                 <div className="flex justify-between mt-4 pt-3 border-t border-purple-100">
-                  <Button size="sm" variant="outline" className="text-xs border-purple-200">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="text-xs border-purple-200"
+                    onClick={() => handleEditStory(story)}
+                  >
                     <Edit className="w-3 h-3 mr-1" />
                     Edit
                   </Button>
@@ -243,21 +268,29 @@ const AdminStoriesManager = () => {
 
         <TabsContent value="add">
           <Card className="border-purple-200">
-            <AdminAddContent onAdd={handleAddStory} />
+            <AdminAddContent 
+              onAdd={handleAddStory} 
+              editingContent={editingStory}
+              onCancel={() => {
+                setEditingStory(null);
+                setSelectedTab('manage');
+              }}
+            />
           </Card>
         </TabsContent>
       </Tabs>
 
       {/* Story Preview Modal */}
-      {previewStory && (<Dialog open={!!previewStory} onOpenChange={() => setPreviewStory(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-xl">
-          <EnhancedBookReader
-            pages={previewStory.pages}
-            title={previewStory.title}
-            onClose={() => setPreviewStory(null)}
-          />
-        </DialogContent>
-      </Dialog>
+      {previewStory && (
+        <Dialog open={!!previewStory} onOpenChange={() => setPreviewStory(null)}>
+          <DialogContent className="max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-xl">
+            <EnhancedBookReader
+              pages={previewStory.pages}
+              title={previewStory.title}
+              onClose={() => setPreviewStory(null)}
+            />
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
