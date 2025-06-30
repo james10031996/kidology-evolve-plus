@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,18 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import Header from '@/components/home/Header';
 import ScienceLessons from './ScienceLessons';
+import ExperimentsLesson from './experiments/ExperimentsLesson';
+import PlanetsLesson from './planets/PlanetsLesson';
 
 const ScienceExplorers = () => {
   const navigate = useNavigate();
   const { updateStars, updateProgress } = useUser();
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
-
-  const experiments = [
-    { name: 'Rainbow in a Glass', materials: ['Water', 'Food coloring', 'Sugar'], result: 'Layered rainbow colors', emoji: '🌈' },
-    { name: 'Dancing Raisins', materials: ['Clear soda', 'Raisins'], result: 'Raisins float and sink', emoji: '🫧' },
-    { name: 'Magic Milk', materials: ['Milk', 'Food coloring', 'Soap'], result: 'Colors swirl and dance', emoji: '🥛' },
-    { name: 'Volcano Eruption', materials: ['Baking soda', 'Vinegar', 'Red coloring'], result: 'Foamy eruption', emoji: '🌋' }
-  ];
 
   const scienceTopics = {
     planets: [
@@ -64,51 +58,6 @@ const ScienceExplorers = () => {
     updateProgress('Science', 5);
   };
 
-  const renderExperimentsLesson = () => (
-    <div className="grid md:grid-cols-2 gap-8">
-      {experiments.map((exp, index) => (
-        <Card key={exp.name} className="p-8 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in" style={{ animationDelay: `${index * 0.2}s` }}>
-          <div className="text-6xl text-center mb-4 animate-bounce">
-            {exp.emoji}
-          </div>
-          <h3 className="font-fredoka text-2xl font-bold text-purple-700 text-center mb-4">
-            {exp.name}
-          </h3>
-          <div className="bg-white p-4 rounded-xl mb-4">
-            <h4 className="font-comic font-bold text-gray-800 mb-2">Materials needed:</h4>
-            <ul className="font-comic text-gray-600 space-y-1">
-              {exp.materials.map((material, i) => (
-                <li key={i}>• {material}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="bg-yellow-100 p-4 rounded-xl">
-            <h4 className="font-comic font-bold text-gray-800 mb-2">What happens:</h4>
-            <p className="font-comic text-gray-700">{exp.result}</p>
-          </div>
-        </Card>
-      ))}
-    </div>
-  );
-
-  const renderPlanetsLesson = () => (
-    <div className="grid md:grid-cols-3 gap-6">
-      {scienceTopics.planets.map((planet, index) => (
-        <Card key={planet.name} className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-          <div className="text-6xl text-center mb-4 animate-bounce">
-            {planet.emoji}
-          </div>
-          <div className={`${planet.color} text-white font-fredoka font-bold text-xl p-3 rounded-xl text-center mb-3`}>
-            {planet.name}
-          </div>
-          <div className="font-comic text-gray-600 text-center bg-gray-50 p-3 rounded-lg">
-            {planet.fact}
-          </div>
-        </Card>
-      ))}
-    </div>
-  );
-
   const renderWeatherLesson = () => (
     <div className="grid md:grid-cols-3 gap-6">
       {scienceTopics.weather.map((weather, index) => (
@@ -116,10 +65,10 @@ const ScienceExplorers = () => {
           <div className="text-6xl text-center mb-4 animate-bounce">
             {weather.emoji}
           </div>
-          <h3 className="font-fredoka text-xl font-bold text-blue-600 text-center mb-3">
+          <h3 className="font-fredoka text-xl font-bold text-pink-600 text-center mb-3">
             {weather.type}
           </h3>
-          <p className="font-comic text-gray-600 text-center bg-blue-50 p-3 rounded-lg">
+          <p className="font-comic text-gray-600 text-center bg-pink-50 p-3 rounded-lg">
             {weather.description}
           </p>
         </Card>
@@ -170,14 +119,15 @@ const ScienceExplorers = () => {
             </p>
           </div>
 
+          {selectedLesson === 'experiments' && <ExperimentsLesson />}
+          {selectedLesson === 'planets' && <PlanetsLesson />}
+          
           {(selectedLesson === 'plants' || selectedLesson === 'human-body' || 
             selectedLesson === 'rocks' || selectedLesson === 'water-life' || 
             selectedLesson === 'universe') && (
             <ScienceLessons lessonType={selectedLesson} />
           )}
           
-          {selectedLesson === 'experiments' && renderExperimentsLesson()}
-          {selectedLesson === 'planets' && renderPlanetsLesson()}
           {selectedLesson === 'weather' && renderWeatherLesson()}
           {selectedLesson === 'animals' && renderAnimalsLesson()}
         </div>

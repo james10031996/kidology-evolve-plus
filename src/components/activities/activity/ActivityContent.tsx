@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { TabsContent } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
@@ -7,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { 
   BookOpen, Play, Palette, Music, Beaker, Calculator, 
   Star, Clock, Users, Gamepad2, Brush, PenTool, Scissors,
-  Lightbulb, Microscope, Globe, Heart, Headphones
+  Lightbulb, Microscope, Globe, Heart, Headphones, Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorySection from './StorySection';
@@ -118,6 +117,13 @@ const ActivityContent = () => {
   ];
 
   const artActivities = [
+    {
+      title: 'Interactive Learning Hub',
+      description: 'Complete learning activities with points and achievements',
+      icon: <Sparkles className="w-6 h-6" />,
+      difficulty: 'Easy',
+      action: () => navigate('/activities/interactive-learning')
+    },
     {
       title: 'Magic Paint Studio',
       description: 'Create beautiful digital artwork with magic brushes',
