@@ -14,6 +14,7 @@ import Admin from '@/components/admin/Admin';
 import NotFound from '@/pages/NotFound';
 import Demo from '@/pages/Demo';
 
+
 // Activity Pages
 import NumberBubblePop from '@/components/game/NumberBubblePop';
 import LetterSafari from '@/components/game/LetterSafari';
@@ -24,6 +25,7 @@ import SearchMissingObject from '@/components/game/SearchMissingObject';
 import MagicPaintStudio from '@/components/activities/MagicPaintStudio';
 import MusicMovement from '@/components/activities/MusicMovement';
 import InteractiveLearningRoute from '@/components/activities/activity/InteractiveLearningRoute';
+import CreativeArts from '@/components/courses/creative/CreativeArts';
 
 // Course Pages
 import EnglishAdventure from '@/components/courses/english/EnglishAdventure';
@@ -35,6 +37,7 @@ import ScienceExplorers from '@/components/courses/science/ScienceExplorers';
 import HistoryAdventures from '@/components/courses/history/HistoryAdventures';
 import SocialMoral from '@/components/courses/social/SocialMoral';
 import NatureExplorer from '@/components/courses/nature/NatureExplorer';
+import GeographyExplorer from '@/components/courses/geography/GeographyExplorer';
 
 import './App.css';
 
@@ -67,6 +70,7 @@ function App() {
                 <Route path="/activities/interactive-learning" element={<InteractiveLearningRoute />} />
                 <Route path="/games/puzzle-assembly" element={<PuzzleAssembly />} />
                 <Route path="/games/search-missing-object" element={<SearchMissingObject />} />
+                <Route path="/activies/creative-arts" element={<CreativeArts />} />
                 
                 {/* Course Routes */}
                 <Route path="/courses/math-basics" element={<MathBasics />} />
@@ -77,7 +81,8 @@ function App() {
                 <Route path="/courses/history-adventures" element={<HistoryAdventures />} />
                 <Route path="/courses/social-moral" element={<SocialMoral />} />
                 <Route path="/courses/nature-explorer" element={<NatureExplorer />} />
-                
+                <Route path="/courses/geography-explorer" element={<GeographyExplorer />} />
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Toaster />

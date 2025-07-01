@@ -3,317 +3,426 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Globe, MapPin, Compass, Mountain, Waves, TreePine } from 'lucide-react';
+import { ArrowLeft, Play, Globe, Star, Map, Compass } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '@/contexts/UserContext';
+import Header from '@/components/home/Header';
 
 const GeographyExplorer = () => {
-  const [currentCountry, setCurrentCountry] = useState(0);
-  const [visitedPlaces, setVisitedPlaces] = useState([]);
+  const navigate = useNavigate();
+  const { updateStars, updateProgress } = useUser();
+  const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
 
-  const countries = [
-    {
-      id: 1,
-      name: 'Egypt',
-      capital: 'Cairo',
-      continent: 'Africa',
-      flag: '🇪🇬',
-      landmark: 'Pyramids of Giza',
-      language: 'Arabic',
-      funFact: 'Home to the longest river in the world - the Nile!',
-      climate: 'Desert',
-      population: '104 million'
+  const geographyTopics = {
+    continents: {
+      title: '🌍 Continents & Oceans',
+      lessons: [
+        { 
+          name: 'Seven Continents', 
+          emoji: '🌎', 
+          description: 'Learn about all seven continents',
+          details: {
+            continents: [
+              { name: 'North America', emoji: '🦅', countries: ['USA', 'Canada', 'Mexico'], fact: 'Home to the Grand Canyon' },
+              { name: 'South America', emoji: '🦙', countries: ['Brazil', 'Argentina', 'Peru'], fact: 'Has the Amazon rainforest' },
+              { name: 'Europe', emoji: '🏰', countries: ['France', 'Germany', 'Italy'], fact: 'Smallest continent by area' },
+              { name: 'Africa', emoji: '🦁', countries: ['Egypt', 'Kenya', 'South Africa'], fact: 'Birthplace of humanity' },
+              { name: 'Asia', emoji: '🐼', countries: ['China', 'India', 'Japan'], fact: 'Largest and most populous' },
+              { name: 'Australia', emoji: '🦘', countries: ['Australia'], fact: 'Only continent that is one country' },
+              { name: 'Antarctica', emoji: '🐧', countries: [], fact: 'Coldest and windiest continent' }
+            ]
+          }
+        },
+        { 
+          name: 'Five Oceans', 
+          emoji: '🌊', 
+          description: 'Discover the world\'s oceans',
+          details: {
+            oceans: [
+              { name: 'Pacific Ocean', emoji: '🐋', fact: 'Largest and deepest ocean', animals: ['Whales', 'Dolphins', 'Sharks'] },
+              { name: 'Atlantic Ocean', emoji: '🐢', fact: 'Second largest ocean', animals: ['Sea Turtles', 'Fish', 'Seals'] },
+              { name: 'Indian Ocean', emoji: '🐙', fact: 'Warmest ocean', animals: ['Octopus', 'Tropical Fish', 'Coral'] },
+              { name: 'Arctic Ocean', emoji: '🐻‍❄️', fact: 'Smallest and coldest ocean', animals: ['Polar Bears', 'Seals', 'Walrus'] },
+              { name: 'Southern Ocean', emoji: '🐧', fact: 'Surrounds Antarctica', animals: ['Penguins', 'Krill', 'Whales'] }
+            ]
+          }
+        }
+      ]
     },
-    {
-      id: 2,
-      name: 'Japan',
-      capital: 'Tokyo',
-      continent: 'Asia',
-      flag: '🇯🇵',
-      landmark: 'Mount Fuji',
-      language: 'Japanese',
-      funFact: 'Has over 6,800 islands!',
-      climate: 'Temperate',
-      population: '125 million'
+    countries: {
+      title: '🗺️ Countries & Capitals',
+      lessons: [
+        {
+          name: 'Famous Countries',
+          emoji: '🏛️',
+          description: 'Learn about interesting countries',
+          details: {
+            countries: [
+              { name: 'USA', capital: 'Washington D.C.', emoji: '🗽', landmark: 'Statue of Liberty', food: 'Hamburger 🍔' },
+              { name: 'France', capital: 'Paris', emoji: '🗼', landmark: 'Eiffel Tower', food: 'Croissant 🥐' },
+              { name: 'Egypt', capital: 'Cairo', emoji: '🏜️', landmark: 'Pyramids', food: 'Falafel 🧆' },
+              { name: 'Japan', capital: 'Tokyo', emoji: '🏯', landmark: 'Mount Fuji', food: 'Sushi 🍣' },
+              { name: 'Australia', capital: 'Canberra', emoji: '🏛️', landmark: 'Sydney Opera House', food: 'Meat Pie 🥧' },
+              { name: 'Brazil', capital: 'Brasília', emoji: '🏟️', landmark: 'Christ the Redeemer', food: 'Açaí 🍇' }
+            ]
+          }
+        },
+        {
+          name: 'World Landmarks',
+          emoji: '🏗️',
+          description: 'Famous places around the world',
+          details: {
+            landmarks: [
+              { name: 'Great Wall of China', country: 'China', emoji: '🏯', fact: 'Can be seen from space' },
+              { name: 'Taj Mahal', country: 'India', emoji: '🕌', fact: 'Made of white marble' },
+              { name: 'Machu Picchu', country: 'Peru', emoji: '⛰️', fact: 'Ancient Inca city in clouds' },
+              { name: 'Colosseum', country: 'Italy', emoji: '🏛️', fact: 'Where gladiators fought' },
+              { name: 'Stonehenge', country: 'England', emoji: '🗿', fact: 'Mysterious ancient stones' },
+              { name: 'Christ the Redeemer', country: 'Brazil', emoji: '⛪', fact: 'Giant statue on mountain' }
+            ]
+          }
+        }
+      ]
     },
-    {
-      id: 3,
-      name: 'Brazil',
-      capital: 'Brasília',
-      continent: 'South America',
-      flag: '🇧🇷',
-      landmark: 'Christ the Redeemer',
-      language: 'Portuguese',
-      funFact: 'Home to the Amazon rainforest!',
-      climate: 'Tropical',
-      population: '215 million'
+    weather: {
+      title: '⛅ Weather & Climate',
+      lessons: [
+        {
+          name: 'Weather Patterns',
+          emoji: '🌦️',
+          description: 'Understanding different weather',
+          details: {
+            weather: [
+              { type: 'Sunny', emoji: '☀️', description: 'Clear sky, bright sun', activities: ['Beach', 'Picnic', 'Swimming'] },
+              { type: 'Rainy', emoji: '🌧️', description: 'Water falling from clouds', activities: ['Indoor games', 'Reading', 'Crafts'] },
+              { type: 'Snowy', emoji: '❄️', description: 'Frozen water crystals', activities: ['Skiing', 'Snowman', 'Hot cocoa'] },
+              { type: 'Windy', emoji: '💨', description: 'Moving air', activities: ['Flying kites', 'Sailing', 'Wind chimes'] },
+              { type: 'Cloudy', emoji: '☁️', description: 'Sky covered with clouds', activities: ['Walking', 'Photography', 'Cloud watching'] },
+              { type: 'Stormy', emoji: '⛈️', description: 'Thunder and lightning', activities: ['Stay inside', 'Watch rain', 'Listen to thunder'] }
+            ]
+          }
+        },
+        {
+          name: 'Seasons Around World',
+          emoji: '🌸🌞🍂❄️',
+          description: 'How seasons change everywhere',
+          details: {
+            seasons: [
+              { name: 'Spring', emoji: '🌸', description: 'Flowers bloom, animals wake up', months: ['March', 'April', 'May'] },
+              { name: 'Summer', emoji: '🌞', description: 'Hot weather, long days', months: ['June', 'July', 'August'] },
+              { name: 'Fall/Autumn', emoji: '🍂', description: 'Leaves change color', months: ['September', 'October', 'November'] },
+              { name: 'Winter', emoji: '❄️', description: 'Cold weather, short days', months: ['December', 'January', 'February'] }
+            ]
+          }
+        }
+      ]
     },
-    {
-      id: 4,
-      name: 'Australia',
-      capital: 'Canberra',
-      continent: 'Oceania',
-      flag: '🇦🇺',
-      landmark: 'Sydney Opera House',
-      language: 'English',
-      funFact: 'The only country that is also a continent!',
-      climate: 'Varies',
-      population: '26 million'
-    }
-  ];
-
-  const geographyTopics = [
-    {
-      id: 1,
-      title: 'Continents & Oceans',
-      description: 'Discover the 7 continents and 5 oceans',
-      icon: '🌍',
-      progress: 60,
-      activities: 8
+    habitats: {
+      title: '🏞️ Natural Habitats',
+      lessons: [
+        {
+          name: 'Forest Homes',
+          emoji: '🌲',
+          description: 'Animals living in forests',
+          details: {
+            forests: [
+              { 
+                type: 'Rainforest', 
+                emoji: '🌴', 
+                location: 'Amazon, Congo', 
+                animals: ['🐒 Monkeys', '🦜 Parrots', '🐆 Jaguars', '🦎 Lizards'],
+                plants: ['🌺 Tropical flowers', '🌿 Ferns', '🌳 Tall trees']
+              },
+              { 
+                type: 'Deciduous Forest', 
+                emoji: '🌳', 
+                location: 'North America, Europe', 
+                animals: ['🐻 Bears', '🦌 Deer', '🐿️ Squirrels', '🦉 Owls'],
+                plants: ['🍂 Oak trees', '🌰 Chestnut trees', '🍄 Mushrooms']
+              }
+            ]
+          }
+        },
+        {
+          name: 'Ocean Life',
+          emoji: '🐠',
+          description: 'Creatures living in seas',
+          details: {
+            zones: [
+              {
+                name: 'Shallow Waters',
+                emoji: '🏖️',
+                animals: ['🐟 Tropical fish', '🐢 Sea turtles', '🦀 Crabs', '⭐ Starfish'],
+                features: ['🪸 Coral reefs', '🌊 Warm water', '☀️ Lots of sunlight']
+              },
+              {
+                name: 'Deep Ocean',
+                emoji: '🌊',
+                animals: ['🐋 Whales', '🦈 Sharks', '🐙 Giant squid', '🐡 Deep-sea fish'],
+                features: ['🌑 Very dark', '❄️ Cold water', '🗻 Underwater mountains']
+              }
+            ]
+          }
+        },
+        {
+          name: 'Desert Life',
+          emoji: '🏜️',
+          description: 'Life in hot, dry places',
+          details: {
+            deserts: [
+              {
+                name: 'Hot Desert',
+                emoji: '🌵',
+                location: 'Sahara, Arizona',
+                animals: ['🐪 Camels', '🦎 Lizards', '🐍 Snakes', '🦂 Scorpions'],
+                plants: ['🌵 Cacti', '🌿 Desert grass', '🌸 Desert flowers']
+              },
+              {
+                name: 'Cold Desert',
+                emoji: '🏔️',
+                location: 'Mongolia, Antarctica',
+                animals: ['🐻‍❄️ Polar bears', '🐧 Penguins', '🦌 Reindeer', '🐺 Arctic wolves'],
+                adaptations: ['❄️ Thick fur', '🏃‍♂️ Fast runners', '😴 Hibernation']
+              }
+            ]
+          }
+        }
+      ]
     },
-    {
-      id: 2,
-      title: 'Weather & Climate',
-      description: 'Learn about different weather patterns',
-      icon: '🌤️',
-      progress: 40,
-      activities: 6
+    maps: {
+      title: '🗺️ Reading Maps',
+      lessons: [
+        {
+          name: 'Map Basics',
+          emoji: '🧭',
+          description: 'How to read and use maps',
+          details: {
+            basics: [
+              { concept: 'Compass Directions', emoji: '🧭', directions: ['North ⬆️', 'South ⬇️', 'East ➡️', 'West ⬅️'] },
+              { concept: 'Map Scale', emoji: '📏', explanation: 'Shows how big real places are on map' },
+              { concept: 'Map Legend', emoji: '🔑', explanation: 'Explains what symbols mean' },
+              { concept: 'Grid Lines', emoji: '#️⃣', explanation: 'Help find exact locations' }
+            ]
+          }
+        },
+        {
+          name: 'Types of Maps',
+          emoji: '📋',
+          description: 'Different kinds of maps',
+          details: {
+            types: [
+              { name: 'Physical Maps', emoji: '⛰️', shows: 'Mountains, rivers, lakes', colors: 'Green for low, brown for high' },
+              { name: 'Political Maps', emoji: '🏛️', shows: 'Countries, states, cities', colors: 'Different colors for countries' },
+              { name: 'Weather Maps', emoji: '🌦️', shows: 'Rain, sun, temperature', symbols: 'Clouds, sun, snowflakes' },
+              { name: 'Treasure Maps', emoji: '🏴‍☠️', shows: 'Where treasure is hidden', fun: 'X marks the spot!' }
+            ]
+          }
+        }
+      ]
     },
-    {
-      id: 3,
-      title: 'Landforms',
-      description: 'Explore mountains, valleys, and plains',
-      icon: '🏔️',
-      progress: 75,
-      activities: 10
-    },
-    {
-      id: 4,
-      title: 'World Cultures',
-      description: 'Meet people from around the world',
-      icon: '🎭',
-      progress: 30,
-      activities: 12
-    }
-  ];
-
-  const explorationGames = [
-    {
-      id: 1,
-      title: 'Flag Match',
-      description: 'Match flags to their countries',
-      icon: '🏁',
-      difficulty: 'Easy',
-      type: 'Memory'
-    },
-    {
-      id: 2,
-      title: 'Capital Quiz',
-      description: 'Test your knowledge of world capitals',
-      icon: '🏛️',
-      difficulty: 'Medium',
-      type: 'Quiz'
-    },
-    {
-      id: 3,
-      title: 'Landmark Hunt',
-      description: 'Find famous landmarks on the map',
-      icon: '🗼',
-      difficulty: 'Medium',
-      type: 'Adventure'
-    },
-    {
-      id: 4,
-      title: 'Culture Explorer',
-      description: 'Learn about traditions around the world',
-      icon: '🎨',
-      difficulty: 'Easy',
-      type: 'Learning'
-    }
-  ];
-
-  const visitCountry = () => {
-    const country = countries[currentCountry];
-    if (!visitedPlaces.includes(country.id)) {
-      setVisitedPlaces([...visitedPlaces, country.id]);
+    culture: {
+      title: '🎭 World Cultures',
+      lessons: [
+        {
+          name: 'Festivals Around World',
+          emoji: '🎉',
+          description: 'How people celebrate',
+          details: {
+            festivals: [
+              { name: 'Chinese New Year', country: 'China', emoji: '🐉', traditions: ['Dragon dances', 'Red decorations', 'Fireworks'] },
+              { name: 'Diwali', country: 'India', emoji: '🪔', traditions: ['Festival of lights', 'Oil lamps', 'Sweets'] },
+              { name: 'Carnival', country: 'Brazil', emoji: '🎭', traditions: ['Colorful costumes', 'Dancing', 'Parades'] },
+              { name: 'Halloween', country: 'USA', emoji: '🎃', traditions: ['Trick or treat', 'Costumes', 'Jack-o-lanterns'] },
+              { name: 'Christmas', country: 'Worldwide', emoji: '🎄', traditions: ['Gift giving', 'Christmas tree', 'Santa Claus'] }
+            ]
+          }
+        },
+        {
+          name: 'Traditional Foods',
+          emoji: '🍽️',
+          description: 'Yummy foods from everywhere',
+          details: {
+            foods: [
+              { country: 'Italy', food: 'Pizza 🍕', ingredients: 'Cheese, tomato, bread', fact: 'Invented in Naples' },
+              { country: 'Mexico', food: 'Tacos 🌮', ingredients: 'Meat, beans, peppers', fact: 'Eaten with hands' },
+              { country: 'Japan', food: 'Sushi 🍣', ingredients: 'Rice, fish, seaweed', fact: 'Very fresh fish' },
+              { country: 'India', food: 'Curry 🍛', ingredients: 'Spices, vegetables, rice', fact: 'Many different colors' },
+              { country: 'France', food: 'Croissant 🥐', ingredients: 'Butter, flour, yeast', fact: 'Crescent moon shape' }
+            ]
+          }
+        }
+      ]
     }
   };
 
-  const nextCountry = () => {
-    setCurrentCountry((currentCountry + 1) % countries.length);
+  const lessons = [
+    { id: 'continents', title: '🌍 Continents & Oceans', description: 'Explore the seven continents and five oceans', color: 'gradient-blue', difficulty: 'Easy' },
+    { id: 'countries', title: '🗺️ Countries & Capitals', description: 'Learn about different countries and their capitals', color: 'gradient-green', difficulty: 'Medium' },
+    { id: 'weather', title: '⛅ Weather & Climate', description: 'Understand weather patterns and seasons', color: 'gradient-purple', difficulty: 'Easy' },
+    { id: 'habitats', title: '🏞️ Natural Habitats', description: 'Discover where animals live around the world', color: 'gradient-orange', difficulty: 'Medium' },
+    { id: 'maps', title: '🗺️ Reading Maps', description: 'Learn how to read and use different maps', color: 'gradient-pink', difficulty: 'Hard' },
+    { id: 'culture', title: '🎭 World Cultures', description: 'Explore festivals and traditions worldwide', color: 'bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300', difficulty: 'Medium' }
+  ];
+
+  const startLesson = (lessonId: string) => {
+    setSelectedLesson(lessonId);
+    updateStars(15);
+    updateProgress('Geography', 10);
   };
 
-  const getClimateIcon = (climate) => {
-    switch(climate) {
-      case 'Desert': return '🏜️';
-      case 'Tropical': return '🌴';
-      case 'Temperate': return '🌸';
-      case 'Varies': return '🌈';
-      default: return '🌍';
-    }
-  };
+  const renderTopicLessons = (topicId: string) => {
+    const topic = geographyTopics[topicId as keyof typeof geographyTopics];
+    if (!topic) return null;
 
-  return (
-    <div className="space-y-6">
-      {/* Geography Header */}
-      <Card className="p-6 bg-gradient-to-br from-emerald-50 to-blue-50 rounded-2xl border-0 shadow-lg">
-        <div className="text-center">
-          <div className="w-16 h-16 gradient-blue rounded-full mx-auto mb-3 flex items-center justify-center">
-            <Globe className="w-8 h-8 text-white" />
-          </div>
-          <h2 className="font-fredoka font-bold text-2xl text-gray-800 mb-2">
-            🌍 Geography Explorer
-          </h2>
-          <p className="font-comic text-gray-600">
-            Discover amazing places and learn about our wonderful world!
-          </p>
-        </div>
+    return (
+      <div className="space-y-8">
+        {topic.lessons.map((lesson, index) => (
+          <Card key={index} className="p-8 bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-lg animate-fade-in" style={{ animationDelay: `${index * 0.2}s` }}>
+            <div className="text-center mb-6">
+              <div className="text-6xl mb-4 animate-bounce">{lesson.emoji}</div>
+              <h3 className="font-fredoka text-3xl font-bold text-gray-800 mb-2">{lesson.name}</h3>
+              <p className="font-comic text-lg text-gray-600">{lesson.description}</p>
+            </div>
 
-        {/* Travel Stats */}
-        <div className="flex justify-center space-x-6 mt-6">
-          <div className="text-center">
-            <div className="font-fredoka text-2xl text-blue-600">{visitedPlaces.length}</div>
-            <div className="font-comic text-xs text-gray-600">Countries Visited</div>
-          </div>
-          <div className="text-center">
-            <div className="font-fredoka text-2xl text-green-500">{countries.length}</div>
-            <div className="font-comic text-xs text-gray-600">Total Countries</div>
-          </div>
-          <div className="text-center">
-            <div className="font-fredoka text-2xl text-orange-500">7</div>
-            <div className="font-comic text-xs text-gray-600">Continents</div>
-          </div>
-        </div>
-      </Card>
-
-      {/* Country Explorer */}
-      <Card className="p-6 bg-white rounded-2xl border-0 shadow-lg">
-        <div className="text-center mb-6">
-          <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-4">
-            🗺️ Virtual Travel
-          </h3>
-
-          <div className="bg-gradient-to-r from-blue-100 to-green-100 rounded-xl p-6">
-            <div className="text-6xl mb-4">{countries[currentCountry].flag}</div>
-            <h4 className="font-fredoka font-bold text-2xl text-gray-800 mb-2">
-              {countries[currentCountry].name}
-            </h4>
-            <p className="font-comic text-gray-600 mb-4">
-              Capital: {countries[currentCountry].capital}
-            </p>
-
-            <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-              <div className="bg-white rounded-lg p-3">
-                <div className="font-comic font-bold text-gray-700">Continent</div>
-                <div className="font-comic text-gray-600">{countries[currentCountry].continent}</div>
-              </div>
-              <div className="bg-white rounded-lg p-3">
-                <div className="font-comic font-bold text-gray-700">Language</div>
-                <div className="font-comic text-gray-600">{countries[currentCountry].language}</div>
-              </div>
-              <div className="bg-white rounded-lg p-3">
-                <div className="font-comic font-bold text-gray-700">Climate</div>
-                <div className="flex items-center space-x-1">
-                  <span>{getClimateIcon(countries[currentCountry].climate)}</span>
-                  <span className="font-comic text-gray-600">{countries[currentCountry].climate}</span>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Render lesson details based on content type */}
+              {lesson.details.continents && lesson.details.continents.map((continent, i) => (
+                <div key={i} className="bg-white p-4 rounded-xl border-2 border-blue-200 hover:shadow-lg transition-shadow">
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">{continent.emoji}</div>
+                    <h4 className="font-fredoka font-bold text-blue-800">{continent.name}</h4>
+                    <p className="font-comic text-sm text-gray-600 mb-2">{continent.fact}</p>
+                    <div className="text-xs text-gray-500">
+                      Countries: {continent.countries.length > 0 ? continent.countries.join(', ') : 'Research station only'}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="bg-white rounded-lg p-3">
-                <div className="font-comic font-bold text-gray-700">Population</div>
-                <div className="font-comic text-gray-600">{countries[currentCountry].population}</div>
-              </div>
+              ))}
+
+              {lesson.details.oceans && lesson.details.oceans.map((ocean, i) => (
+                <div key={i} className="bg-white p-4 rounded-xl border-2 border-cyan-200 hover:shadow-lg transition-shadow">
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">{ocean.emoji}</div>
+                    <h4 className="font-fredoka font-bold text-cyan-800">{ocean.name}</h4>
+                    <p className="font-comic text-sm text-gray-600 mb-2">{ocean.fact}</p>
+                    <div className="text-xs text-gray-500">
+                      Animals: {ocean.animals.join(', ')}
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {lesson.details.countries && lesson.details.countries.map((country, i) => (
+                <div key={i} className="bg-white p-4 rounded-xl border-2 border-green-200 hover:shadow-lg transition-shadow">
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">{country.emoji}</div>
+                    <h4 className="font-fredoka font-bold text-green-800">{country.name}</h4>
+                    <p className="font-comic text-sm text-gray-600">Capital: {country.capital}</p>
+                    <p className="font-comic text-sm text-gray-600">Famous: {country.landmark}</p>
+                    <p className="font-comic text-sm text-purple-600">Food: {country.food}</p>
+                  </div>
+                </div>
+              ))}
+
+              {/* Add similar patterns for other content types */}
             </div>
-
-            <div className="bg-yellow-50 rounded-lg p-3 mb-4">
-              <div className="font-comic font-bold text-sm text-gray-700 mb-1">Fun Fact:</div>
-              <div className="font-comic text-sm text-gray-600">{countries[currentCountry].funFact}</div>
-            </div>
-
-            <div className="bg-purple-50 rounded-lg p-3 mb-4">
-              <div className="font-comic font-bold text-sm text-gray-700 mb-1">Famous Landmark:</div>
-              <div className="font-comic text-sm text-gray-600">{countries[currentCountry].landmark}</div>
-            </div>
-
-            <div className="flex space-x-3 justify-center">
-              <Button
-                onClick={visitCountry}
-                className="gradient-green text-white font-comic font-bold rounded-full"
-              >
-                <MapPin className="w-4 h-4 mr-2" />
-                Visit Country
-              </Button>
-              <Button
-                onClick={nextCountry}
-                variant="outline"
-                className="font-comic rounded-full"
-              >
-                Next Country →
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Card>
-
-      {/* Geography Topics */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {geographyTopics.map((topic) => (
-          <Card key={topic.id} className="p-4 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-0">
-            <div className="text-center mb-4">
-              <div className="text-3xl mb-2">{topic.icon}</div>
-              <h4 className="font-fredoka font-bold text-lg text-gray-800">{topic.title}</h4>
-            </div>
-
-            <p className="font-comic text-sm text-gray-600 mb-4 text-center">
-              {topic.description}
-            </p>
-
-            <div className="space-y-3 mb-4">
-              <div className="flex justify-between items-center">
-                <span className="font-comic text-sm text-gray-700">Progress</span>
-                <span className="font-comic text-sm font-bold">{topic.progress}%</span>
-              </div>
-              <Progress value={topic.progress} className="h-2" />
-              <div className="text-center">
-                <span className="font-comic text-xs text-gray-500">{topic.activities} activities</span>
-              </div>
-            </div>
-
-            <Button className="w-full gradient-blue text-white font-comic font-bold rounded-full">
-              Explore Topic
-            </Button>
           </Card>
         ))}
       </div>
+    );
+  };
 
-      {/* Geography Games */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {explorationGames.map((game) => (
-          <Card key={game.id} className="p-4 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-0">
-            <div className="text-center mb-3">
-              <div className="text-3xl mb-2">{game.icon}</div>
-              <h4 className="font-fredoka font-bold text-lg text-gray-800">{game.title}</h4>
-            </div>
-
-            <p className="font-comic text-sm text-gray-600 mb-4 text-center">
-              {game.description}
-            </p>
-
-            <div className="flex items-center justify-between mb-4">
-              <Badge className={`font-comic text-xs ${
-                game.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                'bg-yellow-100 text-yellow-700'
-              }`}>
-                {game.difficulty}
-              </Badge>
-              <Badge variant="outline" className="font-comic text-xs">
-                {game.type}
-              </Badge>
-            </div>
-
-            <Button className="w-full gradient-orange text-white font-comic font-bold rounded-full">
-              Play Game
+  if (selectedLesson) {
+    const lesson = lessons.find(l => l.id === selectedLesson);
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-cyan-50">
+        <Header />
+        
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center mb-6">
+            <Button onClick={() => setSelectedLesson(null)} variant="ghost" className="mr-4 font-comic">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Topics
             </Button>
-          </Card>
-        ))}
+          </div>
+
+          <div className="text-center mb-8">
+            <h1 className="font-fredoka font-bold text-4xl text-gray-800 mb-4">
+              {lesson?.title}
+            </h1>
+            <p className="font-comic text-lg text-gray-600">
+              {lesson?.description}
+            </p>
+          </div>
+
+          {renderTopicLessons(selectedLesson)}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-cyan-50">
+      <Header />
+      
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center mb-6">
+          <Button onClick={() => navigate('/courses')} variant="ghost" className="mr-4 font-comic">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Courses
+          </Button>
+        </div>
+
+        <div className="text-center mb-12">
+          <h1 className="font-fredoka font-bold text-4xl text-gray-800 mb-4">
+            🌍 Geography Explorer
+          </h1>
+          <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
+            Discover our amazing planet! Learn about continents, countries, weather, habitats, and cultures from around the world. Become a geography expert!
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {lessons.map((lesson, index) => (
+            <Card key={lesson.id} className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+              <div className={`w-full h-32 ${lesson.color} rounded-xl mb-4 flex items-center justify-center`}>
+                <div className="text-4xl text-white animate-bounce">
+                  {lesson.title.split(' ')[0]}
+                </div>
+              </div>
+
+              <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-2">
+                {lesson.title}
+              </h3>
+              <p className="font-comic text-gray-600 text-sm mb-4">
+                {lesson.description}
+              </p>
+
+              <div className="flex items-center justify-between mb-4">
+                <Badge className={`font-comic ${
+                  lesson.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
+                  lesson.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                  'bg-red-100 text-red-700'
+                }`}>
+                  {lesson.difficulty}
+                </Badge>
+                <div className="flex items-center space-x-1">
+                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                  <span className="font-comic text-sm font-bold text-yellow-600">15 stars</span>
+                </div>
+              </div>
+
+              <Button 
+                className={`w-full ${lesson.color} text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200`}
+                onClick={() => startLesson(lesson.id)}
+              >
+                <Globe className="w-4 h-4 mr-2" />
+                Explore World
+              </Button>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );
