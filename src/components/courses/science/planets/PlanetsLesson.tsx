@@ -136,7 +136,7 @@ const PlanetsLesson = () => {
           >
             ✕
           </DialogClose>
-          <SolarSystem />
+          <ThreeDSolarSystem />
         </DialogContent>
       </Dialog>
 
