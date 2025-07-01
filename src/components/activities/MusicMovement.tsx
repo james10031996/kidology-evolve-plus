@@ -5,9 +5,14 @@ import { Progress } from '@/components/ui/progress';
 import { Music, Zap } from 'lucide-react';
 import MusicPlayer from './music/MusicPlayer';
 import ActivityCard from './music/ActivityCard';
+import Header from '@/components/home/Header';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 const MusicMovement = () => {
   const [energy, setEnergy] = useState(85);
+  const navigate = useNavigate();
 
   const songs = [
     {
@@ -77,7 +82,8 @@ const MusicMovement = () => {
       type: 'instruments',
       difficulty: 'Medium',
       duration: '8 min',
-      completed: false
+      completed: false,
+      route: 'https://www.virtualinstrumentshub.com/blog'
     },
     {
       id: 4,
@@ -139,9 +145,20 @@ const MusicMovement = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      <Header />
       {/* Music Header */}
       <Card className="p-6 bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl border-0 shadow-lg">
+        <div className="flex items-center mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/activities')}
+            className="mr-4 font-comic"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Activities
+          </Button>
+        </div> 
         <div className="text-center">
           <div className="w-16 h-16 gradient-pink rounded-full mx-auto mb-3 flex items-center justify-center">
             <Music className="w-8 h-8 text-white" />

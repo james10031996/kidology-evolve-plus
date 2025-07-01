@@ -13,7 +13,7 @@ const Activities = () => {
   const navigate = useNavigate();
 
   const activities = {
-    games: [
+    activities: [
       {
         id: 'number-bubble',
         title: 'Number Bubble Pop',
@@ -73,7 +73,8 @@ const Activities = () => {
         rating: 4.9,
         category: 'Fantasy',
         isNew: true,
-        stars: 25
+        stars: 25,
+        route: '/activities/number-bubble-pop'
       },
       {
         id: 'space-explorer',
@@ -83,7 +84,8 @@ const Activities = () => {
         duration: '7 min',
         rating: 4.8,
         category: 'Science',
-        stars: 30
+        stars: 30,
+        route: '/activities/number-bubble-pop'
       },
       {
         id: 'underwater-treasure',
@@ -93,7 +95,8 @@ const Activities = () => {
         duration: '6 min',
         rating: 4.7,
         category: 'Adventure',
-        stars: 20
+        stars: 20,
+        route: '/activities/number-bubble-pop'
       }
     ],
     creative: [
@@ -106,7 +109,8 @@ const Activities = () => {
         duration: '15 min',
         tools: ['Brushes', 'Colors', 'Stickers'],
         gradient: 'gradient-pink',
-        stars: 35
+        stars: 35,
+        route: '/activities/magic-paint-studio'
       },
       {
         id: 'music-maker',
@@ -117,18 +121,20 @@ const Activities = () => {
         duration: '12 min',
         tools: ['Piano', 'Drums', 'Recorder'],
         gradient: 'gradient-purple',
-        stars: 30
+        stars: 30,
+        route: '/activities/music-movement'
       },
       {
-        id: 'story-builder',
-        title: 'Story Builder',
+        id: 'creative-arts',
+        title: 'Creative Arts',
         description: 'Create your own interactive stories!',
         category: 'Writing',
         difficulty: 3,
         duration: '20 min',
         tools: ['Characters', 'Backgrounds', 'Text'],
         gradient: 'gradient-blue',
-        stars: 40
+        stars: 40,
+        route: '/activies/creative-arts'
       }
     ]
   };
@@ -151,15 +157,16 @@ const Activities = () => {
           <h1 className="font-fredoka font-bold text-4xl md:text-5xl text-gray-800 mb-4">
             🎮 Fun Learning Activities
           </h1>
+
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
             Play games, read stories, and create amazing things while learning!
           </p>
         </div>
 
-        <Tabs defaultValue="games" className="w-full">
+        <Tabs defaultValue="activity" className="w-full">
           <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
-            <TabsTrigger value="games" className="rounded-full font-comic font-bold">
-              🎮 Games
+            <TabsTrigger value="activity" className="rounded-full font-comic font-bold">
+              🎮 Activity
             </TabsTrigger>
             <TabsTrigger value="stories" className="rounded-full font-comic font-bold">
               📚 Stories
@@ -169,9 +176,9 @@ const Activities = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="games">
+          <TabsContent value="activity">
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {activities.games.map((game) => (
+              {activities.activities.map((game) => (
                 <Card key={game.id} className="p-6 bg-white rounded-2xl shadow-lg border-0 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                   <div className={`w-full h-24 ${game.gradient} rounded-xl mb-4 flex items-center justify-center relative overflow-hidden`}>
                     <div className="text-3xl text-white animate-bounce">

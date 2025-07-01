@@ -4,7 +4,10 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Puzzle, RotateCcw, CheckCircle, Sparkles, Trophy, Star, Timer } from 'lucide-react';
+import { Puzzle, RotateCcw, CheckCircle, ArrowLeft, Trophy, Star, Timer } from 'lucide-react';
+import Header from '@/components/home/Header';
+import { useNavigate } from 'react-router-dom';
+import { puzzleData } from './puzzleData';
 
 interface PuzzlePiece {
   id: string;
@@ -23,11 +26,13 @@ interface PuzzleData {
   slots: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   timeLimit?: number;
+  validPieceIds?: any;
+  incorrectIds?: any;
   hints: string[];
 }
 
 const PuzzleAssembly = () => {
-  const [currentPuzzle, setCurrentPuzzle] = useState('usa');
+  const navigate = useNavigate();
   const [completedPuzzles, setCompletedPuzzles] = useState(new Set<string>());
   const [draggedPiece, setDraggedPiece] = useState<PuzzlePiece | null>(null);
   const [placedPieces, setPlacedPieces] = useState<Record<string, Record<string, PuzzlePiece>>>({});
@@ -36,177 +41,71 @@ const PuzzleAssembly = () => {
   const [currentHintIndex, setCurrentHintIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [score, setScore] = useState(0);
+  const [errorSlots, setErrorSlots] = useState<Set<string>>(new Set());
+  const [wrongDrop, setWrongDrop] = useState<string | null>(null);
 
-  const puzzles: PuzzleData[] = [
-    {
-      id: 'usa',
-      name: 'United States Map',
-      emoji: '🇺🇸',
-      description: 'Build the United States by placing states correctly!',
-      difficulty: 'Easy',
-      pieces: [
-        { id: 'california', name: 'California', emoji: '🏖️', color: 'bg-blue-200', hint: 'West coast, golden beaches' },
-        { id: 'texas', name: 'Texas', emoji: '🤠', color: 'bg-red-200', hint: 'Everything is bigger here!' },
-        { id: 'florida', name: 'Florida', emoji: '🏝️', color: 'bg-green-200', hint: 'Sunshine State with palm trees' },
-        { id: 'newyork', name: 'New York', emoji: '🗽', color: 'bg-purple-200', hint: 'Home of the Statue of Liberty' },
-        { id: 'alaska', name: 'Alaska', emoji: '🐻', color: 'bg-cyan-200', hint: 'Coldest state with polar bears' }
-      ],
-      slots: 5,
-      hints: ['Look for coastal states first', 'Think about weather patterns', 'Remember state symbols']
-    },
-    {
-      id: 'world',
-      name: 'World Continents',
-      emoji: '🌍',
-      description: 'Connect all continents to complete our beautiful world!',
-      difficulty: 'Medium',
-      pieces: [
-        { id: 'northamerica', name: 'North America', emoji: '🦅', color: 'bg-blue-200', hint: 'Eagles soar here' },
-        { id: 'southamerica', name: 'South America', emoji: '🦙', color: 'bg-green-200', hint: 'Llamas live here' },
-        { id: 'europe', name: 'Europe', emoji: '🏰', color: 'bg-purple-200', hint: 'Medieval castles' },
-        { id: 'africa', name: 'Africa', emoji: '🦁', color: 'bg-orange-200', hint: 'Lions roam freely' },
-        { id: 'asia', name: 'Asia', emoji: '🐼', color: 'bg-red-200', hint: 'Giant pandas live here' },
-        { id: 'australia', name: 'Australia', emoji: '🦘', color: 'bg-yellow-200', hint: 'Kangaroos hop around' }
-      ],
-      slots: 6,
-      hints: ['Start with the largest continent', 'Think about animals from each place', 'Remember continental shapes']
-    },
-    {
-      id: 'body',
-      name: 'Human Body',
-      emoji: '👤',
-      description: 'Assemble the human body parts in the right places!',
-      difficulty: 'Easy',
-      pieces: [
-        { id: 'head', name: 'Head', emoji: '🧠', color: 'bg-pink-200', hint: 'Houses the brain' },
-        { id: 'torso', name: 'Torso', emoji: '🫁', color: 'bg-blue-200', hint: 'Contains lungs and heart' },
-        { id: 'leftarm', name: 'Left Arm', emoji: '💪', color: 'bg-green-200', hint: 'Left side strength' },
-        { id: 'rightarm', name: 'Right Arm', emoji: '💪', color: 'bg-green-200', hint: 'Right side strength' },
-        { id: 'leftleg', name: 'Left Leg', emoji: '🦵', color: 'bg-yellow-200', hint: 'Left leg for walking' },
-        { id: 'rightleg', name: 'Right Leg', emoji: '🦵', color: 'bg-yellow-200', hint: 'Right leg for walking' }
-      ],
-      slots: 6,
-      hints: ['Head goes at the top', 'Arms connect to shoulders', 'Legs support the body']
-    },
-    {
-      id: 'car',
-      name: 'Build a Car',
-      emoji: '🚗',
-      description: 'Assemble all car parts to build a complete vehicle!',
-      difficulty: 'Easy',
-      pieces: [
-        { id: 'engine', name: 'Engine', emoji: '⚙️', color: 'bg-gray-200', hint: 'Powers the car' },
-        { id: 'wheels', name: 'Wheels', emoji: '🛞', color: 'bg-black', hint: 'Round and help car move' },
-        { id: 'body', name: 'Body', emoji: '🚙', color: 'bg-red-200', hint: 'Main frame of car' },
-        { id: 'windows', name: 'Windows', emoji: '🪟', color: 'bg-blue-200', hint: 'Clear to see through' }
-      ],
-      slots: 4,
-      hints: ['Start with the main body', 'Wheels go at the bottom', 'Windows let light in']
-    },
-    {
-      id: 'animals',
-      name: 'Animal Kingdom',
-      emoji: '🦁',
-      description: 'Place animals in their natural habitat groups!',
-      difficulty: 'Medium',
-      timeLimit: 120,
-      pieces: [
-        { id: 'lion', name: 'Lion', emoji: '🦁', color: 'bg-yellow-200', hint: 'King of the jungle' },
-        { id: 'elephant', name: 'Elephant', emoji: '🐘', color: 'bg-gray-200', hint: 'Largest land animal' },
-        { id: 'penguin', name: 'Penguin', emoji: '🐧', color: 'bg-blue-200', hint: 'Lives in cold places' },
-        { id: 'monkey', name: 'Monkey', emoji: '🐵', color: 'bg-brown-200', hint: 'Swings on trees' },
-        { id: 'fish', name: 'Fish', emoji: '🐠', color: 'bg-cyan-200', hint: 'Lives underwater' },
-        { id: 'bird', name: 'Bird', emoji: '🐦', color: 'bg-green-200', hint: 'Flies in the sky' }
-      ],
-      slots: 6,
-      hints: ['Think about where each animal lives', 'Land, sea, or air?', 'Hot or cold climates?']
-    },
-    {
-      id: 'solar',
-      name: 'Solar System',
-      emoji: '🪐',
-      description: 'Arrange planets in order from the Sun!',
-      difficulty: 'Hard',
-      timeLimit: 180,
-      pieces: [
-        { id: 'mercury', name: 'Mercury', emoji: '☿️', color: 'bg-gray-300', hint: 'Closest to Sun' },
-        { id: 'venus', name: 'Venus', emoji: '♀️', color: 'bg-yellow-300', hint: 'Hottest planet' },
-        { id: 'earth', name: 'Earth', emoji: '🌍', color: 'bg-blue-300', hint: 'Our home planet' },
-        { id: 'mars', name: 'Mars', emoji: '♂️', color: 'bg-red-300', hint: 'The red planet' },
-        { id: 'jupiter', name: 'Jupiter', emoji: '♃', color: 'bg-orange-300', hint: 'Largest planet' },
-        { id: 'saturn', name: 'Saturn', emoji: '♄', color: 'bg-yellow-200', hint: 'Has beautiful rings' }
-      ],
-      slots: 6,
-      hints: ['Mercury is first', 'Remember: My Very Educated Mother...', 'Earth is third from Sun']
-    },
-    {
-      id: 'food',
-      name: 'Healthy Meal',
-      emoji: '🍽️',
-      description: 'Create a balanced, nutritious meal!',
-      difficulty: 'Easy',
-      pieces: [
-        { id: 'vegetables', name: 'Vegetables', emoji: '🥕', color: 'bg-green-200', hint: 'Good for your health' },
-        { id: 'fruits', name: 'Fruits', emoji: '🍎', color: 'bg-red-200', hint: 'Sweet and nutritious' },
-        { id: 'grains', name: 'Grains', emoji: '🍞', color: 'bg-brown-200', hint: 'Energy food' },
-        { id: 'protein', name: 'Protein', emoji: '🥩', color: 'bg-pink-200', hint: 'Builds strong muscles' },
-        { id: 'dairy', name: 'Dairy', emoji: '🥛', color: 'bg-white', hint: 'Good for bones' }
-      ],
-      slots: 5,
-      hints: ['Think about food groups', 'Balance is key', 'All colors of the rainbow']
-    },
-    {
-      id: 'house',
-      name: 'Dream House',
-      emoji: '🏠',
-      description: 'Build your perfect house with all the parts!',
-      difficulty: 'Medium',
-      pieces: [
-        { id: 'foundation', name: 'Foundation', emoji: '🟫', color: 'bg-brown-300', hint: 'Strong base of house' },
-        { id: 'walls', name: 'Walls', emoji: '🧱', color: 'bg-red-200', hint: 'Keep the house together' },
-        { id: 'roof', name: 'Roof', emoji: '🔺', color: 'bg-blue-200', hint: 'Protects from rain' },
-        { id: 'door', name: 'Door', emoji: '🚪', color: 'bg-brown-200', hint: 'Way to enter house' },
-        { id: 'windows', name: 'Windows', emoji: '🪟', color: 'bg-cyan-200', hint: 'Let light inside' },
-        { id: 'chimney', name: 'Chimney', emoji: '🏠', color: 'bg-gray-200', hint: 'Smoke goes up here' }
-      ],
-      slots: 6,
-      hints: ['Foundation goes first', 'Roof goes on top', 'Windows and doors in walls']
-    }
-  ];
+  const [currentPuzzle, setCurrentPuzzle] = useState('usa');
+  const currentPuzzleData = puzzleData.find(p => p.id === currentPuzzle);
 
-  const currentPuzzleData = puzzles.find(p => p.id === currentPuzzle);
 
   const handleDragStart = (piece: PuzzlePiece) => {
     setDraggedPiece(piece);
   };
 
+
+  const triggerError = (slotId: string) => {
+    setErrorSlots(prev => {
+      const updated = new Set(prev);
+      updated.add(slotId);
+      return updated;
+    });
+
+    setTimeout(() => {
+      setErrorSlots(prev => {
+        const updated = new Set(prev);
+        updated.delete(slotId);
+        return updated;
+      });
+    }, 1500);
+  };
+
   const handleDrop = (slotId: string) => {
-    if (draggedPiece) {
-      setPlacedPieces(prev => ({
-        ...prev,
-        [currentPuzzle]: {
-          ...prev[currentPuzzle],
-          [slotId]: draggedPiece
-        }
-      }));
-      setDraggedPiece(null);
-      
-      // Add score for correct placement
-      setScore(prev => prev + 100);
-      
-      // Check if puzzle is complete
-      const currentPieces = {
-        ...placedPieces[currentPuzzle],
-        [slotId]: draggedPiece
-      };
-      
-      if (Object.keys(currentPieces).length === currentPuzzleData?.slots) {
-        setCompletedPuzzles(prev => new Set([...prev, currentPuzzle]));
-        triggerCelebration();
-        setScore(prev => prev + 500); // Bonus for completion
-      }
+    if (!draggedPiece || !currentPuzzleData) return;
+
+    const correctPieceIds = currentPuzzleData.pieces
+      .filter(p => !currentPuzzleData.incorrectIds.includes(p.id.toLowerCase()))
+      .map(p => p.id);
+
+    // This slot already has a piece
+    if (placedPieces[currentPuzzle]?.[slotId]) return;
+
+    // Check if piece is valid (not mumbai, or your chosen invalid pieces)
+    if (!correctPieceIds.includes(draggedPiece.id)) {
+      // Show animated error at this slot
+      triggerError(slotId);
+      setDraggedPiece(null); // reset dragged piece
+      return;
+    }
+
+    // Place piece
+    const updated = {
+      ...placedPieces[currentPuzzle],
+      [slotId]: draggedPiece,
+    };
+    setPlacedPieces(prev => ({
+      ...prev,
+      [currentPuzzle]: updated,
+    }));
+    setDraggedPiece(null);
+    setScore(prev => prev + 100);
+
+    if (Object.keys(updated).length === currentPuzzleData.slots) {
+      setCompletedPuzzles(prev => new Set([...prev, currentPuzzle]));
+      triggerCelebration();
+      setScore(prev => prev + 500);
     }
   };
+
 
   const triggerCelebration = () => {
     setShowCelebration(currentPuzzle);
@@ -257,9 +156,21 @@ const PuzzleAssembly = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header with Puzzle Selection */}
-      <Card className="p-6 bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl border-0 shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50">
+      <Header />
+
+      <Card className="p-6 mb-4 bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl border-0 shadow-lg">
+        <div className="flex items-center mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/games')}
+            className="mr-4 font-comic"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Games
+          </Button>
+        </div>
+
         <div className="text-center mb-6">
           <div className="w-16 h-16 gradient-blue rounded-full mx-auto mb-3 flex items-center justify-center">
             <Puzzle className="w-8 h-8 text-white" />
@@ -279,7 +190,7 @@ const PuzzleAssembly = () => {
                 <SelectValue placeholder="Choose a puzzle" />
               </SelectTrigger>
               <SelectContent className="bg-white border-purple-300 z-50">
-                {puzzles.map((puzzle) => (
+                {puzzleData.map((puzzle) => (
                   <SelectItem key={puzzle.id} value={puzzle.id} className="hover:bg-purple-50">
                     <div className="flex items-center space-x-2">
                       <span className="text-lg">{puzzle.emoji}</span>
@@ -374,17 +285,18 @@ const PuzzleAssembly = () => {
                 {Array.from({ length: currentPuzzleData?.slots || 0 }).map((_, index) => {
                   const slotId = `slot-${index}`;
                   const placedPiece = currentPlacedPieces[slotId];
-                  
+
                   return (
                     <div
                       key={slotId}
-                      className={`border-2 border-dashed rounded-xl p-4 min-h-20 flex items-center justify-center transition-all ${
-                        placedPiece 
-                          ? `${placedPiece.color} border-green-400 shadow-md` 
-                          : 'border-gray-300 hover:border-blue-400 bg-gray-50 hover:bg-blue-50'
-                      }`}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={() => handleDrop(slotId)}
+                      className={`relative border-2 rounded-xl p-4 min-h-20 flex items-center justify-center transition-all duration-300 ${errorSlots.has(slotId)
+                        ? 'border-red-500 animate-shake bg-red-50'
+                        : placedPiece
+                          ? `${placedPiece.color} border-green-400 shadow-md`
+                          : 'border-gray-300 hover:border-blue-400 bg-gray-50 hover:bg-blue-50'
+                        }`}
                     >
                       {placedPiece ? (
                         <div className="text-center animate-scale-in">
@@ -398,8 +310,19 @@ const PuzzleAssembly = () => {
                           Drop piece here
                         </div>
                       )}
+
+                      {/* ❌ Wrong Piece Animation */}
+                      {errorSlots.has(slotId) && (
+                        <div className="absolute inset-0 flex items-center justify-center animate-fade-in-out pointer-events-none">
+                          <div className="bg-red-100 text-red-800 px-2 py-1 rounded font-comic text-sm shadow-md">
+                            ❌ Wrong Piece!
+                          </div>
+                        </div>
+                      )}
                     </div>
+
                   );
+
                 })}
               </div>
 
@@ -438,7 +361,7 @@ const PuzzleAssembly = () => {
           <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-4">
             🧩 Puzzle Pieces
           </h3>
-          
+
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {availablePieces.map((piece) => (
               <div
@@ -462,7 +385,7 @@ const PuzzleAssembly = () => {
                 </div>
               </div>
             ))}
-            
+
             {availablePieces.length === 0 && currentPlacedPieces && Object.keys(currentPlacedPieces).length > 0 && (
               <div className="text-center py-8">
                 <div className="text-4xl mb-2">✨</div>
@@ -488,15 +411,15 @@ const PuzzleAssembly = () => {
             <h4 className="font-comic font-bold text-purple-800 mb-2">🏆 Your Progress</h4>
             <div className="text-center">
               <div className="text-2xl font-fredoka font-bold text-purple-700">
-                {completedPuzzles.size}/{puzzles.length}
+                {completedPuzzles.size}/{puzzleData.length}
               </div>
               <div className="font-comic text-sm text-purple-600">
                 Puzzles Completed
               </div>
               <div className="w-full bg-purple-200 rounded-full h-2 mt-2">
-                <div 
+                <div
                   className="bg-purple-500 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${(completedPuzzles.size / puzzles.length) * 100}%` }}
+                  style={{ width: `${(completedPuzzles.size / puzzleData.length) * 100}%` }}
                 />
               </div>
             </div>

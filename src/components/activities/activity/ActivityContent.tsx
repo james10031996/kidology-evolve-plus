@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { TabsContent } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
@@ -11,8 +12,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import StorySection from './StorySection';
 import ActivitySection from './ActivitySection';
-import CreativeTools from '../creative/CreativeTools';
-import StoryBuilder from '../creative/StoryBuilder';
+import CreativeTools from '../creativeTools/CreativeTools';
+import StoryBuilder from '../creativeTools/StoryBuilder';
 
 const ActivityContent = () => {
   const navigate = useNavigate();
@@ -103,7 +104,7 @@ const ActivityContent = () => {
       difficulty: 'Easy',
       duration: '10 min',
       players: '1',
-      route: '/games/letter-safari'
+      route: '/activities/letter-safari'
     },
     {
       title: 'Number Quest',
@@ -112,7 +113,7 @@ const ActivityContent = () => {
       difficulty: 'Medium',
       duration: '15 min',
       players: '1',
-      route: '/games/number-quest'
+      route: '/courses/math-adventure'
     }
   ];
 
@@ -129,7 +130,7 @@ const ActivityContent = () => {
       description: 'Create beautiful digital artwork with magic brushes',
       icon: <Brush className="w-6 h-6" />,
       difficulty: 'Easy',
-      action: () => navigate('/activities/magic-paint-studio')
+      action: () => setSelectedTool('Magic Paint Studio')
     },
     {
       title: 'Digital Drawing',
@@ -157,7 +158,7 @@ const ActivityContent = () => {
       description: 'Create your own interactive stories',
       icon: <BookOpen className="w-6 h-6" />,
       difficulty: 'Medium',
-      action: () => setShowStoryBuilder(true)
+      action: () => setSelectedTool('Story Builder')
     }
   ];
 
@@ -187,11 +188,11 @@ const ActivityContent = () => {
       action: () => navigate('/activities/music-movement')
     },
     {
-      title: 'Rhythm Maker',
+      title: 'Music Maker',
       description: 'Create beats and rhythms',
       icon: <Music className="w-6 h-6" />,
       difficulty: 'Easy',
-      action: () => setSelectedTool('Rhythm Maker')
+      action: () => setSelectedTool('Music Maker')
     },
     {
       title: 'Sing Along',

@@ -25,7 +25,7 @@ const Games = () => {
       gradient: 'gradient-blue',
       stars: 15,
       route: '/activities/number-bubble-pop',
-      icon: '🫧'
+      icon: '🔢'
     }
   ];
 
@@ -95,7 +95,7 @@ const Games = () => {
   const PuzzleAssembly = [
     {
       id: 'puzzle-assembly',
-      title: 'Shape Sorter',
+      title: 'Puzzle Assembly',
       description: 'Drag the puzzle pieces to the right location!',
       difficulty: 2,
       duration: '4 min',
@@ -104,7 +104,7 @@ const Games = () => {
       gradient: 'bg-gradient-to-r from-yellow-300 via-pink-500 to-orange-600',
       stars: 10,
       route: '/games/puzzle-assembly',
-      icon: '🔷'
+      icon: '🧩'
     }
   ];
 

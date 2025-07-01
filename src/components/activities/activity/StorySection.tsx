@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Play, Clock, Star } from 'lucide-react';
+import { BookOpen, Play, Clock, Star, X } from 'lucide-react';
 import EnhancedBookReader from '../story/EnhancedBookReader';
 
 interface Story {
@@ -77,11 +77,22 @@ const StorySection = ({ stories, type }: StorySectionProps) => {
       </div>
 
       {selectedStory && (
-        <EnhancedBookReader
-          pages={selectedStory.pages}
-          title={selectedStory.title}
-          onClose={() => setSelectedStory(null)}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden relative">
+            <Button
+              onClick={() => setSelectedStory(null)}
+              className="absolute top-4 right-4 z-10 rounded-full w-10 h-10 p-0 bg-white/10 text-gray-600 hover:bg-white/20"
+              variant="ghost"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+            <EnhancedBookReader
+              pages={selectedStory.pages}
+              title={selectedStory.title}
+              onClose={() => setSelectedStory(null)}
+            />
+          </div>
+        </div>
       )}
     </>
   );

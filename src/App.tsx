@@ -4,8 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { UserProvider } from '@/contexts/UserContext';
 import { Toaster } from '@/components/ui/sonner';
-import Index from '@/pages/Index';
+import Index from '@/pages/Index'; 
 import Activities from '@/components/activities/activity/Activities';
+import ActivityContent from '@/components/activities/activity/ActivityContent';
 import Courses from '@/components/courses/course/Courses';
 import Games from '@/components/game/Games';
 import Progress from '@/components/progress/Progress';
@@ -17,12 +18,12 @@ import Demo from '@/pages/Demo';
 
 // Activity Pages
 import NumberBubblePop from '@/components/game/NumberBubblePop';
-import LetterSafari from '@/components/game/LetterSafari';
+import LetterSafari from '@/components/game/LetterSafari/LetterSafari';
 import MemoryPalace from '@/components/game/MemoryPalace';
 import ShapeSorter from '@/components/game/ShapeSorter';
-import PuzzleAssembly from '@/components/game/PuzzleAssembly';
-import SearchMissingObject from '@/components/game/SearchMissingObject';
-import MagicPaintStudio from '@/components/activities/MagicPaintStudio';
+import PuzzleAssembly from '@/components/game/PuzzleAssembly/PuzzleAssembly';
+import SearchMissingObject from '@/components/game/SearchMissingObject/SearchMissingObject';
+import MagicPaintStudio from '@/components/activities/creativeTools/MagicPaintStudio';
 import MusicMovement from '@/components/activities/MusicMovement';
 import InteractiveLearningRoute from '@/components/activities/activity/InteractiveLearningRoute';
 import CreativeArts from '@/components/courses/creative/CreativeArts';
@@ -54,6 +55,7 @@ function App() {
                 <Route path="/" element={<Index />} />
                 <Route path="/demo" element={<Demo />} />
                 <Route path="/activities" element={<Activities />} />
+                <Route path="/activitycontent" element={<ActivityContent />} />
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/games" element={<Games />} />
                 <Route path="/progress" element={<Progress />} />

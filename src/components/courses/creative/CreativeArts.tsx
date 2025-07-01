@@ -171,9 +171,9 @@ const CreativeArts = () => {
       
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center mb-6">
-          <Button onClick={() => navigate('/courses')} variant="ghost" className="mr-4 font-comic">
+          <Button onClick={() => navigate('/activities')} variant="ghost" className="mr-4 font-comic">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Courses
+            Back to Activities
           </Button>
         </div>
 

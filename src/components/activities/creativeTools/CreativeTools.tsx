@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { X, Palette, Brush, Music, Volume2, Book, Type } from 'lucide-react';
-import MagicPaintStudio from '../MagicPaintStudio';
+import MagicPaintStudio from './MagicPaintStudio';
 
 interface CreativeToolsProps {
   tool: string;

@@ -137,7 +137,7 @@ const MemoryPalace = () => {
       if (score > 200) {
         updateStars(Math.floor(score / 20));
       }
-    }
+    } 
   }, [gameActive, timeLeft, score, updateStars]);
 
   const gridCols = cards.length <= 8 ? 'grid-cols-4' : cards.length <= 12 ? 'grid-cols-4' : 'grid-cols-6';
