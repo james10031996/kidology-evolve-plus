@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Play, Star, Clock, Users, BookOpen, Award } from 'lucide-react';
+import { Play, Star, Clock, Users, BookOpen, Award, Gift } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/home/Header';
@@ -79,6 +79,22 @@ const Courses = () => {
       route: '/courses/reading-adventure'
     },
     {
+      id: 'english-adventure',
+      title: 'English Adventure',
+      description: 'Learn letters, sounds, words, and stories with fun activities.',
+      category: 'english',
+      difficulty: 'Beginner',
+      duration: '30 min',
+      lessons: 15,
+      rating: 4.8,
+      students: 1890,
+      progress: userData.progress.find(p => p.name === 'English')?.progress || 0,
+      color: 'bg-gradient-to-br from-red-400 via-voilet-400 to-pink-500',
+      topics: ['Letters', 'Phonics', 'Sounds', 'Words', 'Alphabet'],
+      nextLesson: 'Phonics Fun',
+      route: '/courses/english-adventure'
+    },
+    {
       id: 'science-explorers',
       title: 'Science Explorers',
       description: 'Discover experiments, planets, weather, and amazing science facts',
@@ -108,7 +124,7 @@ const Courses = () => {
       color: 'gradient-pink',
       topics: ['Drawing', 'Coloring', 'Crafts', 'Creativity'],
       nextLesson: 'Basic Shapes Drawing',
-      route: '/courses/creative-arts'
+      route: '/activities/creative-arts'
     },
     {
       id: 'geography-explorer',
@@ -204,7 +220,7 @@ const Courses = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
       <Header />
       
       <div className="container mx-auto px-4 py-8">
@@ -331,8 +347,25 @@ const Courses = () => {
           ))}
         </div>
 
-        {/* Achievement Banner */}
-        <div className="mt-12 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl p-6 text-center">
+         
+              {/* Daily Rewards */}
+              <Card className="p-6 mt-12 bg-gradient-to-r from-green-100 to-blue-100 border-4 border-green-300">
+                <div className="text-center">
+                  <h2 className="font-fredoka text-2xl text-green-700 mb-4">
+                    🎁 Daily Learning Reward
+                  </h2>
+                  <p className="font-comic text-gray-600 mb-4">
+                    Come back tomorrow for a special surprise!
+                  </p>
+                  <Button className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full">
+                    <Gift className="w-5 h-5 mr-2" />
+                    Claim Tomorrow's Gift
+                  </Button>
+                </div>
+              </Card>
+
+               {/* Achievement Banner */}
+        <div className="mt-4 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl p-6 text-center">
           <div className="flex items-center justify-center space-x-3 mb-4">
             <Award className="w-8 h-8 text-orange-500" />
             <h3 className="font-fredoka font-bold text-2xl text-gray-800">
@@ -343,6 +376,7 @@ const Courses = () => {
             Earn stars, unlock badges, and track your amazing learning journey.
           </p>
         </div>
+
       </div>
     </div>
   );

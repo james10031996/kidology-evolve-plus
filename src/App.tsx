@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/sonner';
 import Index from '@/pages/Index';
 import Activities from '@/components/activities/activity/Activities';
 import Courses from '@/components/courses/course/Courses';
-import Games from '@/components/game/Games';
+import Games from '@/components/game/game/Games';
 import Progress from '@/components/progress/Progress';
 import Parents from '@/components/parents/Parents';
 import Admin from '@/components/admin/Admin';
@@ -20,12 +20,18 @@ import NumberBubblePop from '@/components/game/NumberBubblePop';
 import LetterSafari from '@/components/game/LetterSafari/LetterSafari';
 import MemoryPalace from '@/components/game/MemoryPalace';
 import ShapeSorter from '@/components/game/ShapeSorter';
+import MatchingGame from '@/components/game/MatchingGame';
 import PuzzleAssembly from '@/components/game/PuzzleAssembly/PuzzleAssembly';
 import SearchMissingObject from '@/components/game/SearchMissingObject/SearchMissingObject';
 import MagicPaintStudio from '@/components/activities/creativeTools/MagicPaintStudio';
-import MusicMovement from '@/components/activities/MusicMovement';
-import InteractiveLearningRoute from '@/components/activities/activity/InteractiveLearningRoute';
+import MusicMovement from '@/components/activities/creativeTools/MusicMovement';
 import CreativeArts from '@/components/courses/creative/CreativeArts';
+
+
+// Creative Tools 
+import PaperCraftsTool from '@/components/activities/creativeTools/PaperCraftsTool';
+import ColoringPagesTool from '@/components/activities/creativeTools/ColoringPagesTool';
+import MandalaMaker from '@/components/activities/creativeTools/MandalaMaker';
 
 // Course Pages
 import EnglishAdventure from '@/components/courses/english/EnglishAdventure';
@@ -59,20 +65,27 @@ function App() {
                 <Route path="/progress" element={<Progress />} />
                 <Route path="/parents" element={<Parents />} />
                 <Route path="/admin" element={<Admin />} />
-                
-                {/* Activity Routes */}
+
+                {/* Activity Game Routes */}
                 <Route path="/activities/number-bubble-pop" element={<NumberBubblePop />} />
                 <Route path="/activities/letter-safari" element={<LetterSafari />} />
                 <Route path="/activities/memory-palace" element={<MemoryPalace />} />
                 <Route path="/activities/shape-sorter" element={<ShapeSorter />} />
-                <Route path="/activities/magic-paint-studio" element={<MagicPaintStudio />} />
-                <Route path="/activities/music-movement" element={<MusicMovement />} />
-                <Route path="/activities/interactive-learning" element={<InteractiveLearningRoute />} />
                 <Route path="/games/puzzle-assembly" element={<PuzzleAssembly />} />
                 <Route path="/games/search-missing-object" element={<SearchMissingObject />} />
-                <Route path="/activies/creative-arts" element={<CreativeArts />} />
-                
+                <Route path="/games/matching-game" element={<MatchingGame />} />
+
+
+                {/* Creative Tools Routes */}
+                <Route path="/activities/paper-crafts" element={<PaperCraftsTool onClose={() => window.history.back()} />} />
+                <Route path="/activities/coloring-pages-tool" element={<ColoringPagesTool onClose={() => window.history.back()} />} />
+                <Route path="/activities/mandala-maker" element={<MandalaMaker />} />
+                <Route path="/activities/music-movement" element={<MusicMovement />} />
+                <Route path="/activities/magic-paint-studio" element={<MagicPaintStudio />} />
+
+
                 {/* Course Routes */}
+                <Route path="/courses/english-adventure" element={<EnglishAdventure />} />
                 <Route path="/courses/math-basics" element={<MathBasics />} />
                 <Route path="/courses/math-adventure" element={<MathAdventure />} />
                 <Route path="/courses/enhanced-math-adventure" element={<EnhancedMathAdventure />} />
@@ -82,6 +95,7 @@ function App() {
                 <Route path="/courses/social-moral" element={<SocialMoral />} />
                 <Route path="/courses/nature-explorer" element={<NatureExplorer />} />
                 <Route path="/courses/geography-explorer" element={<GeographyExplorer />} />
+                <Route path="/activities/creative-arts" element={<CreativeArts />} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -6,19 +6,17 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   BookOpen, Play, Palette, Music, Beaker, Calculator, 
-  Star, Clock, Users, Gamepad2, Brush, PenTool, Scissors,
+  Star, Clock, Users, Brush, PenTool, Scissors,
   Lightbulb, Microscope, Globe, Heart, Headphones, Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StorySection from './StorySection';
 import ActivitySection from './ActivitySection';
 import CreativeTools from '../creativeTools/CreativeTools';
-import StoryBuilder from '../creativeTools/StoryBuilder';
 
 const ActivityContent = () => {
   const navigate = useNavigate();
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
-  const [showStoryBuilder, setShowStoryBuilder] = useState(false);
 
   const stories = [
     {
@@ -96,45 +94,24 @@ const ActivityContent = () => {
     }
   ];
 
-  const games = [
-    {
-      title: 'Letter Safari',
-      description: 'Find animals for each letter of the alphabet',
-      icon: '🦁',
-      difficulty: 'Easy',
-      duration: '10 min',
-      players: '1',
-      route: '/activities/letter-safari'
-    },
-    {
-      title: 'Number Quest',
-      description: 'Adventure through math problems',
-      icon: '🔢',
-      difficulty: 'Medium',
-      duration: '15 min',
-      players: '1',
-      route: '/courses/math-adventure'
-    }
-  ];
-
-  const artActivities = [
-    {
-      title: 'Interactive Learning Hub',
-      description: 'Complete learning activities with points and achievements',
-      icon: <Sparkles className="w-6 h-6" />,
-      difficulty: 'Easy',
-      action: () => navigate('/activities/interactive-learning')
-    },
+  const creativeActivities = [
     {
       title: 'Magic Paint Studio',
       description: 'Create beautiful digital artwork with magic brushes',
       icon: <Brush className="w-6 h-6" />,
       difficulty: 'Easy',
-      action: () => setSelectedTool('Magic Paint Studio')
+      action: () => navigate('/activities/magic-paint-studio')
     },
     {
-      title: 'Digital Drawing',
-      description: 'Create beautiful digital artwork',
+      title: 'Paper Crafts',
+      description: 'Make fun crafts with paper',
+      icon: <Scissors className="w-6 h-6" />,
+      difficulty: 'Medium',
+      action: () => navigate('/activities/paper-crafts')
+    },
+    {
+      title: 'Mandal Maker',
+      description: 'Create beautiful symmetric patterns and peaceful mandalas!',
       icon: <Brush className="w-6 h-6" />,
       difficulty: 'Easy',
       action: () => setSelectedTool('Digital Drawing')
@@ -144,21 +121,38 @@ const ActivityContent = () => {
       description: 'Color amazing pictures',
       icon: <Palette className="w-6 h-6" />,
       difficulty: 'Easy',
-      action: () => setSelectedTool('Coloring Pages')
+       action: () => navigate('/activities/coloring-pages-tool')
+    }
+  ];
+
+  const artActivities = [
+    {
+      title: 'Music Movement',
+      description: ' Sing, dance, and move to learn through music and rhythm!',
+      icon: <Sparkles className="w-6 h-6" />,
+      difficulty: 'Easy',
+      action: () => navigate('/activities/music-movement')
+    },
+    {
+      title: 'Magic Paint Studio',
+      description: 'Create beautiful digital artwork with magic brushes',
+      icon: <Brush className="w-6 h-6" />,
+      difficulty: 'Easy',
+      action: () => navigate('/activities/magic-paint-studio')
     },
     {
       title: 'Paper Crafts',
       description: 'Make fun crafts with paper',
       icon: <Scissors className="w-6 h-6" />,
       difficulty: 'Medium',
-      action: () => setSelectedTool('Paper Crafts')
+      action: () => navigate('/activities/paper-crafts')
     },
     {
-      title: 'Story Builder',
-      description: 'Create your own interactive stories',
-      icon: <BookOpen className="w-6 h-6" />,
-      difficulty: 'Medium',
-      action: () => setSelectedTool('Story Builder')
+      title: 'Coloring Pages',
+      description: 'Color amazing pictures',
+      icon: <Palette className="w-6 h-6" />,
+      difficulty: 'Easy',
+      action: () => setSelectedTool('Coloring Pages')
     }
   ];
 
@@ -192,7 +186,7 @@ const ActivityContent = () => {
       description: 'Create beats and rhythms',
       icon: <Music className="w-6 h-6" />,
       difficulty: 'Easy',
-      action: () => setSelectedTool('Music Maker')
+      action: () => navigate('/activities/music-maker')
     },
     {
       title: 'Sing Along',
@@ -230,47 +224,8 @@ const ActivityContent = () => {
         <StorySection stories={poems} type="poems" />
       </TabsContent>
 
-      <TabsContent value="games" className="space-y-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {games.map((game, index) => (
-            <Card key={index} className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-400 rounded-2xl flex items-center justify-center text-2xl">
-                  {game.icon}
-                </div>
-                <Badge className="bg-blue-100 text-blue-700 font-comic">
-                  {game.difficulty}
-                </Badge>
-              </div>
-              
-              <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">
-                {game.title}
-              </h3>
-              <p className="font-comic text-gray-600 text-sm mb-4">
-                {game.description}
-              </p>
-              
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center space-x-2">
-                  <Clock className="w-4 h-4 text-gray-500" />
-                  <span className="font-comic text-sm text-gray-600">{game.duration}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Users className="w-4 h-4 text-gray-500" />
-                  <span className="font-comic text-sm text-gray-600">{game.players} player</span>
-                </div>
-              </div>
-              
-              <Button 
-                className="w-full gradient-blue text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200"
-                onClick={() => navigate(game.route)}
-              >
-                <Gamepad2 className="w-4 h-4 mr-2" />
-                Play Game
-              </Button>
-            </Card>
-          ))}
-        </div>
+      <TabsContent value="creative" className="space-y-8">
+        <ActivitySection activities={creativeActivities} gradientClass="gradient-purple" />
       </TabsContent>
 
       <TabsContent value="math" className="space-y-8">
@@ -293,12 +248,6 @@ const ActivityContent = () => {
         <CreativeTools
           tool={selectedTool}
           onClose={() => setSelectedTool(null)}
-        />
-      )}
-
-      {showStoryBuilder && (
-        <StoryBuilder
-          onClose={() => setShowStoryBuilder(false)}
         />
       )}
     </>

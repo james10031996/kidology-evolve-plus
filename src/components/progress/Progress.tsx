@@ -30,7 +30,7 @@ const Progress = () => {
   const nextLevelStars = 500 - (userData.stars % 500);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50">
       <Header />
       
       <div className="container mx-auto px-4 py-8">

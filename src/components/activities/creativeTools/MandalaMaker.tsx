@@ -2,9 +2,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, RotateCcw, Download, Palette, Star } from 'lucide-react';
+import { Sparkles, RotateCcw, Download, ArrowLeft, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import Header from '@/components/home/Header';
 
 const MandalaMaker = () => {
+  const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentColor, setCurrentColor] = useState('#ff6b6b');
@@ -35,7 +38,7 @@ const MandalaMaker = () => {
       if (ctx) {
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
+
         // Draw center guide
         drawCenterGuide(ctx, canvas.width / 2, canvas.height / 2);
       }
@@ -47,7 +50,7 @@ const MandalaMaker = () => {
     ctx.strokeStyle = '#e0e0e0';
     ctx.lineWidth = 1;
     ctx.setLineDash([5, 5]);
-    
+
     // Draw symmetry lines
     for (let i = 0; i < symmetryMode; i++) {
       const angle = (2 * Math.PI * i) / symmetryMode;
@@ -59,16 +62,16 @@ const MandalaMaker = () => {
       );
       ctx.stroke();
     }
-    
+
     // Draw center circles
     ctx.beginPath();
     ctx.arc(centerX, centerY, 50, 0, 2 * Math.PI);
     ctx.stroke();
-    
+
     ctx.beginPath();
     ctx.arc(centerX, centerY, 100, 0, 2 * Math.PI);
     ctx.stroke();
-    
+
     ctx.restore();
   };
 
@@ -76,7 +79,7 @@ const MandalaMaker = () => {
     const points = [];
     const radius = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
     const baseAngle = Math.atan2(y - centerY, x - centerX);
-    
+
     for (let i = 0; i < symmetryMode; i++) {
       const angle = baseAngle + (2 * Math.PI * i) / symmetryMode;
       points.push({
@@ -84,7 +87,7 @@ const MandalaMaker = () => {
         y: centerY + radius * Math.sin(angle)
       });
     }
-    
+
     return points;
   };
 
@@ -92,7 +95,7 @@ const MandalaMaker = () => {
     ctx.fillStyle = currentColor;
     ctx.strokeStyle = currentColor;
     ctx.lineWidth = brushSize;
-    
+
     switch (selectedShape) {
       case 'circle':
         ctx.beginPath();
@@ -119,10 +122,10 @@ const MandalaMaker = () => {
   const drawStar = (ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, points: number) => {
     const step = (Math.PI * 2) / points;
     const halfStep = step / 2;
-    
+
     ctx.beginPath();
     ctx.moveTo(x, y - radius);
-    
+
     for (let i = 1; i <= points * 2; i++) {
       const currentRadius = i % 2 === 0 ? radius : radius * 0.5;
       const currentAngle = i * halfStep - Math.PI / 2;
@@ -131,7 +134,7 @@ const MandalaMaker = () => {
         y + Math.sin(currentAngle) * currentRadius
       );
     }
-    
+
     ctx.closePath();
     ctx.fill();
   };
@@ -143,7 +146,7 @@ const MandalaMaker = () => {
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return;
-    
+
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
@@ -151,13 +154,13 @@ const MandalaMaker = () => {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    
+
     // Get symmetric points
     const points = getSymmetricPoints(x, y, centerX, centerY);
-    
+
     // Draw at all symmetric points
     points.forEach(point => {
       drawShape(ctx, point.x, point.y);
@@ -186,19 +189,19 @@ const MandalaMaker = () => {
       const tempCtx = tempCanvas.getContext('2d');
       tempCanvas.width = canvas.width;
       tempCanvas.height = canvas.height;
-      
+
       if (tempCtx) {
         tempCtx.fillStyle = 'white';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
         tempCtx.drawImage(canvas, 0, 0);
-        
+
         const link = document.createElement('a');
         link.download = `mandala-${Date.now()}.png`;
         link.href = tempCanvas.toDataURL();
         link.click();
-        
+
         setCompletedMandalas(prev => prev + 1);
-        
+
         if (window.speechSynthesis) {
           const utterance = new SpeechSynthesisUtterance('Beautiful mandala saved! Keep creating amazing art!');
           window.speechSynthesis.speak(utterance);
@@ -213,21 +216,21 @@ const MandalaMaker = () => {
     if (!canvas || !ctx) return;
 
     clearCanvas();
-    
+
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    
+
     // Generate random mandala pattern
     for (let ring = 1; ring <= 5; ring++) {
       const radius = ring * 30;
       const color = colors[Math.floor(Math.random() * colors.length)];
       ctx.fillStyle = color;
-      
+
       for (let i = 0; i < symmetryMode * ring; i++) {
         const angle = (2 * Math.PI * i) / (symmetryMode * ring);
         const x = centerX + radius * Math.cos(angle);
         const y = centerY + radius * Math.sin(angle);
-        
+
         const shape = shapes[Math.floor(Math.random() * shapes.length)];
         const originalShape = selectedShape;
         setSelectedShape(shape.id as any);
@@ -238,9 +241,19 @@ const MandalaMaker = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-0 shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      <Header />
+      <Card className="p-6 mb-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-0 shadow-lg">
+        <div className="flex items-center mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/activities')}
+            className="mr-4 font-comic"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Activities
+          </Button>
+        </div>
         <div className="text-center">
           <div className="w-16 h-16 gradient-purple rounded-full mx-auto mb-3 flex items-center justify-center">
             <Sparkles className="w-8 h-8 text-white" />
@@ -328,9 +341,8 @@ const MandalaMaker = () => {
                   <button
                     key={color}
                     onClick={() => setCurrentColor(color)}
-                    className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${
-                      currentColor === color ? 'border-gray-800 scale-110' : 'border-gray-300'
-                    }`}
+                    className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${currentColor === color ? 'border-gray-800 scale-110' : 'border-gray-300'
+                      }`}
                     style={{ backgroundColor: color }}
                   />
                 ))}
@@ -369,7 +381,7 @@ const MandalaMaker = () => {
                 onMouseUp={stopDrawing}
                 onMouseLeave={stopDrawing}
               />
-              
+
               {/* Center indicator */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-purple-400 rounded-full pointer-events-none opacity-50" />
             </div>

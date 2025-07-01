@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Music, Zap } from 'lucide-react';
-import MusicPlayer from './music/MusicPlayer';
-import ActivityCard from './music/ActivityCard';
+import MusicPlayer from '../music/MusicPlayer';
+import ActivityCard from '../music/ActivityCard';
 import Header from '@/components/home/Header';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -148,7 +148,7 @@ const MusicMovement = () => {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <Header />
       {/* Music Header */}
-      <Card className="p-6 bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl border-0 shadow-lg">
+      <Card className="p-6 mb-6 bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl border-0 shadow-lg">
         <div className="flex items-center mb-6">
           <Button
             variant="ghost"
@@ -188,7 +188,7 @@ const MusicMovement = () => {
       <MusicPlayer songs={songs} onEnergyUpdate={updateEnergy} />
 
       {/* Music Activities */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="mt-6 grid md:grid-cols-2 gap-6">
         {musicActivities.map((activity) => (
           <ActivityCard key={activity.id} activity={activity} gradientClass="gradient-pink" />
         ))}

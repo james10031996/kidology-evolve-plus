@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -136,6 +135,15 @@ const AdminQuizManager = () => {
         difficulty: 'Easy'
       });
       setIsCreating(false);
+    }
+  };
+
+  const handleUpdateQuiz = () => {
+    if (editingQuiz) {
+      setQuizzes(quizzes.map(quiz => 
+        quiz.id === editingQuiz.id ? editingQuiz : quiz
+      ));
+      setEditingQuiz(null);
     }
   };
 
@@ -405,6 +413,163 @@ const AdminQuizManager = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Quiz Dialog */}
+      {editingQuiz && (
+        <Dialog open={!!editingQuiz} onOpenChange={() => setEditingQuiz(null)}>
+          <DialogContent className="max-w-4xl bg-gradient-to-br from-white via-orange-50 to-yellow-50">
+            <DialogHeader>
+              <DialogTitle className="font-fredoka text-2xl text-orange-700">
+                ✏️ Edit Quiz: {editingQuiz.title}
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <Label className="font-comic font-bold text-orange-800">Quiz Title</Label>
+                  <Input
+                    value={editingQuiz.title}
+                    onChange={(e) => setEditingQuiz({ ...editingQuiz, title: e.target.value })}
+                    placeholder="Enter quiz title..."
+                    className="font-comic"
+                  />
+                </div>
+                
+                <div>
+                  <Label className="font-comic font-bold text-orange-800">Description</Label>
+                  <Textarea
+                    value={editingQuiz.description}
+                    onChange={(e) => setEditingQuiz({ ...editingQuiz, description: e.target.value })}
+                    placeholder="Describe the quiz..."
+                    className="font-comic"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="font-comic font-bold text-orange-800">Course</Label>
+                    <Select value={editingQuiz.courseId} onValueChange={(value) => setEditingQuiz({ ...editingQuiz, courseId: value })}>
+                      <SelectTrigger className="font-comic">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {courses.map((course) => (
+                          <SelectItem key={course.id} value={course.id}>
+                            {course.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <Label className="font-comic font-bold text-orange-800">Topic</Label>
+                    <Select value={editingQuiz.topicId} onValueChange={(value) => setEditingQuiz({ ...editingQuiz, topicId: value })}>
+                      <SelectTrigger className="font-comic">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {courses.find(c => c.id === editingQuiz.courseId)?.topics.map((topic) => (
+                          <SelectItem key={topic} value={topic.toLowerCase()}>
+                            {topic}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label className="font-comic font-bold text-orange-800">Time Limit (s)</Label>
+                    <Input
+                      type="number"
+                      value={editingQuiz.timeLimit}
+                      onChange={(e) => setEditingQuiz({ ...editingQuiz, timeLimit: parseInt(e.target.value) })}
+                      className="font-comic"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label className="font-comic font-bold text-orange-800">Passing Score (%)</Label>
+                    <Input
+                      type="number"
+                      value={editingQuiz.passingScore}
+                      onChange={(e) => setEditingQuiz({ ...editingQuiz, passingScore: parseInt(e.target.value) })}
+                      className="font-comic"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label className="font-comic font-bold text-orange-800">Difficulty</Label>
+                    <Select value={editingQuiz.difficulty} onValueChange={(value) => setEditingQuiz({ ...editingQuiz, difficulty: value as 'Easy' | 'Medium' | 'Hard' })}>
+                      <SelectTrigger className="font-comic">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Easy">Easy</SelectItem>
+                        <SelectItem value="Medium">Medium</SelectItem>
+                        <SelectItem value="Hard">Hard</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white/80 p-4 rounded-xl">
+                <h3 className="font-fredoka text-lg text-orange-600 mb-3">Questions ({editingQuiz.questions.length})</h3>
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {editingQuiz.questions.map((question, index) => (
+                    <div key={question.id} className="p-3 bg-white rounded-lg border border-orange-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">{question.emoji}</span>
+                          <span className="font-comic text-sm font-medium">
+                            Q{index + 1}: {question.question.substring(0, 40)}...
+                          </span>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => deleteQuestion(editingQuiz.id, question.id)}
+                          className="text-xs"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  <Button
+                    onClick={() => {
+                      const newQuestion = createNewQuestion();
+                      setEditingQuiz({
+                        ...editingQuiz,
+                        questions: [...editingQuiz.questions, newQuestion]
+                      });
+                    }}
+                    variant="outline"
+                    className="w-full font-comic text-orange-600 border-orange-300"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Question
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button variant="outline" onClick={() => setEditingQuiz(null)} className="font-comic">
+                Cancel
+              </Button>
+              <Button onClick={handleUpdateQuiz} className="gradient-orange text-white font-comic">
+                <Save className="w-4 h-4 mr-2" />
+                Save Changes
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Quiz Preview Dialog */}
       {previewQuiz && (

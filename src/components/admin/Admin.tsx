@@ -15,7 +15,7 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-violet-50">
       <Header />
       
       <div className="container mx-auto px-4 py-8">

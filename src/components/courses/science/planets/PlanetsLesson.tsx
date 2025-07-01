@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Telescope, Info, Star } from 'lucide-react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Telescope, Info, Star, X } from 'lucide-react';
 import Viewer from './solar/2d/Viewer';
 import ThreeDSolarSystem from './solar/3d/System';
 import SolarSystem from './solar/1D/SolarSystem';
@@ -12,15 +11,11 @@ import { Suspense } from 'react';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogClose, DialogDescription } from '@/components/ui/dialog';
 
-// import ExperimentsLesson from '../experiments/ExperimentsLesson';
-
-
 const PlanetsLesson = () => {
   const [selectedPlanet, setSelectedPlanet] = useState<number | null>(null);
   const [open1D, setOpen1D] = useState(false);
   const [open2D, setOpen2D] = useState(false);
   const [open3D, setOpen3D] = useState(false);
-  // const [view, setView] = useState<'lesson' | '2d' | '3d'>('lesson');
 
   const planets = [
     {
@@ -81,96 +76,86 @@ const PlanetsLesson = () => {
 
   return (
     <div className="space-y-6">
-
+      {/* Dialog for 1D Solar System */}
       <Dialog open={open1D} onOpenChange={setOpen1D}>
         <DialogTrigger asChild>
-          <button
-            className="px-4 py-2 mr-2 text-white bg-blue-500 hover:bg-blue-700 rounded"
-            aria-label="Open 2D Viewer"
-          >
+          <Button className="px-4 py-2 mr-2 text-white bg-blue-500 hover:bg-blue-700 rounded">
             Single Planet Solar System
-          </button>
+          </Button>
         </DialogTrigger>
-
-        <DialogContent className="w-full h-[90vh] p-0 max-w-[90vw] overflow-y-auto">
-
+        <DialogContent className="w-full h-[90vh] p-0 max-w-[90vw]">
           <DialogTitle className="sr-only">Single Planet Solar System</DialogTitle>
           <DialogDescription className="sr-only">
             Explore an interactive planet solar system
           </DialogDescription>
-
-          <DialogClose
-            className="absolute top-4 right-4 bg-white/10 text-white text-xl px-3 py-2 rounded-full hover:bg-white hover:text-black transition"
-          >
-            ✕
-          </DialogClose>
-
-
-          <TooltipProvider>
-            <Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
-              <Viewer />
-            </Suspense>
-          </TooltipProvider>
+          <div className="relative w-full h-full">
+            <Button
+              onClick={() => setOpen1D(false)}
+              className="absolute top-4 right-4 z-50 bg-white/80 text-gray-800 hover:bg-white rounded-full w-10 h-10 p-0"
+              size="sm"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+            <TooltipProvider>
+              <Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
+                <Viewer />
+              </Suspense>
+            </TooltipProvider>
+          </div>
         </DialogContent>
       </Dialog>
 
+      {/* Dialog for 2D Solar System */}
       <Dialog open={open2D} onOpenChange={setOpen2D}>
         <DialogTrigger asChild>
-          <button
-            className="px-4 py-2 mr-2 text-white bg-violet-500 hover:bg-violet-700 rounded"
-            aria-label="Open 2D Viewer"
-          >
+          <Button className="px-4 py-2 mr-2 text-white bg-violet-500 hover:bg-violet-700 rounded">
             2D Solar System
-          </button>
+          </Button>
         </DialogTrigger>
-
-        <DialogContent className="w-full h-[90vh] p-0 max-w-[90vw] overflow-y-auto">
-
+        <DialogContent className="w-full h-[90vh] p-0 max-w-[90vw]">
           <DialogTitle className="sr-only">2D Solar System</DialogTitle>
           <DialogDescription className="sr-only">
             Explore a 2D interactive solar system
           </DialogDescription>
-
-          <DialogClose
-            className="absolute top-4 right-4 bg-white/10 text-white text-xl px-3 py-2 rounded-full hover:bg-white hover:text-black transition"
-          >
-            ✕
-          </DialogClose>
-          <ThreeDSolarSystem />
+          <div className="relative w-full h-full">
+            <Button
+              onClick={() => setOpen2D(false)}
+              className="absolute top-4 right-4 z-50 bg-white/80 text-gray-800 hover:bg-white rounded-full w-10 h-10 p-0"
+              size="sm"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+            <ThreeDSolarSystem />
+          </div>
         </DialogContent>
       </Dialog>
 
-      {/* 3D Solar System */}
-       <Dialog open={open2D} onOpenChange={setOpen2D}>
+      {/* Dialog for 3D Solar System */}
+      <Dialog open={open3D} onOpenChange={setOpen3D}>
         <DialogTrigger asChild>
-          <button
-            className="px-4 py-2 text-white bg-purple-500 hover:bg-purple-700 rounded"
-            aria-label="Open 3D Viewer"
-          >
+          <Button className="px-4 py-2 text-white bg-purple-500 hover:bg-purple-700 rounded">
             3D Solar System
-          </button>
+          </Button>
         </DialogTrigger>
-
-        <DialogContent className="w-full h-[90vh] p-0 max-w-[90vw] overflow-y-auto">
-
+        <DialogContent className="w-full h-[90vh] p-0 max-w-[90vw]">
           <DialogTitle className="sr-only">3D Solar System</DialogTitle>
           <DialogDescription className="sr-only">
             Explore a 3D interactive solar system
           </DialogDescription>
-
-          <DialogClose
-            className="absolute top-4 right-4 bg-white/10 text-white text-xl px-3 py-2 rounded-full hover:bg-white hover:text-black transition"
-          >
-            ✕
-          </DialogClose>
-
-
-          <TooltipProvider>
-            <Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
-             {/* <ThreeDSolarSystem /> */}
-              <SolarSystem />
-            </Suspense>
-          </TooltipProvider>
+          <div className="relative w-full h-full">
+            <Button
+              onClick={() => setOpen3D(false)}
+              className="absolute top-4 right-4 z-50 bg-white/80 text-gray-800 hover:bg-white rounded-full w-10 h-10 p-0"
+              size="sm"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+            <TooltipProvider>
+              <Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
+                <SolarSystem />
+              </Suspense>
+            </TooltipProvider>
+          </div>
         </DialogContent>
       </Dialog>
  
@@ -224,7 +209,6 @@ const PlanetsLesson = () => {
 
                 {selectedPlanet === index && (
                   <div className="flex space-x-2">
-
                     <Button size="sm" variant="outline" className="flex-1 font-comic text-xs">
                       🚀 Visit
                     </Button>

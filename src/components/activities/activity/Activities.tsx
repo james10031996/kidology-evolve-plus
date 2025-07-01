@@ -134,7 +134,7 @@ const Activities = () => {
         tools: ['Characters', 'Backgrounds', 'Text'],
         gradient: 'gradient-blue',
         stars: 40,
-        route: '/activies/creative-arts'
+        route: '/activities/creative-arts'
       }
     ]
   };
@@ -148,30 +148,29 @@ const Activities = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-50">
       <Header />
       
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="font-fredoka font-bold text-4xl md:text-5xl text-gray-800 mb-4">
-            🎮 Fun Learning Activities
+         <div className="text-center mb-8">
+          <h1 className="font-fredoka font-bold text-4xl text-gray-800 mb-4">
+            🎭 Fun Learning Activities
           </h1>
-
           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
-            Play games, read stories, and create amazing things while learning!
+            Explore amazing stories, create art, make music, and learn through play!
           </p>
         </div>
 
         <Tabs defaultValue="activity" className="w-full">
           <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
-            <TabsTrigger value="activity" className="rounded-full font-comic font-bold">
+            <TabsTrigger value="activity" className="rounded-full font-comic font-bold data-[state=active]:bg-yellow-200 data-[state=active]">
               🎮 Activity
             </TabsTrigger>
-            <TabsTrigger value="stories" className="rounded-full font-comic font-bold">
+            <TabsTrigger value="stories" className="rounded-full font-comic font-bold data-[state=active]:bg-orange-200 data-[state=active]">
               📚 Stories
             </TabsTrigger>
-            <TabsTrigger value="creative" className="rounded-full font-comic font-bold">
+            <TabsTrigger value="creative" className="rounded-full font-comic font-bold data-[state=active]:bg-red-200 data-[state=active]">
               🎨 Create
             </TabsTrigger>
           </TabsList>

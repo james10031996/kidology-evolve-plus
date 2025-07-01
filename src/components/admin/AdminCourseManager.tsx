@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -64,6 +63,8 @@ const AdminCourseManager = () => {
 
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [newCourse, setNewCourse] = useState<Partial<Course>>({
     title: '',
     description: '',
@@ -120,6 +121,54 @@ const AdminCourseManager = () => {
 
   const handleDeleteCourse = (id: string) => {
     setCourses(courses.filter(course => course.id !== id));
+  };
+
+  const handleEditCourse = (course: Course) => {
+    setSelectedCourse(course);
+    setNewCourse(course);
+    setIsEditMode(true);
+  };
+
+  const handlePreviewCourse = (course: Course) => {
+    setSelectedCourse(course);
+    setIsPreviewMode(true);
+  };
+
+  const handleUpdateCourse = () => {
+    if (selectedCourse && newCourse.title && newCourse.description) {
+      const updatedCourse: Course = {
+        ...selectedCourse,
+        title: newCourse.title,
+        description: newCourse.description,
+        category: newCourse.category || 'General',
+        difficulty: newCourse.difficulty || 'Easy',
+        duration: newCourse.duration || '1 week',
+        emoji: newCourse.emoji || '📚',
+        titleColor: newCourse.titleColor || '#6366f1',
+        backgroundColor: newCourse.backgroundColor || '#f8fafc',
+        animation: newCourse.animation || 'bounce'
+      };
+      
+      setCourses(courses.map(course => 
+        course.id === selectedCourse.id ? updatedCourse : course
+      ));
+      
+      setIsEditMode(false);
+      setSelectedCourse(null);
+      setNewCourse({
+        title: '',
+        description: '',
+        category: '',
+        difficulty: 'Easy',
+        duration: '',
+        lessons: [],
+        questions: [],
+        emoji: '📚',
+        titleColor: '#6366f1',
+        backgroundColor: '#f8fafc',
+        animation: 'bounce'
+      });
+    }
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -185,7 +234,7 @@ const AdminCourseManager = () => {
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-400 rounded-lg flex items-center justify-center">
-                      <BookOpen className="w-6 h-6 text-white" />
+                      <span className="text-2xl">{course.emoji || '📚'}</span>
                     </div>
                     <div>
                       <h4 className="font-bold text-gray-800 font-fredoka text-lg">
@@ -232,11 +281,20 @@ const AdminCourseManager = () => {
                 </div>
 
                 <div className="flex justify-between mt-6 pt-4 border-t border-green-100">
-                  <Button size="sm" variant="outline" className="text-xs border-green-200">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="text-xs border-green-200"
+                    onClick={() => handleEditCourse(course)}
+                  >
                     <Edit className="w-3 h-3 mr-1" />
                     Edit
                   </Button>
-                  <Button size="sm" className="gradient-green text-white text-xs">
+                  <Button 
+                    size="sm" 
+                    className="gradient-green text-white text-xs"
+                    onClick={() => handlePreviewCourse(course)}
+                  >
                     <Eye className="w-3 h-3 mr-1" />
                     Preview
                   </Button>
@@ -270,16 +328,107 @@ const AdminCourseManager = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Enhanced Course Creation Dialog */}
-      <Dialog open={isCreateMode} onOpenChange={setIsCreateMode}>
+      {/* Course Preview Dialog */}
+      <Dialog open={isPreviewMode} onOpenChange={setIsPreviewMode}>
+        <DialogContent className="max-w-4xl bg-gradient-to-br from-white via-blue-50 to-purple-50">
+          <DialogHeader>
+            <DialogTitle className="font-fredoka text-2xl text-blue-700">
+              🎯 Course Preview
+            </DialogTitle>
+            <DialogDescription className="font-comic text-gray-600">
+              Preview how your course will appear to students
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedCourse && (
+            <div className="space-y-6">
+              <Card 
+                className="p-6 shadow-lg"
+                style={{ backgroundColor: selectedCourse.backgroundColor }}
+              >
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className={`text-4xl animate-${selectedCourse.animation}`}>
+                    {selectedCourse.emoji}
+                  </div>
+                  <div>
+                    <h3 
+                      className="font-fredoka text-2xl font-bold mb-2"
+                      style={{ color: selectedCourse.titleColor }}
+                    >
+                      {selectedCourse.title}
+                    </h3>
+                    <Badge className={`${getDifficultyColor(selectedCourse.difficulty)}`}>
+                      {selectedCourse.difficulty}
+                    </Badge>
+                  </div>
+                </div>
+                
+                <p className="font-comic text-gray-700 mb-4">
+                  {selectedCourse.description}
+                </p>
+                
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="flex justify-between">
+                    <span className="font-comic text-gray-600">Category:</span>
+                    <span className="font-bold">{selectedCourse.category}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-comic text-gray-600">Duration:</span>
+                    <span className="font-bold">{selectedCourse.duration}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-comic text-gray-600">Lessons:</span>
+                    <span className="font-bold text-green-600">{selectedCourse.lessons.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-comic text-gray-600">Questions:</span>
+                    <span className="font-bold text-blue-600">{selectedCourse.questions.length}</span>
+                  </div>
+                </div>
+              </Card>
+              
+              <div className="text-center">
+                <Button
+                  onClick={() => setIsPreviewMode(false)}
+                  className="gradient-blue text-white font-comic"
+                >
+                  Close Preview
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Enhanced Course Creation/Edit Dialog */}
+      <Dialog open={isCreateMode || isEditMode} onOpenChange={(open) => {
+        if (!open) {
+          setIsCreateMode(false);
+          setIsEditMode(false);
+          setSelectedCourse(null);
+          setNewCourse({
+            title: '',
+            description: '',
+            category: '',
+            difficulty: 'Easy',
+            duration: '',
+            lessons: [],
+            questions: [],
+            emoji: '📚',
+            titleColor: '#6366f1',
+            backgroundColor: '#f8fafc',
+            animation: 'bounce'
+          });
+        }
+      }}>
         <DialogContent className="bg-gradient-to-br from-white via-purple-50 to-pink-50 max-w-5xl max-h-[90vh] overflow-y-auto border border-purple-200 rounded-xl shadow-xl p-6 transition-all duration-500">
           <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 rounded-t-2xl">
             <DialogHeader>
               <DialogTitle className="font-fredoka text-3xl text-white text-center mb-2">
-                🎨 Create Amazing Course
+                {isEditMode ? '✏️ Edit Course' : '🎨 Create Amazing Course'}
               </DialogTitle>
               <DialogDescription className="text-purple-100 text-center font-comic">
-                Design a beautiful and engaging course with custom styling!
+                {isEditMode ? 'Update your course details and styling!' : 'Design a beautiful and engaging course with custom styling!'}
               </DialogDescription>
             </DialogHeader>
           </div>
@@ -500,7 +649,11 @@ const AdminCourseManager = () => {
             <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
               <Button 
                 variant="outline" 
-                onClick={() => setIsCreateMode(false)} 
+                onClick={() => {
+                  setIsCreateMode(false);
+                  setIsEditMode(false);
+                  setSelectedCourse(null);
+                }} 
                 className="font-comic px-6 py-2"
               >
                 ❌ Cancel
@@ -517,14 +670,18 @@ const AdminCourseManager = () => {
                 
                 <Button 
                   onClick={() => {
-                    handleCreateCourse();
-                    triggerConfetti();
+                    if (isEditMode) {
+                      handleUpdateCourse();
+                    } else {
+                      handleCreateCourse();
+                      triggerConfetti();
+                    }
                   }} 
                   className="gradient-green text-white font-comic px-8 py-2 hover:scale-105 transition-transform"
                   disabled={!newCourse.title || !newCourse.description}
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Create Course
+                  {isEditMode ? 'Update Course' : 'Create Course'}
                 </Button>
               </div>
             </div>

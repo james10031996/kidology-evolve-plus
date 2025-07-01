@@ -3,14 +3,18 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Target, RotateCcw, CheckCircle, Star, Trophy } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import Header from '@/components/home/Header';
 
 const MatchingGame = () => {
+  const navigate = useNavigate();
   const [currentCategory, setCurrentCategory] = useState('body');
   const [selectedObject, setSelectedObject] = useState<string | null>(null);
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [matches, setMatches] = useState<Record<string, Record<string, boolean>>>({});
   const [score, setScore] = useState(0);
-  const [showFeedback, setShowFeedback] = useState<{type: string, message: string, emoji: string} | null>(null);
+  const [showFeedback, setShowFeedback] = useState<{ type: string, message: string, emoji: string } | null>(null);
   const [gameComplete, setGameComplete] = useState(false);
 
   const categories = [
@@ -85,7 +89,7 @@ const MatchingGame = () => {
 
   const handleObjectClick = (item: any) => {
     if (categoryMatches[item.id]) return; // Already matched
-    
+
     if (selectedName && selectedName === item.name) {
       // Correct match!
       setMatches(prev => ({
@@ -115,7 +119,7 @@ const MatchingGame = () => {
 
   const handleNameClick = (name: string) => {
     if (Object.values(categoryMatches).length >= (currentCategoryData?.items.length || 0)) return;
-    
+
     if (selectedObject) {
       const objectItem = currentCategoryData?.items.find(item => item.id === selectedObject);
       if (objectItem && objectItem.name === name) {
@@ -164,9 +168,19 @@ const MatchingGame = () => {
   const shuffledNames = currentCategoryData ? shuffleArray(currentCategoryData.items.map(item => item.name)) : [];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-0 shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      <Header />
+      <Card className="p-6 mb-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-0 shadow-lg">
+        <div className="flex items-center mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/games')}
+            className="mr-4 font-comic"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Games
+          </Button>
+        </div>
         <div className="text-center">
           <div className="w-16 h-16 gradient-purple rounded-full mx-auto mb-3 flex items-center justify-center">
             <Target className="w-8 h-8 text-white" />
@@ -192,16 +206,15 @@ const MatchingGame = () => {
           <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-4">
             🎪 Categories
           </h3>
-          
+
           <div className="space-y-3">
             {categories.map((category) => (
               <Card
                 key={category.id}
-                className={`p-3 cursor-pointer transition-all transform hover:scale-105 border-2 ${
-                  currentCategory === category.id 
-                    ? 'border-purple-400 bg-purple-50 shadow-lg' 
+                className={`p-3 cursor-pointer transition-all transform hover:scale-105 border-2 ${currentCategory === category.id
+                    ? 'border-purple-400 bg-purple-50 shadow-lg'
                     : 'border-gray-200 hover:border-purple-300'
-                }`}
+                  }`}
                 onClick={() => setCurrentCategory(category.id)}
               >
                 <div className="text-center space-y-1">
@@ -246,13 +259,12 @@ const MatchingGame = () => {
             {shuffledItems.map((item) => (
               <Card
                 key={item.id}
-                className={`p-4 cursor-pointer transition-all transform hover:scale-105 border-2 ${
-                  categoryMatches[item.id] 
-                    ? 'border-green-400 bg-green-50' 
+                className={`p-4 cursor-pointer transition-all transform hover:scale-105 border-2 ${categoryMatches[item.id]
+                    ? 'border-green-400 bg-green-50'
                     : selectedObject === item.id
-                    ? 'border-blue-400 bg-blue-50 shadow-lg'
-                    : 'border-gray-200 hover:border-blue-300'
-                }`}
+                      ? 'border-blue-400 bg-blue-50 shadow-lg'
+                      : 'border-gray-200 hover:border-blue-300'
+                  }`}
                 onClick={() => handleObjectClick(item)}
               >
                 <div className="text-center space-y-2">
@@ -282,13 +294,12 @@ const MatchingGame = () => {
               return (
                 <Card
                   key={`${name}-${index}`}
-                  className={`p-3 cursor-pointer transition-all transform hover:scale-105 border-2 ${
-                    isMatched
+                  className={`p-3 cursor-pointer transition-all transform hover:scale-105 border-2 ${isMatched
                       ? 'border-green-400 bg-green-50'
                       : selectedName === name
-                      ? 'border-blue-400 bg-blue-50 shadow-lg'
-                      : 'border-gray-200 hover:border-blue-300'
-                  }`}
+                        ? 'border-blue-400 bg-blue-50 shadow-lg'
+                        : 'border-gray-200 hover:border-blue-300'
+                    }`}
                   onClick={() => !isMatched && handleNameClick(name)}
                 >
                   <div className="flex items-center justify-between">
@@ -319,10 +330,10 @@ const MatchingGame = () => {
                 </span>
               </div>
               <div className="w-full bg-purple-200 rounded-full h-3">
-                <div 
+                <div
                   className="bg-purple-500 h-3 rounded-full transition-all duration-500"
-                  style={{ 
-                    width: `${currentCategoryData ? (Object.keys(categoryMatches).length / currentCategoryData.items.length) * 100 : 0}%` 
+                  style={{
+                    width: `${currentCategoryData ? (Object.keys(categoryMatches).length / currentCategoryData.items.length) * 100 : 0}%`
                   }}
                 />
               </div>
@@ -338,10 +349,10 @@ const MatchingGame = () => {
                 </span>
               </div>
               <div className="w-full bg-yellow-200 rounded-full h-3">
-                <div 
+                <div
                   className="bg-yellow-500 h-3 rounded-full transition-all duration-500"
-                  style={{ 
-                    width: `${(Object.values(matches).reduce((total: number, cat: Record<string, boolean>) => total + Object.keys(cat).length, 0) / categories.reduce((total, cat) => total + cat.items.length, 0)) * 100}%` 
+                  style={{
+                    width: `${(Object.values(matches).reduce((total: number, cat: Record<string, boolean>) => total + Object.keys(cat).length, 0) / categories.reduce((total, cat) => total + cat.items.length, 0)) * 100}%`
                   }}
                 />
               </div>
@@ -349,9 +360,8 @@ const MatchingGame = () => {
 
             {/* Feedback Area */}
             {showFeedback && (
-              <div className={`rounded-xl p-4 text-center animate-pulse-soft ${
-                showFeedback.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
-              }`}>
+              <div className={`rounded-xl p-4 text-center animate-pulse-soft ${showFeedback.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+                }`}>
                 <div className="text-2xl mb-1">{showFeedback.emoji}</div>
                 <p className="font-comic font-bold">{showFeedback.message}</p>
               </div>

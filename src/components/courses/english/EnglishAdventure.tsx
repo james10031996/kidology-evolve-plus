@@ -24,7 +24,7 @@ const EnglishAdventure = () => {
   const lessons = [
     { id: 'alphabet', title: '🔤 Alphabet Adventure', description: 'Learn all 26 letters with fun activities', color: 'gradient-blue', difficulty: 'Easy', duration: '15 min' },
     { id: 'phonics', title: '🗣️ Phonics Fun', description: 'Connect letters to sounds', color: 'gradient-green', difficulty: 'Easy', duration: '20 min' },
-    { id: 'sight-words', title: '👁️ Sight Words', description: 'Recognize common words instantly', color: 'gradient-red', difficulty: 'Medium', duration: '25 min' },
+    { id: 'sight-words', title: '👁️ Sight Words', description: 'Recognize common words instantly', color: 'bg-gradient-to-r from-teal-400 via-cyan-500 to-blue-600', difficulty: 'Medium', duration: '25 min' },
     { id: 'rhyming', title: '🎵 Rhyming Games', description: 'Discover words that sound alike', color: 'gradient-purple', difficulty: 'Easy', duration: '18 min' },
     { id: 'spelling', title: '✏️ Spelling Bee', description: 'Build words letter by letter', color: 'gradient-orange', difficulty: 'Medium', duration: '22 min' },
     { id: 'reading', title: '📚 Reading Stories', description: 'Practice reading simple stories', color: 'gradient-pink', difficulty: 'Medium', duration: '30 min' }

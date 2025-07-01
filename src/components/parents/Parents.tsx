@@ -79,7 +79,7 @@ const Parents = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       <Header />
       
       <div className="container mx-auto px-4 py-8">
@@ -95,10 +95,10 @@ const Parents = () => {
 
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
-            <TabsTrigger value="overview" className="rounded-full font-comic font-bold">Overview</TabsTrigger>
-            <TabsTrigger value="progress" className="rounded-full font-comic font-bold">Progress</TabsTrigger>
-            <TabsTrigger value="safety" className="rounded-full font-comic font-bold">Safety</TabsTrigger>
-            <TabsTrigger value="insights" className="rounded-full font-comic font-bold">Insights</TabsTrigger>
+            <TabsTrigger value="overview" className="rounded-full font-comic font-bold data-[state=active]:bg-red-200 data-[state=active]">Overview</TabsTrigger>
+            <TabsTrigger value="progress" className="rounded-full font-comic font-bold data-[state=active]:bg-fuchsia-200 data-[state=active]">Progress</TabsTrigger>
+            <TabsTrigger value="safety" className="rounded-full font-comic font-bold data-[state=active]:bg-pink-200 data-[state=active]">Safety</TabsTrigger>
+            <TabsTrigger value="insights" className="rounded-full font-comic font-bold data-[state=active]:bg-orange-200 data-[state=active]">Insights</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">

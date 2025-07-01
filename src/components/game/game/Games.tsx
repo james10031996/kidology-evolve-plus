@@ -105,11 +105,27 @@ const Games = () => {
       stars: 10,
       route: '/games/puzzle-assembly',
       icon: '🧩'
+    },
+  ];
+
+  const MatchingGame = [
+    {
+      id: 'matching-game',
+      title: 'Matching Game',
+      description: 'Match objects with their names and learn new words!',
+      difficulty: 2,
+      duration: '4 min',
+      bestScore: 720,
+      playCount: 950,
+      gradient: 'bg-gradient-to-r from-green-300 via-cyan-500 to-teal-600',
+      stars: 10,
+      route: '/games/matching-game',
+      icon: '🧩'
     }
   ];
 
 
-  const allGames = [...mathGames, ...languageGames, ...memoryGames, ...logicGames, ...SearchMissingObject, ...PuzzleAssembly];
+  const allGames = [...mathGames, ...languageGames, ...memoryGames, ...logicGames, ...SearchMissingObject, ...PuzzleAssembly, ...MatchingGame];
 
   const playGame = (game: any) => {
     if (game.route) {
@@ -159,7 +175,7 @@ const Games = () => {
         </div>
       </div>
 
-      <Button 
+      <Button
         className={`w-full ${game.gradient} text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200`}
         onClick={() => playGame(game)}
       >
@@ -172,7 +188,7 @@ const Games = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -186,19 +202,19 @@ const Games = () => {
 
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid w-full grid-cols-5 max-w-2xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
-            <TabsTrigger value="all" className="rounded-full font-comic font-bold">
+            <TabsTrigger value="all" className="rounded-full font-comic font-bold data-[state=active]:bg-blue-200 data-[state=active]">
               🎯 All
             </TabsTrigger>
-            <TabsTrigger value="math" className="rounded-full font-comic font-bold">
+            <TabsTrigger value="math" className="rounded-full font-comic font-bold data-[state=active]:bg-purple-200 data-[state=active]">
               🔢 Math
             </TabsTrigger>
-            <TabsTrigger value="language" className="rounded-full font-comic font-bold">
+            <TabsTrigger value="language" className="rounded-full font-comic font-bold data-[state=active]:bg-violet-200 data-[state=active]">
               📝 Language
             </TabsTrigger>
-            <TabsTrigger value="memory" className="rounded-full font-comic font-bold">
+            <TabsTrigger value="memory" className="rounded-full font-comic font-bold data-[state=active]:bg-sky-200 data-[state=active]">
               🧠 Memory
             </TabsTrigger>
-            <TabsTrigger value="logic" className="rounded-full font-comic font-bold">
+            <TabsTrigger value="logic" className="rounded-full font-comic font-bold data-[state=active]:bg-green-200 data-[state=active]">
               🧩 Logic
             </TabsTrigger>
           </TabsList>
@@ -269,19 +285,19 @@ const Games = () => {
             <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">Math Games</h3>
             <p className="font-comic text-sm text-gray-600">Practice numbers, counting, and basic arithmetic</p>
           </Card>
-          
+
           <Card className="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl text-center">
             <Zap className="w-12 h-12 text-green-600 mx-auto mb-4" />
             <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">Language</h3>
             <p className="font-comic text-sm text-gray-600">Learn letters, words, and reading skills</p>
           </Card>
-          
+
           <Card className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl text-center">
             <Brain className="w-12 h-12 text-purple-600 mx-auto mb-4" />
             <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">Memory</h3>
             <p className="font-comic text-sm text-gray-600">Train your brain and improve concentration</p>
           </Card>
-          
+
           <Card className="p-6 bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl text-center">
             <Trophy className="w-12 h-12 text-pink-600 mx-auto mb-4" />
             <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-2">Logic</h3>
