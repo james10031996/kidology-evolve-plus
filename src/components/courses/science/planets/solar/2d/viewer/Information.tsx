@@ -1,3 +1,4 @@
+
 import { Menu, X } from 'lucide-react';
 import React from 'react';
 
@@ -5,10 +6,10 @@ interface Planet {
   name: string;
   texture: string;
   tagline: string;
-  radius: number;
+  radius: string;
   moons: number;
   orbit: string;
-  hasRing: boolean;
+  hasRing?: boolean;
   description: string;
 }
 
@@ -55,7 +56,7 @@ export default function Information({ currentPlanet, showInfo, setShowInfo }: In
           <div className="mt-4 px-4 grid grid-cols-2 gap-3 text-sm">
             <div>
               <p className="font-medium text-gray-600">Radius</p>
-              <p>{currentPlanet.radius} km</p>
+              <p>{currentPlanet.radius}</p>
             </div>
             <div>
               <p className="font-medium text-gray-600">Moons</p>
@@ -82,3 +83,4 @@ export default function Information({ currentPlanet, showInfo, setShowInfo }: In
     </>
   );
 }
+
