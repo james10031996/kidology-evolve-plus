@@ -1,6 +1,5 @@
 
 import * as THREE from "three";
-import { Vector3 } from "three";
 import { OrbitControls } from 'three-stdlib';
 import { useEffect, useRef } from 'react';
 
@@ -25,9 +24,7 @@ export default function ThreeDSolarSystem() {
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
     containerRef.current.appendChild(renderer.domElement);
     
-    camera.position.setZ(50);
-    camera.position.setX(200);
-    camera.position.setY(20);
+    camera.position.set(200, 20, 50);
 
     sceneRef.current = scene;
     rendererRef.current = renderer;
@@ -52,7 +49,7 @@ export default function ThreeDSolarSystem() {
 
     const minPan = new THREE.Vector3(-400, -400, -400);
     const maxPan = new THREE.Vector3(400, 400, 400);
-    var _v = new THREE.Vector3();
+    const _v = new THREE.Vector3();
 
     controls.addEventListener("change", function () {
       _v.copy(controls.target);
@@ -392,7 +389,7 @@ export default function ThreeDSolarSystem() {
   return (
     <div className="w-full h-full">
       <div ref={containerRef} className="w-full h-full bg-black" />
-      <div className="absolute top-4 left-4 text-white text-sm">
+      <div className="absolute top-4 left-4 text-white text-sm bg-black bg-opacity-50 p-3 rounded-lg">
         <p>🌟 Use mouse to rotate and zoom</p>
         <p>🪐 Explore our solar system in 3D!</p>
       </div>
