@@ -125,7 +125,7 @@ const PlanetsLesson = () => {
             >
               <X className="w-5 h-5" />
             </Button>
-            <ThreeDSolarSystem />
+            <SolarSystem />
           </div>
         </DialogContent>
       </Dialog>
@@ -152,7 +152,7 @@ const PlanetsLesson = () => {
             </Button>
             <TooltipProvider>
               <Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
-                <SolarSystem />
+                 <ThreeDSolarSystem />
               </Suspense>
             </TooltipProvider>
           </div>

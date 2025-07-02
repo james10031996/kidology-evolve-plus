@@ -372,3 +372,66 @@ const Activities = () => {
 };
 
 export default Activities;
+
+
+
+
+// import { useState } from 'react';
+// import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// import { BookOpen, Sparkles, Calculator, Palette, Music, Beaker } from 'lucide-react';
+// import Header from '@/components/home/Header';
+// import ActivityContent from './ActivityContent';
+
+// const Activities = () => {
+//   const [activeTab, setActiveTab] = useState('stories');
+
+//   return (
+//     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+//       <Header />
+      
+//       <div className="container mx-auto px-4 py-8">
+//         <div className="text-center mb-8">
+//           <h1 className="font-fredoka font-bold text-4xl text-gray-800 mb-4">
+//             🎭 Fun Activities
+//           </h1>
+//           <p className="font-comic text-lg text-gray-600 max-w-2xl mx-auto">
+//             Explore amazing stories, create art, make music, and learn through play!
+//           </p>
+//         </div>
+
+//         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+//           <TabsList className="grid grid-cols-3 md:grid-cols-6 w-full bg-white rounded-2xl p-2 shadow-lg mb-8">
+//             <TabsTrigger value="stories" className="rounded-xl font-comic font-bold text-xs data-[state=active]:bg-orange-100 data-[state=active]:text-orange-600">
+//               <BookOpen className="w-4 h-4 mr-1" />
+//               Stories
+//             </TabsTrigger>
+//             <TabsTrigger value="poems-stories" className="rounded-xl font-comic font-bold text-xs data-[state=active]:bg-rose-100 data-[state=active]:text-rose-600">
+//               <BookOpen className="w-4 h-4 mr-1" />
+//               Poems
+//             </TabsTrigger>
+//             <TabsTrigger value="creative" className="rounded-xl font-comic font-bold text-xs data-[state=active]:bg-purple-100 data-[state=active]:text-purple-600">
+//               <Sparkles className="w-4 h-4 mr-1" />
+//               Creative
+//             </TabsTrigger>
+//             <TabsTrigger value="math" className="rounded-xl font-comic font-bold text-xs data-[state=active]:bg-blue-100 data-[state=active]:text-blue-600">
+//               <Calculator className="w-4 h-4 mr-1" />
+//               Math
+//             </TabsTrigger>
+//             <TabsTrigger value="art" className="rounded-xl font-comic font-bold text-xs data-[state=active]:bg-green-100 data-[state=active]:text-green-600">
+//               <Palette className="w-4 h-4 mr-1" />
+//               Art
+//             </TabsTrigger>
+//             <TabsTrigger value="science" className="rounded-xl font-comic font-bold text-xs data-[state=active]:bg-indigo-100 data-[state=active]:text-indigo-600">
+//               <Beaker className="w-4 h-4 mr-1" />
+//               Science
+//             </TabsTrigger>
+//           </TabsList>
+
+//           <ActivityContent />
+//         </Tabs>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Activities;
