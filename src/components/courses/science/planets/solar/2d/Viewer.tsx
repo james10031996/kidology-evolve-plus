@@ -1,3 +1,4 @@
+
 import { useState, startTransition, Suspense } from 'react';
 import texture from './Data/texture.json';
 import { Canvas, useLoader } from '@react-three/fiber';
@@ -22,6 +23,11 @@ interface Planet {
   hasRing?: boolean;
   ringTexture?: string;
   ringAlpha?: string;
+  tagline?: string;
+  radius?: number;
+  moons?: number;
+  orbit?: string;
+  description?: string;
   [key: string]: any;
 }
 

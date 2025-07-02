@@ -31,6 +31,7 @@ const AnalogClock = ({
   const [showStopwatch, setShowStopwatch] = useState(false);
   const [stopwatchTime, setStopwatchTime] = useState(0);
   const [isStopwatchRunning, setIsStopwatchRunning] = useState(false);
+  const [showSecondsState, setShowSecondsState] = useState(showSeconds);
   
   const sizeClasses = {
     small: 'w-32 h-32',
@@ -230,7 +231,7 @@ const AnalogClock = ({
           />
 
           {/* Second hand */}
-          {showSeconds && (
+          {showSecondsState && (
             <line
               x1="50"
               y1="50"
@@ -274,7 +275,7 @@ const AnalogClock = ({
             hour12: timeFormat === '12',
             hour: '2-digit',
             minute: '2-digit',
-            second: showSeconds ? '2-digit' : undefined
+            second: showSecondsState ? '2-digit' : undefined
           })}
         </div>
         {timezone && (
@@ -295,10 +296,10 @@ const AnalogClock = ({
         <Button
           size="sm"
           variant="outline"
-          onClick={() => setShowSeconds(!showSeconds)}
+          onClick={() => setShowSecondsState(!showSecondsState)}
           className="font-comic text-xs"
         >
-          {showSeconds ? 'Hide' : 'Show'} Seconds
+          {showSecondsState ? 'Hide' : 'Show'} Seconds
         </Button>
         <Button
           size="sm"
