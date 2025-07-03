@@ -25,40 +25,26 @@ const TimeAdventure = () => {
   }, []);
 
   const lessons = [
-    { 
-      id: 'analog-clock', 
-      title: '🕐 Analog Clock', 
-      description: 'Learn to read traditional clocks with hands', 
-      color: 'gradient-blue', 
-      difficulty: 'Easy' 
+    {
+      id: 'analog-clock',
+      title: '🕐 Analog Clock',
+      description: 'Learn to read traditional clocks with hands',
+      color: 'gradient-blue',
+      difficulty: 'Easy'
     },
-    { 
-      id: 'digital-time', 
-      title: '🔢 Digital Time', 
-      description: 'Master digital clocks and 24-hour format', 
-      color: 'gradient-green', 
-      difficulty: 'Easy' 
+    {
+      id: 'digital-time',
+      title: '🔢 Digital Time',
+      description: 'Master digital clocks and 24-hour format',
+      color: 'gradient-green',
+      difficulty: 'Easy'
     },
-    { 
-      id: 'time-concepts', 
-      title: '⏰ Time Concepts', 
-      description: 'Hours, minutes, seconds and time zones', 
-      color: 'gradient-purple', 
-      difficulty: 'Medium' 
-    },
-    { 
-      id: 'calendar', 
-      title: '📅 Calendar & Events', 
-      description: 'Days, weeks, months and special events', 
-      color: 'gradient-orange', 
-      difficulty: 'Medium' 
-    },
-    { 
-      id: 'time-games', 
-      title: '🎮 Time Games', 
-      description: 'Fun activities to practice time skills', 
-      color: 'gradient-pink', 
-      difficulty: 'Easy' 
+    {
+      id: 'calendar',
+      title: '📅 Calendar & Events',
+      description: 'Days, weeks, months and special events',
+      color: 'gradient-orange',
+      difficulty: 'Medium'
     }
   ];
 
@@ -157,11 +143,11 @@ const TimeAdventure = () => {
 
   if (selectedLesson) {
     const lesson = lessons.find(l => l.id === selectedLesson);
-    
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
         <Header />
-        
+
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center mb-6">
             <Button onClick={() => setSelectedLesson(null)} variant="ghost" className="mr-4 font-comic">
@@ -188,7 +174,7 @@ const TimeAdventure = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center mb-6">
           <Button onClick={() => navigate('/courses')} variant="ghost" className="mr-4 font-comic">
@@ -207,23 +193,59 @@ const TimeAdventure = () => {
         </div>
 
         {/* Current Time Display */}
-        <Card className="p-6 mb-8 bg-gradient-to-r from-yellow-100 to-orange-100">
-          <div className="text-center">
-            <h3 className="font-fredoka text-xl font-bold text-gray-800 mb-4">🕐 Current Time</h3>
-            <div className="flex justify-center items-center space-x-8">
-              <div className="flex justify-center">
-                <AnalogClock time={currentTime} size="small" />
+        <Card className="p-6 mb-8 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl shadow">
+          <div className="flex flex-col lg:flex-row justify-center items-center gap-8">
+            {/* Clock Display Section */}
+            <div className="text-center">
+              <h3 className="font-fredoka text-xl font-bold text-gray-800 mb-4">🕐 Current Time</h3>
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
+                {/* Analog Clock */}
+                <div className="flex justify-center">
+                  <AnalogClock time={currentTime} size="small" />
+                </div>
+                {/* Digital Clock + Date */}
+                <div className="text-center">
+                  <DigitalClock time={currentTime} format="12" />
+                  <p className="font-comic text-sm text-gray-600 mt-2">
+                    {currentTime.toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                </div>
               </div>
-              <div className="text-center">
-                <DigitalClock time={currentTime} format="12" />
-                <p className="font-comic text-sm text-gray-600 mt-2">
-                  {currentTime.toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                </p>
+            </div>
+
+            {/* Learn About Time Section */}
+            <div className="p-4 w-full lg:w-96 bg-gradient-to-r from-yellow-50 to-blue-50 rounded-xl shadow-md text-left">
+              <h4 className="font-fredoka font-bold text-yellow-600 text-sm mb-3">⏰ Learn About Time!</h4>
+              <div className="text-xs font-comic text-gray-800 space-y-2">
+                {/* What is Time */}
+                <p>• 🕰️ Time helps us know <strong>when to wake up, eat, play, and sleep</strong>.</p>
+                <p>• ⏳ It moves in <strong>seconds, minutes, hours, days, and months</strong>!</p>
+
+                {/* Clock Parts */}
+                <p>• 🕒 A clock has <strong>three hands</strong>:</p>
+                <ul className="list-disc list-inside pl-4">
+                  <li>Short hand → Hour</li>
+                  <li>Long hand → Minute</li>
+                  <li>Thin hand → Second</li>
+                </ul>
+                <p>• 🔄 The hands go round in circles to show time passing.</p>
+
+                {/* Daily Time Routine */}
+                <p>• 🌞 <strong>Morning (7 AM)</strong> – Time to wake up!</p>
+                <p>• 📚 <strong>Daytime (9 AM–3 PM)</strong> – School learning time!</p>
+                <p>• 🎮 <strong>Afternoon (4 PM)</strong> – Play time!</p>
+                <p>• 🌙 <strong>Evening (8 PM)</strong> – Get ready for bed!</p>
+
+                {/* Fun Time Facts */}
+                <p>• 📏 1 minute = 60 seconds | 1 hour = 60 minutes</p>
+                <p>• 🕐 When both hands point to 12 → It’s <strong>12 o’clock</strong>!</p>
+                <p>• 🌗 Long ago, people told time by looking at <strong>shadows (sundials)</strong>.</p>
+                <p>• 🧪 <strong>Atomic clocks</strong> are the most accurate clocks in the world!</p>
               </div>
             </div>
           </div>
@@ -246,11 +268,10 @@ const TimeAdventure = () => {
               </p>
 
               <div className="flex items-center justify-between mb-4">
-                <Badge className={`font-comic ${
-                  lesson.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
+                <Badge className={`font-comic ${lesson.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
                   lesson.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                  'bg-red-100 text-red-700'
-                }`}>
+                    'bg-red-100 text-red-700'
+                  }`}>
                   {lesson.difficulty}
                 </Badge>
                 <div className="flex items-center space-x-1">
@@ -259,7 +280,7 @@ const TimeAdventure = () => {
                 </div>
               </div>
 
-              <Button 
+              <Button
                 className={`w-full ${lesson.color} text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200`}
                 onClick={() => startLesson(lesson.id)}
               >

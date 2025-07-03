@@ -20,9 +20,9 @@ const ScienceExplorers = () => {
       { name: 'Mercury', emoji: '☿️', fact: 'Closest to the Sun', color: 'bg-gray-400' },
       { name: 'Venus', emoji: '♀️', fact: 'Hottest planet', color: 'bg-yellow-400' },
       { name: 'Earth', emoji: '🌍', fact: 'Our home planet', color: 'bg-blue-400' },
-      { name: 'Mars', emoji: '♂️', fact: 'The red planet', color: 'bg-red-400' },
-      { name: 'Jupiter', emoji: '♃', fact: 'Largest planet', color: 'bg-orange-400' },
-      { name: 'Saturn', emoji: '♄', fact: 'Has beautiful rings', color: 'bg-yellow-300' }
+      { name: 'Mars', emoji: '🔴', fact: 'The red planet', color: 'bg-red-400' },
+      { name: 'Jupiter', emoji: '🌀', fact: 'Largest planet', color: 'bg-orange-400' },
+      { name: 'Saturn', emoji: '🪐', fact: 'Has beautiful rings', color: 'bg-yellow-300' }
     ],
     weather: [
       { type: 'Sunny', emoji: '☀️', description: 'Bright and warm day' },
@@ -47,7 +47,7 @@ const ScienceExplorers = () => {
     { id: 'animals', title: '🦁 Animal Habitats', description: 'Where different animals live', color: 'gradient-green' },
     { id: 'plants', title: '🌱 Plant Life', description: 'How plants grow and live', color: 'gradient-green' },
     { id: 'human-body', title: '🫀 Human Body', description: 'Amazing facts about our body', color: 'bg-gradient-to-r from-green-300 via-emerald-400 to-teal-500' },
-    { id: 'rocks', title: '🪨 Rocks and Minerals', description: 'Earth\'s building blocks', color: 'bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-100' },
+    { id: 'rocks', title: '🪨 Rocks and Minerals', description: 'Earth\'s building blocks', color: 'bg-gradient-to-r from-blue-300 via-indigo-200 to-cyan-500' },
     { id: 'water-life', title: '🐠 Water Life', description: 'Amazing creatures that live in water', color: 'gradient-blue' },
     { id: 'universe', title: '🌌 Universe', description: 'Explore the vast cosmos and stars', color: 'bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-500' }
   ];
@@ -76,7 +76,7 @@ const ScienceExplorers = () => {
     </div>
   );
 
-  const renderAnimalsLesson = () => (
+  const renderAnimalsLesson = () => ( 
     <div className="grid md:grid-cols-2 gap-8">
       {scienceTopics.animals.map((habitat, index) => (
         <Card key={habitat.habitat} className={`p-8 ${habitat.color} rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in`} style={{ animationDelay: `${index * 0.2}s` }}>

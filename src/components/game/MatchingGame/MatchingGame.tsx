@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Target, RotateCcw, CheckCircle, Star, Trophy } from 'lucide-react';
+import { Target, RotateCcw, ChevronDown, CheckCircle, Star, Trophy, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import Header from '@/components/home/Header';
+import { categories } from './matchingGameData';
+
 
 const MatchingGame = () => {
   const navigate = useNavigate();
@@ -16,65 +17,6 @@ const MatchingGame = () => {
   const [score, setScore] = useState(0);
   const [showFeedback, setShowFeedback] = useState<{ type: string, message: string, emoji: string } | null>(null);
   const [gameComplete, setGameComplete] = useState(false);
-
-  const categories = [
-    {
-      id: 'body',
-      name: 'Body Parts',
-      emoji: '👤',
-      description: 'Match body parts with their names!',
-      items: [
-        { id: 'head', emoji: '👤', name: 'Head', sound: 'This is your head!' },
-        { id: 'eyes', emoji: '👀', name: 'Eyes', sound: 'These are your eyes!' },
-        { id: 'nose', emoji: '👃', name: 'Nose', sound: 'This is your nose!' },
-        { id: 'mouth', emoji: '👄', name: 'Mouth', sound: 'This is your mouth!' },
-        { id: 'hands', emoji: '🤲', name: 'Hands', sound: 'These are your hands!' },
-        { id: 'feet', emoji: '🦶', name: 'Feet', sound: 'These are your feet!' }
-      ]
-    },
-    {
-      id: 'animals',
-      name: 'Animals',
-      emoji: '🐾',
-      description: 'Match animals with their names!',
-      items: [
-        { id: 'cat', emoji: '🐱', name: 'Cat', sound: 'Meow! I am a cat!' },
-        { id: 'dog', emoji: '🐶', name: 'Dog', sound: 'Woof! I am a dog!' },
-        { id: 'bird', emoji: '🐦', name: 'Bird', sound: 'Tweet! I am a bird!' },
-        { id: 'fish', emoji: '🐠', name: 'Fish', sound: 'Blub! I am a fish!' },
-        { id: 'rabbit', emoji: '🐰', name: 'Rabbit', sound: 'Hop! I am a rabbit!' },
-        { id: 'elephant', emoji: '🐘', name: 'Elephant', sound: 'Trumpet! I am an elephant!' }
-      ]
-    },
-    {
-      id: 'ocean',
-      name: 'Ocean Creatures',
-      emoji: '🌊',
-      description: 'Match sea creatures with their names!',
-      items: [
-        { id: 'whale', emoji: '🐋', name: 'Whale', sound: 'I am a huge whale!' },
-        { id: 'dolphin', emoji: '🐬', name: 'Dolphin', sound: 'Click! I am a dolphin!' },
-        { id: 'octopus', emoji: '🐙', name: 'Octopus', sound: 'I am an octopus!' },
-        { id: 'seahorse', emoji: '🐴', name: 'Seahorse', sound: 'I am a seahorse!' },
-        { id: 'shark', emoji: '🦈', name: 'Shark', sound: 'I am a shark!' },
-        { id: 'crab', emoji: '🦀', name: 'Crab', sound: 'Click click! I am a crab!' }
-      ]
-    },
-    {
-      id: 'objects',
-      name: 'Objects',
-      emoji: '📚',
-      description: 'Match everyday objects with their names!',
-      items: [
-        { id: 'book', emoji: '📖', name: 'Book', sound: 'I am a book for reading!' },
-        { id: 'ball', emoji: '⚽', name: 'Ball', sound: 'I am a ball for playing!' },
-        { id: 'car', emoji: '🚗', name: 'Car', sound: 'Beep! I am a car!' },
-        { id: 'house', emoji: '🏠', name: 'House', sound: 'I am a house to live in!' },
-        { id: 'tree', emoji: '🌳', name: 'Tree', sound: 'I am a tall tree!' },
-        { id: 'flower', emoji: '🌸', name: 'Flower', sound: 'I am a beautiful flower!' }
-      ]
-    }
-  ];
 
   const currentCategoryData = categories.find(c => c.id === currentCategory);
   const categoryMatches = matches[currentCategory] || {};
@@ -166,7 +108,8 @@ const MatchingGame = () => {
 
   const shuffledItems = currentCategoryData ? shuffleArray(currentCategoryData.items) : [];
   const shuffledNames = currentCategoryData ? shuffleArray(currentCategoryData.items.map(item => item.name)) : [];
-
+  const [open, setOpen] = useState(false);
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
       <Header />
@@ -203,45 +146,59 @@ const MatchingGame = () => {
       <div className="grid lg:grid-cols-4 gap-6">
         {/* Category Selection */}
         <Card className="p-6 bg-white rounded-2xl shadow-lg border-0">
-          <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-4">
-            🎪 Categories
-          </h3>
+      <h3 className="font-fredoka font-bold text-lg text-gray-800 mb-4 flex items-center justify-between">
+        🎪 Categories
+        <button
+          onClick={() => setOpen(!open)}
+          className="text-sm text-blue-500 hover:underline flex items-center"
+        >
+          {open ? 'Hide' : 'Choose'} <ChevronDown className="ml-1 w-4 h-4 transition-transform duration-200" style={{ transform: open ? 'rotate(180deg)' : 'rotate(0)' }} />
+        </button>
+      </h3>
 
-          <div className="space-y-3">
-            {categories.map((category) => (
-              <Card
-                key={category.id}
-                className={`p-3 cursor-pointer transition-all transform hover:scale-105 border-2 ${currentCategory === category.id
-                    ? 'border-purple-400 bg-purple-50 shadow-lg'
-                    : 'border-gray-200 hover:border-purple-300'
-                  }`}
-                onClick={() => setCurrentCategory(category.id)}
-              >
-                <div className="text-center space-y-1">
-                  <div className="text-2xl">{category.emoji}</div>
-                  <h4 className="font-comic font-bold text-sm text-gray-800">{category.name}</h4>
-                  {matches[category.id] && Object.keys(matches[category.id]).length === category.items.length && (
+      {/* Dropdown content */}
+      {open && (
+        <div className="space-y-3 transition-all duration-300 ease-in-out max-h-[500px] overflow-y-auto">
+          {categories.map((category) => (
+            <Card
+              key={category.id}
+              className={`p-3 cursor-pointer transition-all transform hover:scale-105 border-2 ${
+                currentCategory === category.id
+                  ? 'border-purple-400 bg-purple-50 shadow-lg'
+                  : 'border-gray-200 hover:border-purple-300'
+              }`}
+              onClick={() => {
+                setCurrentCategory(category.id);
+                setOpen(false); // close dropdown on selection
+              }}
+            >
+              <div className="text-center space-y-1">
+                <div className="text-2xl">{category.emoji}</div>
+                <h4 className="font-comic font-bold text-sm text-gray-800">{category.name}</h4>
+                {matches[category.id] &&
+                  Object.keys(matches[category.id]).length === category.items.length && (
                     <Badge className="bg-green-100 text-green-700 font-comic text-xs">
                       <CheckCircle className="w-3 h-3 mr-1" />
                       Complete!
                     </Badge>
                   )}
-                </div>
-              </Card>
-            ))}
-          </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
-          {/* Instructions */}
-          <div className="mt-6 bg-blue-50 rounded-xl p-4">
-            <h4 className="font-comic font-bold text-blue-800 mb-2">📝 How to Play:</h4>
-            <ol className="font-comic text-sm text-blue-700 space-y-1">
-              <li>1. Click an object</li>
-              <li>2. Click its matching name</li>
-              <li>3. Get points for correct matches!</li>
-              <li>4. Complete all categories! 🏆</li>
-            </ol>
-          </div>
-        </Card>
+      {/* Instructions Section */}
+      <div className="mt-6 bg-blue-50 rounded-xl p-4">
+        <h4 className="font-comic font-bold text-blue-800 mb-2">📝 How to Play:</h4>
+        <ol className="font-comic text-sm text-blue-700 space-y-1">
+          <li>1. Click an object</li>
+          <li>2. Click its matching name</li>
+          <li>3. Get points for correct matches!</li>
+          <li>4. Complete all categories! 🏆</li>
+        </ol>
+      </div>
+    </Card>
 
         {/* Objects Area */}
         <Card className="p-6 bg-white rounded-2xl shadow-lg border-0">

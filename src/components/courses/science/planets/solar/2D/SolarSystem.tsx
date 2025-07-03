@@ -54,16 +54,6 @@ export default function SolarSystem() {
     <div id="app">
       <nav id="navbar">
         <a id="toggle-data" href="#data"><i className="icon-data" />Data</a>
-        <h1>
-          3D Solar System
-          <br />
-          <span>
-            by{' '}
-            <a href="https://twitter.com/JulianGarnier" target="_blank" rel="noopener noreferrer">
-              @JulianGarnier
-            </a>
-          </span>
-        </h1>
         <a id="toggle-controls" href="#controls"><i className="icon-controls" />Controls</a>
       </nav>
 

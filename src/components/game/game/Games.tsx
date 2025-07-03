@@ -88,7 +88,7 @@ const Games = () => {
       gradient: 'bg-gradient-to-r from-purple-300 via-violet-400 to-pink-500',
       stars: 10,
       route: '/games/search-missing-object',
-      icon: '🔷'
+      icon: '🔍'
     }
   ];
 
@@ -120,12 +120,59 @@ const Games = () => {
       gradient: 'bg-gradient-to-r from-green-300 via-cyan-500 to-teal-600',
       stars: 10,
       route: '/games/matching-game',
-      icon: '🧩'
+      icon: '🎯'
     }
   ];
 
+  const GeographyBubbleGame = [
+    {
+      id: 'geography-bubble-game',
+      title: 'Geography Bubble Game',
+      description: 'Explore the world by popping the correct geography answers!',
+      difficulty: 2,
+      duration: '4 min',
+      bestScore: 720,
+      playCount: 950,
+      gradient: 'bg-gradient-to-r from-cyan-600 via-blue-400 to-purple-600',
+      stars: 10,
+      route: '/games/geography-bubble-game',
+      icon: '🌍'
+    }
+  ];
 
-  const allGames = [...mathGames, ...languageGames, ...memoryGames, ...logicGames, ...SearchMissingObject, ...PuzzleAssembly, ...MatchingGame];
+  const MathBubbleGame = [
+    {
+      id: 'math-bubble-game',
+      title: 'Math Bubble Game',
+      description: 'Pop all the bubbles with expressions that equal the target number!',
+      difficulty: 2,
+      duration: '4 min',
+      bestScore: 720,
+      playCount: 950,
+      gradient: 'bg-gradient-to-r from-green-300 via-cyan-500 to-teal-600',
+      stars: 10,
+      route: '/games/math-bubble-game',
+      icon: '➕'
+    }
+  ];
+
+  const ScienceBubbleGame = [
+    {
+      id: 'science-bubble-game',
+      title: 'Science Bubble Game',
+      description: 'Pop the bubble with the correct answer to science questions!',
+      difficulty: 2,
+      duration: '4 min',
+      bestScore: 720,
+      playCount: 950,
+      gradient: 'bg-gradient-to-r from-purple-500 via-violet-400 to-pink-600',
+      stars: 10,
+      route: '/games/science-bubble-game',
+      icon: '🔬'
+    }
+  ];
+
+  const allGames = [...mathGames, ...languageGames, ...memoryGames, ...logicGames, ...SearchMissingObject, ...PuzzleAssembly, ...MatchingGame, ...GeographyBubbleGame, ...MathBubbleGame, ...ScienceBubbleGame];
 
   const playGame = (game: any) => {
     if (game.route) {

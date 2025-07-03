@@ -2,50 +2,38 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Star, Clock, Zap, Target, Trophy, Heart, ArrowLeft } from 'lucide-react';
+import { Star, Clock, Zap, Target, Trophy, Heart, Globe, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/home/Header';
+import { geographyQuestions } from './geographyBubbleGameData';
 
-interface MathExpression {
+interface GeographyQuestion {
   id: number;
-  expression: string;
-  value: number;
+  question: string;
+  answer: string;
   isCorrect: boolean;
   x: number;
   y: number;
   clicked: boolean;
   color: string;
+  flag?: string;
 }
 
-interface GameStats {
-  level: number;
-  score: number;
-  lives: number;
-  timeLeft: number;
-  streak: number;
-  totalCorrect: number;
-}
-
-const MathBubbleGame = () => {
-  const [gameStats, setGameStats] = useState<GameStats>({
+const GeographyBubbleGame = () => {
+  const [gameStats, setGameStats] = useState({
     level: 1,
     score: 0,
     lives: 3,
-    timeLeft: 30,
+    timeLeft: 40,
     streak: 0,
     totalCorrect: 0
   });
 
   const navigate = useNavigate();
-  const [targetNumber, setTargetNumber] = useState(6);
-  const [expressions, setExpressions] = useState<MathExpression[]>([]);
-  const [gameState, setGameState] = useState<'menu' | 'playing' | 'paused' | 'gameOver' | 'levelComplete'>('menu');
+  const [currentQuestion, setCurrentQuestion] = useState('');
+  const [questions, setQuestions] = useState<GeographyQuestion[]>([]);
+  const [gameState, setGameState] = useState<'menu' | 'playing' | 'gameOver' | 'levelComplete'>('menu');
   const [feedback, setFeedback] = useState<string>('');
-  const [powerUps, setPowerUps] = useState({
-    timeFreeze: 1,
-    hint: 1,
-    extraLife: 0
-  });
 
   const bubbleColors = [
     'from-red-400 to-red-600',
@@ -58,134 +46,66 @@ const MathBubbleGame = () => {
     'from-teal-400 to-teal-600'
   ];
 
-  const generateExpression = useCallback((target: number, shouldBeCorrect: boolean, level: number) => {
-    const operations = ['+', '-', '×', '÷'];
-    let expression = '';
-    let value = 0;
-
-    if (shouldBeCorrect) {
-      // Generate correct expressions
-      const op = operations[Math.floor(Math.random() * Math.min(operations.length, level === 1 ? 2 : level === 2 ? 3 : 4))];
-
-      switch (op) {
-        case '+':
-          const add1 = Math.floor(Math.random() * target) + 1;
-          const add2 = target - add1;
-          expression = `${add1} + ${add2}`;
-          value = add1 + add2;
-          break;
-        case '-':
-          const sub1 = target + Math.floor(Math.random() * 10) + 1;
-          const sub2 = sub1 - target;
-          expression = `${sub1} - ${sub2}`;
-          value = sub1 - sub2;
-          break;
-        case '×':
-          const factors = [];
-          for (let i = 1; i <= target; i++) {
-            if (target % i === 0) factors.push(i);
-          }
-          if (factors.length > 1) {
-            const factor = factors[Math.floor(Math.random() * factors.length)];
-            expression = `${factor} × ${target / factor}`;
-            value = factor * (target / factor);
-          } else {
-            expression = `${target} × 1`;
-            value = target;
-          }
-          break;
-        case '÷':
-          const mult = Math.floor(Math.random() * 5) + 2;
-          expression = `${target * mult} ÷ ${mult}`;
-          value = (target * mult) / mult;
-          break;
-        default:
-          expression = `${target}`;
-          value = target;
-      }
-    } else {
-      // Generate incorrect expressions
-      const op = operations[Math.floor(Math.random() * Math.min(operations.length, level === 1 ? 2 : level === 2 ? 3 : 4))];
-      let result = target;
-
-      while (result === target) {
-        switch (op) {
-          case '+':
-            const a1 = Math.floor(Math.random() * 10) + 1;
-            const a2 = Math.floor(Math.random() * 10) + 1;
-            expression = `${a1} + ${a2}`;
-            result = a1 + a2;
-            break;
-          case '-':
-            const s1 = Math.floor(Math.random() * 15) + target;
-            const s2 = Math.floor(Math.random() * 10) + 1;
-            expression = `${s1} - ${s2}`;
-            result = s1 - s2;
-            break;
-          case '×':
-            const m1 = Math.floor(Math.random() * 8) + 1;
-            const m2 = Math.floor(Math.random() * 8) + 1;
-            expression = `${m1} × ${m2}`;
-            result = m1 * m2;
-            break;
-          case '÷':
-            const d1 = Math.floor(Math.random() * 50) + 10;
-            const d2 = Math.floor(Math.random() * 5) + 2;
-            if (d1 % d2 === 0) {
-              expression = `${d1} ÷ ${d2}`;
-              result = d1 / d2;
-            } else {
-              expression = `${d1 - (d1 % d2)} ÷ ${d2}`;
-              result = (d1 - (d1 % d2)) / d2;
-            }
-            break;
-        }
-      }
-      value = result;
-    }
-
-    return { expression, value };
-  }, []);
-
-  const generateBubbles = useCallback(() => {
+  const generateQuestions = useCallback(() => {
     const level = gameStats.level;
-    const bubbleCount = Math.min(6 + level, 12);
-    const correctCount = Math.max(2, Math.floor(bubbleCount / 3));
+    const difficulty = level <= 2 ? 'easy' : level <= 4 ? 'medium' : 'hard';
+    const questionPool = geographyQuestions[difficulty];
+    const selectedQ = questionPool[Math.floor(Math.random() * questionPool.length)];
 
-    const newExpressions: MathExpression[] = [];
+    setCurrentQuestion(selectedQ.q);
 
-    // Generate correct expressions
-    for (let i = 0; i < correctCount; i++) {
-      const { expression, value } = generateExpression(targetNumber, true, level);
-      newExpressions.push({
-        id: i,
-        expression,
-        value,
-        isCorrect: true,
-        x: Math.random() * 80 + 10,
-        y: Math.random() * 70 + 15,
-        clicked: false,
-        color: bubbleColors[Math.floor(Math.random() * bubbleColors.length)]
-      });
-    }
+    const bubbleCount = Math.min(6 + level, 8);
+    const newQuestions: GeographyQuestion[] = [];
 
-    // Generate incorrect expressions
-    for (let i = correctCount; i < bubbleCount; i++) {
-      const { expression, value } = generateExpression(targetNumber, false, level);
-      newExpressions.push({
-        id: i,
-        expression,
-        value,
+    // Add correct answer
+    newQuestions.push({
+      id: 0,
+      question: selectedQ.q,
+      answer: selectedQ.correct,
+      isCorrect: true,
+      x: Math.random() * 80 + 10,
+      y: Math.random() * 70 + 15,
+      clicked: false,
+      color: bubbleColors[Math.floor(Math.random() * bubbleColors.length)],
+      flag: selectedQ.flag
+    });
+
+    // Add wrong answers
+    selectedQ.wrong.forEach((wrong, index) => {
+      newQuestions.push({
+        id: index + 1,
+        question: selectedQ.q,
+        answer: wrong,
         isCorrect: false,
         x: Math.random() * 80 + 10,
         y: Math.random() * 70 + 15,
         clicked: false,
         color: bubbleColors[Math.floor(Math.random() * bubbleColors.length)]
       });
+    });
+
+    // Add additional wrong answers from other questions
+    const otherQuestions = questionPool.filter(q => q.q !== selectedQ.q);
+    while (newQuestions.length < bubbleCount && otherQuestions.length > 0) {
+      const randomQ = otherQuestions[Math.floor(Math.random() * otherQuestions.length)];
+      const randomWrong = randomQ.wrong[Math.floor(Math.random() * randomQ.wrong.length)];
+
+      if (!newQuestions.some(q => q.answer === randomWrong)) {
+        newQuestions.push({
+          id: newQuestions.length,
+          question: selectedQ.q,
+          answer: randomWrong,
+          isCorrect: false,
+          x: Math.random() * 80 + 10,
+          y: Math.random() * 70 + 15,
+          clicked: false,
+          color: bubbleColors[Math.floor(Math.random() * bubbleColors.length)]
+        });
+      }
     }
 
-    setExpressions(newExpressions);
-  }, [targetNumber, gameStats.level, generateExpression]);
+    setQuestions(newQuestions);
+  }, [gameStats.level]);
 
   const startGame = () => {
     setGameState('playing');
@@ -193,52 +113,40 @@ const MathBubbleGame = () => {
       level: 1,
       score: 0,
       lives: 3,
-      timeLeft: 30,
+      timeLeft: 40,
       streak: 0,
       totalCorrect: 0
     });
-    setTargetNumber(Math.floor(Math.random() * 15) + 5);
-    generateBubbles();
+    generateQuestions();
   };
 
-  const handleBubbleClick = (bubble: MathExpression) => {
+  const handleBubbleClick = (bubble: GeographyQuestion) => {
     if (bubble.clicked) return;
 
-    const newExpressions = expressions.map(exp =>
-      exp.id === bubble.id ? { ...exp, clicked: true } : exp
+    const newQuestions = questions.map(q =>
+      q.id === bubble.id ? { ...q, clicked: true } : q
     );
-    setExpressions(newExpressions);
+    setQuestions(newQuestions);
 
     if (bubble.isCorrect) {
       setGameStats(prev => ({
         ...prev,
-        score: prev.score + (10 * (prev.level + prev.streak)),
+        score: prev.score + (25 * (prev.level + prev.streak)),
         streak: prev.streak + 1,
         totalCorrect: prev.totalCorrect + 1
       }));
-      setFeedback('Correct! ✨');
+      setFeedback(`Correct! ${bubble.flag || '🌍'} Great geography knowledge!`);
 
-      setTimeout(() => setFeedback(''), 1000);
-
-      // Check if all correct bubbles are clicked
-      const allCorrectClicked = newExpressions
-        .filter(exp => exp.isCorrect)
-        .every(exp => exp.clicked);
-
-      if (allCorrectClicked) {
-        setTimeout(() => {
-          setGameState('levelComplete');
-        }, 500);
-      }
+      setTimeout(() => {
+        setGameState('levelComplete');
+      }, 1000);
     } else {
       setGameStats(prev => ({
         ...prev,
         lives: prev.lives - 1,
         streak: 0
       }));
-      setFeedback('Wrong! ❌');
-
-      setTimeout(() => setFeedback(''), 1000);
+      setFeedback('Wrong location! Try again! ❌');
 
       if (gameStats.lives <= 1) {
         setTimeout(() => {
@@ -246,11 +154,13 @@ const MathBubbleGame = () => {
         }, 1000);
       }
     }
+
+    setTimeout(() => setFeedback(''), 1500);
   };
 
   const nextLevel = () => {
     const newLevel = gameStats.level + 1;
-    const newTimeLimit = Math.max(15, 35 - newLevel * 2);
+    const newTimeLimit = Math.max(20, 45 - newLevel * 3);
 
     setGameStats(prev => ({
       ...prev,
@@ -259,36 +169,8 @@ const MathBubbleGame = () => {
       streak: 0
     }));
 
-    setTargetNumber(Math.floor(Math.random() * (10 + newLevel * 3)) + 5);
-    generateBubbles();
+    generateQuestions();
     setGameState('playing');
-  };
-
-  const usePowerUp = (type: 'timeFreeze' | 'hint' | 'extraLife') => {
-    if (powerUps[type] <= 0) return;
-
-    setPowerUps(prev => ({ ...prev, [type]: prev[type] - 1 }));
-
-    switch (type) {
-      case 'timeFreeze':
-        // Freeze time for 5 seconds (implemented in timer effect)
-        setFeedback('Time Frozen! ❄️');
-        setTimeout(() => setFeedback(''), 2000);
-        break;
-      case 'hint':
-        // Highlight one correct answer
-        const correctBubble = expressions.find(exp => exp.isCorrect && !exp.clicked);
-        if (correctBubble) {
-          setFeedback(`Hint: ${correctBubble.expression} = ${correctBubble.value}`);
-          setTimeout(() => setFeedback(''), 3000);
-        }
-        break;
-      case 'extraLife':
-        setGameStats(prev => ({ ...prev, lives: prev.lives + 1 }));
-        setFeedback('Extra Life! ❤️');
-        setTimeout(() => setFeedback(''), 2000);
-        break;
-    }
   };
 
   // Timer effect
@@ -304,18 +186,11 @@ const MathBubbleGame = () => {
     }
   }, [gameState, gameStats.timeLeft]);
 
-  // Generate new bubbles when target changes
-  useEffect(() => {
-    if (gameState === 'playing') {
-      generateBubbles();
-    }
-  }, [generateBubbles, gameState]);
-
   if (gameState === 'menu') {
     return (
       <div>
         <Header />
-        <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 p-6">
+        <div className="min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-red-100 p-6">
           <div className="flex items-center mb-6">
             <Button
               variant="ghost"
@@ -329,31 +204,32 @@ const MathBubbleGame = () => {
           <div className="max-w-2xl mx-auto text-center space-y-8">
             <div className="space-y-4">
               <h1 className="font-fredoka text-6xl font-bold gradient-text animate-bounce">
-                🧮 Math Bubble Pop!
+                🌍 Geography Explorer!
               </h1>
               <p className="font-comic text-xl text-gray-700">
-                Pop all the bubbles with expressions that equal the target number!
+                Explore the world by popping the correct geography answers!
               </p>
             </div>
 
             <Card className="p-8 bg-white/80 backdrop-blur-sm">
+              <Globe className="w-16 h-16 text-green-500 mx-auto mb-4" />
               <h2 className="font-fredoka text-2xl font-bold mb-4">How to Play:</h2>
               <div className="space-y-3 text-left font-comic">
                 <div className="flex items-center space-x-3">
                   <Target className="w-6 h-6 text-blue-500" />
-                  <span>Find the target number at the top</span>
+                  <span>Read the geography question carefully</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Zap className="w-6 h-6 text-yellow-500" />
-                  <span>Pop bubbles with expressions that equal the target</span>
+                  <span>Pop the bubble with the correct answer</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Clock className="w-6 h-6 text-red-500" />
-                  <span>Beat the clock to advance levels</span>
+                  <span>Answer before time runs out</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Star className="w-6 h-6 text-purple-500" />
-                  <span>Build streaks for bonus points</span>
+                  <span>Learn about countries, capitals, and landmarks!</span>
                 </div>
               </div>
             </Card>
@@ -361,9 +237,9 @@ const MathBubbleGame = () => {
             <Button
               onClick={startGame}
               size="lg"
-              className="font-fredoka text-xl px-8 py-4 gradient-purple text-white hover:scale-105 transition-transform"
+              className="font-fredoka text-xl px-8 py-4 gradient-blue text-white hover:scale-105 transition-transform"
             >
-              🚀 Start Playing!
+              🚀 Start Exploring!
             </Button>
           </div>
         </div>
@@ -391,11 +267,12 @@ const MathBubbleGame = () => {
             <div className="space-y-3 font-comic text-lg">
               <p>Final Score: <span className="font-bold text-purple-600">{gameStats.score}</span></p>
               <p>Level Reached: <span className="font-bold text-blue-600">{gameStats.level}</span></p>
-              <p>Correct Answers: <span className="font-bold text-green-600">{gameStats.totalCorrect}</span></p>
+              <p>Countries Explored: <span className="font-bold text-green-600">{gameStats.totalCorrect}</span></p>
+              <p className="text-sm text-gray-600">Keep exploring to learn more about our world! 🌎</p>
             </div>
             <div className="flex gap-3 justify-center mt-6">
               <Button onClick={startGame} className="gradient-green text-white font-comic">
-                🔄 Play Again
+                🔄 Explore Again
               </Button>
               <Button onClick={() => setGameState('menu')} variant="outline" className="font-comic">
                 🏠 Menu
@@ -424,14 +301,14 @@ const MathBubbleGame = () => {
           </div>
           <Card className="p-8 max-w-md mx-auto text-center bg-white/90 backdrop-blur-sm">
             <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-            <h2 className="font-fredoka text-4xl font-bold text-green-600 mb-4">Level Complete!</h2>
+            <h2 className="font-fredoka text-4xl font-bold text-green-600 mb-4">Excellent!</h2>
             <div className="space-y-2 font-comic text-lg mb-6">
-              <p>Level {gameStats.level} completed! 🎉</p>
+              <p>Level {gameStats.level} completed! 🗺️</p>
               <p>Score: <span className="font-bold text-purple-600">{gameStats.score}</span></p>
-              {gameStats.streak > 3 && <p>Amazing streak! 🔥</p>}
+              {gameStats.streak > 2 && <p>Amazing geography skills! 🌟</p>}
             </div>
             <Button onClick={nextLevel} className="gradient-blue text-white font-comic text-lg px-6">
-              ➡️ Next Level
+              ➡️ Next Location
             </Button>
           </Card>
         </div>
@@ -442,8 +319,7 @@ const MathBubbleGame = () => {
   return (
     <div>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 p-6">
-
+      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-teal-100 p-4">
         <div className="flex items-center mb-6">
           <Button
             variant="ghost"
@@ -472,13 +348,6 @@ const MathBubbleGame = () => {
               </div>
             </div>
 
-            <div className="text-center">
-              <div className="font-fredoka text-6xl font-bold text-gray-800 mb-2">
-                Target: <span className="gradient-text">{targetNumber}</span>
-              </div>
-              <div className="font-comic text-lg text-gray-600">Find expressions that equal this number!</div>
-            </div>
-
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1">
                 {Array.from({ length: gameStats.lives }).map((_, i) => (
@@ -492,26 +361,14 @@ const MathBubbleGame = () => {
             </div>
           </div>
 
-          {/* Power-ups */}
-          <div className="flex justify-center space-x-3 mb-4">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => usePowerUp('timeFreeze')}
-              disabled={powerUps.timeFreeze === 0}
-              className="font-comic"
-            >
-              ❄️ Freeze ({powerUps.timeFreeze})
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => usePowerUp('hint')}
-              disabled={powerUps.hint === 0}
-              className="font-comic"
-            >
-              💡 Hint ({powerUps.hint})
-            </Button>
+          {/* Question */}
+          <div className="text-center mb-6">
+            <Card className="p-6 bg-white/90 backdrop-blur-sm max-w-4xl mx-auto">
+              <h2 className="font-fredoka text-3xl font-bold text-gray-800 mb-2">
+                {currentQuestion}
+              </h2>
+              <p className="font-comic text-lg text-gray-600">Find the correct location on the world map!</p>
+            </Card>
           </div>
 
           {/* Feedback */}
@@ -525,14 +382,14 @@ const MathBubbleGame = () => {
 
           {/* Game Area */}
           <div className="relative h-96 bg-white/20 backdrop-blur-sm rounded-2xl overflow-hidden">
-            {expressions.map((bubble) => (
+            {questions.map((bubble) => (
               <button
                 key={bubble.id}
                 onClick={() => handleBubbleClick(bubble)}
                 disabled={bubble.clicked}
                 className={`
-                absolute w-20 h-20 rounded-full flex items-center justify-center
-                font-comic font-bold text-white text-sm shadow-lg
+                absolute w-28 h-20 rounded-xl flex flex-col items-center justify-center
+                font-comic font-bold text-white text-xs shadow-lg p-2
                 transition-all duration-300 hover:scale-110
                 ${bubble.clicked
                     ? 'opacity-50 scale-90'
@@ -542,10 +399,11 @@ const MathBubbleGame = () => {
                 style={{
                   left: `${bubble.x}%`,
                   top: `${bubble.y}%`,
-                  animationDelay: `${bubble.id * 0.2}s`
+                  animationDelay: `${bubble.id * 0.3}s`
                 }}
               >
-                {bubble.expression}
+                {bubble.flag && <span className="text-lg mb-1">{bubble.flag}</span>}
+                <span className="text-center leading-tight">{bubble.answer}</span>
               </button>
             ))}
           </div>
@@ -555,4 +413,4 @@ const MathBubbleGame = () => {
   );
 };
 
-export default MathBubbleGame;
+export default GeographyBubbleGame;

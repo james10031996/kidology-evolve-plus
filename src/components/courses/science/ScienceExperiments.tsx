@@ -4,100 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Beaker, Zap, Droplets, Thermometer, Eye, PlayCircle } from 'lucide-react';
+import { experiments, scienceTopics } from './scienceExplorersData';
 
 const ScienceExperiments = () => {
   const [activeExperiment, setActiveExperiment] = useState(null);
   const [completedSteps, setCompletedSteps] = useState(0);
 
-  const experiments = [
-    {
-      id: 1,
-      title: 'Rainbow in a Glass',
-      description: 'Create a beautiful rainbow using different liquids',
-      category: 'Chemistry',
-      difficulty: 'Easy',
-      duration: '15 min',
-      materials: ['Water', 'Honey', 'Dish soap', 'Food coloring'],
-      safetyLevel: 'Safe',
-      icon: '🌈',
-      steps: 4,
-      completed: false
-    },
-    {
-      id: 2,
-      title: 'Volcano Eruption',
-      description: 'Make a safe volcano that erupts with bubbling lava',
-      category: 'Chemistry',
-      difficulty: 'Medium',
-      duration: '20 min',
-      materials: ['Baking soda', 'Vinegar', 'Food coloring', 'Clay'],
-      safetyLevel: 'Adult Help',
-      icon: '🌋',
-      steps: 6,
-      completed: true
-    },
-    {
-      id: 3,
-      title: 'Magic Milk Colors',
-      description: 'Watch colors dance and swirl in milk like magic',
-      category: 'Physics',
-      difficulty: 'Easy',
-      duration: '10 min',
-      materials: ['Milk', 'Food coloring', 'Cotton swabs', 'Dish soap'],
-      safetyLevel: 'Safe',
-      icon: '🥛',
-      steps: 3,
-      completed: false
-    },
-    {
-      id: 4,
-      title: 'Growing Crystals',
-      description: 'Grow your own beautiful crystals over time',
-      category: 'Chemistry',
-      difficulty: 'Hard',
-      duration: '3 days',
-      materials: ['Salt', 'Water', 'String', 'Magnifying glass'],
-      safetyLevel: 'Adult Help',
-      icon: '💎',
-      steps: 5,
-      completed: false
-    }
-  ];
 
-  const scienceTopics = [
-    {
-      id: 1,
-      title: 'Weather Watch',
-      description: 'Learn about clouds, rain, and sunshine',
-      icon: '☁️',
-      activities: 8,
-      completed: 3
-    },
-    {
-      id: 2,
-      title: 'Animal Habitats',
-      description: 'Discover where different animals live',
-      icon: '🦁',
-      activities: 12,
-      completed: 7
-    },
-    {
-      id: 3,
-      title: 'Plant Life Cycle',
-      description: 'Watch how plants grow from seeds',
-      icon: '🌱',
-      activities: 6,
-      completed: 2
-    },
-    {
-      id: 4,
-      title: 'Simple Machines',
-      description: 'Explore levers, wheels, and pulleys',
-      icon: '⚙️',
-      activities: 10,
-      completed: 5
-    }
-  ];
 
   const startExperiment = (experiment) => {
     setActiveExperiment(experiment);
@@ -111,7 +24,7 @@ const ScienceExperiments = () => {
   };
 
   const getSafetyColor = (level) => {
-    switch(level) {
+    switch (level) {
       case 'Safe': return 'bg-green-100 text-green-700';
       case 'Adult Help': return 'bg-yellow-100 text-yellow-700';
       case 'Caution': return 'bg-red-100 text-red-700';
@@ -147,7 +60,7 @@ const ScienceExperiments = () => {
               </span>
             </div>
             <Progress value={(completedSteps / activeExperiment.steps) * 100} className="h-3" />
-            <Button 
+            <Button
               onClick={completeStep}
               disabled={completedSteps >= activeExperiment.steps}
               size="sm"
@@ -162,14 +75,15 @@ const ScienceExperiments = () => {
       {/* Experiments Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         {experiments.map((experiment) => (
-          <Card key={experiment.id} className="group relative overflow-hidden bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-0">
+          <Card
+            key={experiment.id}
+            className="group relative overflow-hidden bg-gradient-to-br from-white via-green-50 to-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-green-100 animate-fade-in"
+          >
             <div className="p-4">
               <div className="flex items-start justify-between mb-3">
-                <div className="text-3xl">{experiment.icon}</div>
+                <div className="text-4xl animate-bounce">{experiment.icon}</div>
                 {experiment.completed && (
-                  <Badge className="bg-green-100 text-green-700 font-comic">
-                    Completed
-                  </Badge>
+                  <Badge className="bg-green-100 text-green-700 font-comic">Completed</Badge>
                 )}
               </div>
 
@@ -181,6 +95,13 @@ const ScienceExperiments = () => {
                 {experiment.description}
               </p>
 
+              <div className="text-xs text-blue-700 italic mb-2">
+                🔍 {experiment.learningOutcome}
+              </div>
+              <div className="text-xs text-yellow-700 italic mb-4">
+                🌟 {experiment.funFact}
+              </div>
+
               <div className="space-y-2 mb-4">
                 <div className="flex items-center justify-between">
                   <Badge variant="outline" className="font-comic text-xs">
@@ -190,13 +111,16 @@ const ScienceExperiments = () => {
                     {experiment.safetyLevel}
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
-                  <Badge className={`font-comic text-xs ${
-                    experiment.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                    experiment.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-red-100 text-red-700'
-                  }`}>
+                  <Badge
+                    className={`font-comic text-xs ${experiment.difficulty === 'Easy'
+                        ? 'bg-green-100 text-green-700'
+                        : experiment.difficulty === 'Medium'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-red-100 text-red-700'
+                      }`}
+                  >
                     {experiment.difficulty}
                   </Badge>
                   <span className="font-comic text-xs text-gray-500">{experiment.duration}</span>
@@ -204,31 +128,37 @@ const ScienceExperiments = () => {
               </div>
 
               <div className="mb-4">
-                <h4 className="font-comic font-bold text-sm text-gray-700 mb-2">Materials needed:</h4>
+                <h4 className="font-comic font-bold text-sm text-gray-700 mb-2">
+                  Materials needed:
+                </h4>
                 <div className="flex flex-wrap gap-1">
-                  {experiment.materials.slice(0, 3).map((material, index) => (
+                  {experiment.materials.slice(0, 4).map((material, index) => (
                     <Badge key={index} variant="outline" className="font-comic text-xs">
                       {material}
                     </Badge>
                   ))}
-                  {experiment.materials.length > 3 && (
+                  {experiment.materials.length > 4 && (
                     <Badge variant="outline" className="font-comic text-xs">
-                      +{experiment.materials.length - 3} more
+                      +{experiment.materials.length - 4} more
                     </Badge>
                   )}
                 </div>
               </div>
 
-              <Button 
+              <Button
                 onClick={() => startExperiment(experiment)}
                 disabled={activeExperiment?.id === experiment.id}
-                className={`w-full font-comic font-bold rounded-full ${
-                  experiment.completed ? 'bg-gray-200 text-gray-600' : 'gradient-green text-white'
-                }`}
+                className={`w-full font-comic font-bold rounded-full ${experiment.completed
+                    ? 'bg-gray-200 text-gray-600'
+                    : 'bg-gradient-to-r from-green-500 to-teal-500 text-white hover:from-green-600 hover:to-teal-600'
+                  }`}
               >
                 <PlayCircle className="w-4 h-4 mr-2" />
-                {activeExperiment?.id === experiment.id ? 'In Progress...' : 
-                 experiment.completed ? 'Try Again' : 'Start Experiment'}
+                {activeExperiment?.id === experiment.id
+                  ? 'In Progress...'
+                  : experiment.completed
+                    ? 'Try Again'
+                    : 'Start Experiment'}
               </Button>
             </div>
           </Card>
@@ -238,27 +168,40 @@ const ScienceExperiments = () => {
       {/* Science Topics */}
       <div className="grid md:grid-cols-2 gap-6">
         {scienceTopics.map((topic) => (
-          <Card key={topic.id} className="p-4 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-0">
+          <Card
+            key={topic.id}
+            className="p-5 bg-gradient-to-br from-white via-blue-50 to-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-blue-100 animate-fade-in"
+          >
             <div className="text-center mb-4">
-              <div className="text-3xl mb-2">{topic.icon}</div>
-              <h4 className="font-fredoka font-bold text-lg text-gray-800">{topic.title}</h4>
+              <div className="text-4xl mb-2 animate-bounce">{topic.icon}</div>
+              <h4 className="font-fredoka font-bold text-xl text-gray-800">{topic.title}</h4>
             </div>
 
-            <p className="font-comic text-sm text-gray-600 mb-4 text-center">
+            <p className="font-comic text-sm text-gray-700 mb-4 text-center px-2">
               {topic.description}
             </p>
 
-            <div className="space-y-3 mb-4">
+            <div className="mb-4 px-1 text-left space-y-2">
+              <h5 className="font-comic font-bold text-blue-600 text-sm">Key Concepts:</h5>
+              <ul className="list-disc list-inside text-xs text-gray-600">
+                {topic.keyConcepts?.map((concept, i) => (
+                  <li key={i}>{concept}</li>
+                ))}
+              </ul>
+              <p className="text-yellow-700 text-xs italic pt-1">🌟 {topic.funFact}</p>
+            </div>
+
+            <div className="space-y-3 mb-4 px-1">
               <div className="flex justify-between items-center">
                 <span className="font-comic text-sm text-gray-700">Progress</span>
-                <span className="font-comic text-sm font-bold">
+                <span className="font-comic text-sm font-bold text-gray-800">
                   {topic.completed}/{topic.activities} activities
                 </span>
               </div>
-              <Progress value={(topic.completed / topic.activities) * 100} className="h-2" />
+              <Progress value={(topic.completed / topic.activities) * 100} className="h-2 bg-blue-200" />
             </div>
 
-            <Button className="w-full gradient-blue text-white font-comic font-bold rounded-full">
+            <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-comic font-bold rounded-full hover:from-blue-600 hover:to-purple-600 transition-colors duration-200">
               Explore Topic
             </Button>
           </Card>

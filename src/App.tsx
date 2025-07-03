@@ -15,23 +15,26 @@ import NotFound from '@/pages/NotFound';
 import Demo from '@/pages/Demo';
 
 
-// Activity Pages
+// Game Pages
 import NumberBubblePop from '@/components/game/NumberBubblePop';
 import LetterSafari from '@/components/game/LetterSafari/LetterSafari';
 import MemoryPalace from '@/components/game/MemoryPalace';
 import ShapeSorter from '@/components/game/ShapeSorter';
-import MatchingGame from '@/components/game/MatchingGame';
+import MatchingGame from '@/components/game/MatchingGame/MatchingGame';
 import PuzzleAssembly from '@/components/game/PuzzleAssembly/PuzzleAssembly';
 import SearchMissingObject from '@/components/game/SearchMissingObject/SearchMissingObject';
-import MagicPaintStudio from '@/components/activities/creativeTools/MagicPaintStudio';
-import MusicMovement from '@/components/activities/creativeTools/MusicMovement';
-import CreativeArts from '@/components/courses/creative/CreativeArts';
+import GeographyBubbleGame from '@/components/game/GeographyBubbleGame/GeographyBubbleGame';
+import MathBubbleGame from '@/components/game/MathBubbleGame';
+import ScienceBubbleGame from '@/components/game/ScienceBubbleGame/ScienceBubbleGame';
 
 
-// Creative Tools 
+// Activity & Creative Tools 
 import PaperCraftsTool from '@/components/activities/creativeTools/PaperCraftsTool';
 import ColoringPagesTool from '@/components/activities/creativeTools/ColoringPagesTool';
 import MandalaMaker from '@/components/activities/creativeTools/MandalaMaker';
+import MagicPaintStudio from '@/components/activities/creativeTools/MagicPaintStudio';
+import MusicMovement from '@/components/activities/creativeTools/MusicMovement';
+import CreativeArts from '@/components/courses/creative/CreativeArts';
 
 // Course Pages
 import EnglishAdventure from '@/components/courses/english/EnglishAdventure';
@@ -44,6 +47,7 @@ import HistoryAdventures from '@/components/courses/history/HistoryAdventures';
 import SocialMoral from '@/components/courses/social/SocialMoral';
 import NatureExplorer from '@/components/courses/nature/NatureExplorer';
 import GeographyExplorer from '@/components/courses/geography/GeographyExplorer';
+import TimeAdventure from '@/components/courses/time/TimeAdventure';
 
 import './App.css';
 
@@ -74,6 +78,9 @@ function App() {
                 <Route path="/games/puzzle-assembly" element={<PuzzleAssembly />} />
                 <Route path="/games/search-missing-object" element={<SearchMissingObject />} />
                 <Route path="/games/matching-game" element={<MatchingGame />} />
+                <Route path="/games/geography-bubble-game" element={<GeographyBubbleGame />} />
+                <Route path="/games/math-bubble-game" element={<MathBubbleGame />} />
+                <Route path="/games/science-bubble-game" element={<ScienceBubbleGame />} />
 
 
                 {/* Creative Tools Routes */}
@@ -95,6 +102,7 @@ function App() {
                 <Route path="/courses/social-moral" element={<SocialMoral />} />
                 <Route path="/courses/nature-explorer" element={<NatureExplorer />} />
                 <Route path="/courses/geography-explorer" element={<GeographyExplorer />} />
+                <Route path="/courses/time-adventurer" element={<TimeAdventure />} />
                 <Route path="/activities/creative-arts" element={<CreativeArts />} />
 
                 <Route path="*" element={<NotFound />} />
