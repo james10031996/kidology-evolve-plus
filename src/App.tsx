@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -46,6 +45,18 @@ import SocialMoral from '@/components/courses/social/SocialMoral';
 import NatureExplorer from '@/components/courses/nature/NatureExplorer';
 import GeographyExplorer from '@/components/courses/geography/GeographyExplorer';
 import TimeAdventure from '@/components/courses/time/TimeAdventure';
+
+// Add new game imports
+import WordBuilderChallenge from '@/components/game/WordBuilderChallenge/WordBuilderChallenge';
+import PatternDetective from '@/components/game/PatternDetective/PatternDetective';
+import GeographyQuizAdventure from '@/components/game/GeographyQuizAdventure/GeographyQuizAdventure';
+
+// Add new course imports
+import EmotionalIntelligence from '@/components/courses/emotional/EmotionalIntelligence';
+import FinancialLiteracy from '@/components/courses/financial/FinancialLiteracy';
+import EnvironmentalHeroes from '@/components/courses/environmental/EnvironmentalHeroes';
+import CulturalExplorer from '@/components/courses/cultural/CulturalExplorer';
+import HealthNutrition from '@/components/courses/health/HealthNutrition';
 
 import './App.css';
 
@@ -100,6 +111,18 @@ function App() {
                 <Route path="/courses/geography-explorer" element={<GeographyExplorer />} />
                 <Route path="/courses/time-adventurer" element={<TimeAdventure />} />
                 <Route path="/activities/creative-arts" element={<CreativeArts />} />
+
+                {/* New Game Routes */}
+                <Route path="/games/word-builder-challenge" element={<WordBuilderChallenge />} />
+                <Route path="/games/pattern-detective" element={<PatternDetective />} />
+                <Route path="/games/geography-quiz-adventure" element={<GeographyQuizAdventure />} />
+
+                {/* New Course Routes */}
+                <Route path="/courses/emotional-intelligence" element={<EmotionalIntelligence />} />
+                <Route path="/courses/financial-literacy" element={<FinancialLiteracy />} />
+                <Route path="/courses/environmental-heroes" element={<EnvironmentalHeroes />} />
+                <Route path="/courses/cultural-explorer" element={<CulturalExplorer />} />
+                <Route path="/courses/health-nutrition" element={<HealthNutrition />} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>
