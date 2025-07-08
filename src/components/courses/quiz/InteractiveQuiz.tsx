@@ -6,7 +6,7 @@ import confetti from 'canvas-confetti';
 import { QuizQuestion } from './QuizData';
 import QuizHeader from './components/QuizHeader';
 import QuizProgress from './components/QuizProgress';
-import QuizQuestion from './components/QuizQuestion';
+import QuizQuestionComponent from './components/QuizQuestion';
 import QuizAnswers from './components/QuizAnswers';
 import QuizExplanation from './components/QuizExplanation';
 import QuizCompletion from './components/QuizCompletion';
@@ -96,7 +96,7 @@ const InteractiveQuiz = ({ questions, title, subject, onClose, onComplete }: Int
           score={score} 
         />
 
-        <QuizQuestion question={currentQ} />
+        <QuizQuestionComponent question={currentQ} />
 
         <QuizAnswers 
           question={currentQ} 
