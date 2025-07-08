@@ -14,7 +14,6 @@ import Admin from '@/components/admin/Admin';
 import NotFound from '@/pages/NotFound';
 import Demo from '@/pages/Demo';
 
-
 // Game Pages
 import NumberBubblePop from '@/components/game/NumberBubblePop';
 import LetterSafari from '@/components/game/LetterSafari/LetterSafari';
@@ -26,7 +25,6 @@ import SearchMissingObject from '@/components/game/SearchMissingObject/SearchMis
 import GeographyBubbleGame from '@/components/game/GeographyBubbleGame/GeographyBubbleGame';
 import MathBubbleGame from '@/components/game/MathBubbleGame';
 import ScienceBubbleGame from '@/components/game/ScienceBubbleGame/ScienceBubbleGame';
-
 
 // Activity & Creative Tools 
 import PaperCraftsTool from '@/components/activities/creativeTools/PaperCraftsTool';
@@ -82,14 +80,12 @@ function App() {
                 <Route path="/games/math-bubble-game" element={<MathBubbleGame />} />
                 <Route path="/games/science-bubble-game" element={<ScienceBubbleGame />} />
 
-
                 {/* Creative Tools Routes */}
                 <Route path="/activities/paper-crafts" element={<PaperCraftsTool onClose={() => window.history.back()} />} />
                 <Route path="/activities/coloring-pages-tool" element={<ColoringPagesTool onClose={() => window.history.back()} />} />
                 <Route path="/activities/mandala-maker" element={<MandalaMaker />} />
                 <Route path="/activities/music-movement" element={<MusicMovement />} />
                 <Route path="/activities/magic-paint-studio" element={<MagicPaintStudio />} />
-
 
                 {/* Course Routes */}
                 <Route path="/courses/english-adventure" element={<EnglishAdventure />} />
