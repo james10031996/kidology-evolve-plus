@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Beaker, Zap, Droplets, Thermometer, Eye, PlayCircle } from 'lucide-react';
-import { experiments, scienceTopics } from './scienceExplorersData';
+import { experiments, scienceTopics } from './scienceData/scienceExplorersData';
 
-const ScienceExperiments = () => {
+const ScienceExperiments = () => { 
   const [activeExperiment, setActiveExperiment] = useState(null);
   const [completedSteps, setCompletedSteps] = useState(0);
 
