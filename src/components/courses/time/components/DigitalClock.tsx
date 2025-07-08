@@ -80,7 +80,7 @@ const DigitalClock = ({ time, format = '12', showSeconds = true, interactive = f
 
       {/* Interactive tooltips */}
       {interactive && hoveredPart && (
-        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-gray-800 text-white px-3 py-1 rounded-lg text-sm font-comic whitespace-nowrap">
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-gray-800 text-white px-3 py-1 rounded-lg text-sm font-comic whitespace-nowrap z-10">
           {hoveredPart === 'hours' && `Hours: ${hours} (${format === '12' ? '12-hour format' : '24-hour format'})`}
           {hoveredPart === 'minutes' && `Minutes: ${minutes} (0-59)`}
           {hoveredPart === 'seconds' && `Seconds: ${seconds} (0-59)`}

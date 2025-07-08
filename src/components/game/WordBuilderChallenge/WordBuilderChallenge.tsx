@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import Header from '@/components/home/Header';
 import GameCompletionPopup from '@/components/game/game/GameCompletionPopup';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import confetti from 'canvas-confetti';
 
 const WordBuilderChallenge = () => {
@@ -41,7 +41,7 @@ const WordBuilderChallenge = () => {
     }
   }, [timeLeft, gameActive]);
 
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     
     const items = Array.from(draggedLetters);

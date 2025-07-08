@@ -17,7 +17,7 @@ const PhonicsCards = ({ words }: PhonicsCardsProps) => {
     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
       {words.map((item, index) => (
         <Card 
-          key={item.word} 
+          key={`${item.word}-${index}`}
           className={`p-6 text-center ${item.color} hover:shadow-lg transition-all duration-300 animate-fade-in`} 
           style={{ animationDelay: `${index * 0.2}s` }}
         >
@@ -28,7 +28,7 @@ const PhonicsCards = ({ words }: PhonicsCardsProps) => {
             {item.word}
           </div>
           <div className="font-comic text-lg text-gray-600">
-            {item.sounds[0]}
+            {item.sounds[0] || ''}
           </div>
         </Card>
       ))}
