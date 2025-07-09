@@ -28,6 +28,7 @@ const ActivityCard = ({ activity, onPlay }: ActivityCardProps) => {
       case 'English': return '📝';
       case 'Memory': return '🧠';
       case 'Logic': return '🧩';
+      case 'Geography': return '🌍';
       default: return '🎮';
     }
   };

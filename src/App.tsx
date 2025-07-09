@@ -49,7 +49,7 @@ import TimeAdventure from '@/components/courses/time/TimeAdventure';
 // Add new game imports
 import WordBuilderChallenge from '@/components/game/WordBuilderChallenge/WordBuilderChallenge';
 import PatternDetective from '@/components/game/PatternDetective/PatternDetective';
-import GeographyQuizAdventure from '@/components/game/GeographyQuizAdventure/GeographyQuizAdventure';
+import GeographyQuizAdventure from '@/components/quiz/GeographyQuizAdventure/GeographyQuizAdventure';
 
 // Add new course imports
 import EmotionalIntelligence from '@/components/courses/emotional/EmotionalIntelligence';
@@ -90,6 +90,8 @@ function App() {
                 <Route path="/games/geography-bubble-game" element={<GeographyBubbleGame />} />
                 <Route path="/games/math-bubble-game" element={<MathBubbleGame />} />
                 <Route path="/games/science-bubble-game" element={<ScienceBubbleGame />} />
+                <Route path="/games/word-builder-challenge" element={<WordBuilderChallenge />} />
+                <Route path="/games/pattern-detective" element={<PatternDetective />} />
 
                 {/* Creative Tools Routes */}
                 <Route path="/activities/paper-crafts" element={<PaperCraftsTool onClose={() => window.history.back()} />} />
@@ -112,10 +114,9 @@ function App() {
                 <Route path="/courses/time-adventurer" element={<TimeAdventure />} />
                 <Route path="/activities/creative-arts" element={<CreativeArts />} />
 
-                {/* New Game Routes */}
-                <Route path="/games/word-builder-challenge" element={<WordBuilderChallenge />} />
-                <Route path="/games/pattern-detective" element={<PatternDetective />} />
-                <Route path="/games/geography-quiz-adventure" element={<GeographyQuizAdventure />} />
+                {/* New Quiz Routes */}
+                
+                <Route path="/quizes/geography-quiz-adventure" element={<GeographyQuizAdventure />} />
 
                 {/* New Course Routes */}
                 <Route path="/courses/emotional-intelligence" element={<EmotionalIntelligence />} />

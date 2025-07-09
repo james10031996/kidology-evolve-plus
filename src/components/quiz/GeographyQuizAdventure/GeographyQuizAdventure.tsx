@@ -1,107 +1,148 @@
-
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Trophy, Star, Globe, Map } from 'lucide-react';
+import { ArrowLeft, Trophy, Star, Globe, Map, Award, Flame } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import Header from '@/components/home/Header';
 import GameCompletionPopup from '@/components/game/game/GameCompletionPopup';
 import confetti from 'canvas-confetti';
+import { landmarks as presetLandmarks } from './geographyQuizAdventureData';
+
+const TIMER_SECONDS = 20; // Each question has 20 seconds
 
 const GeographyQuizAdventure = () => {
   const navigate = useNavigate();
   const { updateStars } = useUser();
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [score, setScore] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(() => {
+    return parseInt(localStorage.getItem('geoQuizCurrentQuestion') || '0', 10);
+  });
+  const [score, setScore] = useState(() => {
+    return parseInt(localStorage.getItem('geoQuizScore') || '0', 10);
+  });
+  const [streak, setStreak] = useState(() => {
+    return parseInt(localStorage.getItem('geoQuizStreak') || '0', 10);
+  });
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showCompletion, setShowCompletion] = useState(false);
-  const [streak, setStreak] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
+  const [badges, setBadges] = useState<string[]>([]);
+  const [bestScore, setBestScore] = useState(() => parseInt(localStorage.getItem('geoQuizBestScore') || '0', 10));
+  const [bestStreak, setBestStreak] = useState(() => parseInt(localStorage.getItem('geoQuizBestStreak') || '0', 10));
 
-  const landmarks = [
-    {
-      name: 'Eiffel Tower',
-      country: 'France',
-      city: 'Paris',
-      image: '🗼',
-      options: ['London', 'Paris', 'Rome', 'Berlin'],
-      correct: 'Paris',
-      fact: 'The Eiffel Tower was built in 1889 and is 330 meters tall!'
-    },
-    {
-      name: 'Great Wall',
-      country: 'China',
-      city: 'Beijing',
-      image: '🏯',
-      options: ['Tokyo', 'Seoul', 'Beijing', 'Bangkok'],
-      correct: 'Beijing',
-      fact: 'The Great Wall of China is over 13,000 miles long!'
-    },
-    {
-      name: 'Statue of Liberty',
-      country: 'USA',
-      city: 'New York',
-      image: '🗽',
-      options: ['New York', 'Los Angeles', 'Chicago', 'Miami'],
-      correct: 'New York',
-      fact: 'The Statue of Liberty was a gift from France to America!'
-    },
-    {
-      name: 'Big Ben',
-      country: 'UK',
-      city: 'London',
-      image: '🕰️',
-      options: ['Manchester', 'London', 'Edinburgh', 'Dublin'],
-      correct: 'London',
-      fact: 'Big Ben is actually the name of the bell, not the tower!'
-    },
-    {
-      name: 'Sydney Opera House',
-      country: 'Australia',
-      city: 'Sydney',
-      image: '🎭',
-      options: ['Melbourne', 'Brisbane', 'Sydney', 'Perth'],
-      correct: 'Sydney',
-      fact: 'The Sydney Opera House looks like giant seashells!'
+  // Merge presets with random ones after
+  const allLandmarks = [...presetLandmarks];
+
+  // Generate random landmark (after presets)
+  const generateRandomLandmark = () => {
+    const random = presetLandmarks[Math.floor(Math.random() * presetLandmarks.length)];
+    const harderOptions = random.options.slice();
+    while (harderOptions.length < 4) {
+      const city = presetLandmarks[Math.floor(Math.random() * presetLandmarks.length)].city;
+      if (!harderOptions.includes(city)) harderOptions.push(city);
     }
-  ];
+    return {
+      ...random,
+      options: shuffleArray(harderOptions)
+    };
+  };
 
-  const currentLandmark = landmarks[currentQuestion];
+  const currentLandmark = currentQuestion < allLandmarks.length
+    ? allLandmarks[currentQuestion]
+    : generateRandomLandmark();
+
+  // Timer countdown
+  useEffect(() => {
+    if (selectedAnswer || showCompletion) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleAnswer(''); // Treat timeout as wrong
+          return TIMER_SECONDS;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [currentQuestion, selectedAnswer, showCompletion]);
+
+  // Save progress
+  useEffect(() => {
+    localStorage.setItem('geoQuizCurrentQuestion', currentQuestion.toString());
+    localStorage.setItem('geoQuizScore', score.toString());
+    localStorage.setItem('geoQuizStreak', streak.toString());
+  }, [currentQuestion, score, streak]);
+
+  const updateRecords = () => {
+    if (score > bestScore) {
+      setBestScore(score);
+      localStorage.setItem('geoQuizBestScore', score.toString());
+    }
+    if (streak > bestStreak) {
+      setBestStreak(streak);
+      localStorage.setItem('geoQuizBestStreak', streak.toString());
+    }
+  };
 
   const handleAnswer = (answer: string) => {
     setSelectedAnswer(answer);
-    
-    if (answer === currentLandmark.correct) {
-      const points = (streak + 1) * 15;
-      setScore(score + points);
-      setStreak(streak + 1);
-      
+    const isCorrect = answer === currentLandmark.correct;
+
+    if (isCorrect) {
+      const timeBonus = Math.floor((timeLeft / TIMER_SECONDS) * 5); // Faster = more bonus
+      const points = (streak + 1) * 10 + timeBonus;
+      setScore(prev => prev + points);
+      setStreak(prev => prev + 1);
+
       confetti({
         particleCount: 50 + (streak * 10),
         spread: 70,
         origin: { y: 0.6 }
       });
-      
-      setTimeout(() => {
-        if (currentQuestion < landmarks.length - 1) {
-          setCurrentQuestion(currentQuestion + 1);
-          setSelectedAnswer(null);
-        } else {
-          setShowCompletion(true);
+
+      if (streak + 1 >= 5) {
+        confetti({
+          particleCount: 200,
+          spread: 90,
+          origin: { y: 0.5 }
+        });
+         if (!badges.includes('🔥 Perfect Streak')) {
+          setBadges(prev => [...prev, '🔥 Perfect Streak']);
         }
-      }, 3000);
+      }
     } else {
       setStreak(0);
-      setTimeout(() => {
-        setSelectedAnswer(null);
-      }, 3000);
     }
+
+    setTimeout(() => {
+      setSelectedAnswer(null);
+      setTimeLeft(TIMER_SECONDS);
+      setCurrentQuestion(prev => prev + 1);
+    }, 3000);
+  };
+
+  useEffect(() => {
+
+    updateRecords();
+
+  }, [score, streak]);
+
+  const handleCompletion = () => {
+    updateStars(Math.floor(score / 10));
+    updateRecords();
+    setShowCompletion(false);
+    localStorage.removeItem('geoQuizCurrentQuestion');
+    localStorage.removeItem('geoQuizScore');
+    localStorage.removeItem('geoQuizStreak');
+    navigate('/games');
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-teal-50">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center mb-6">
           <Button onClick={() => navigate('/games')} variant="ghost" className="mr-4 font-comic">
@@ -115,7 +156,7 @@ const GeographyQuizAdventure = () => {
             🌍 Geography Quiz Adventure
           </h1>
           <p className="font-comic text-xl text-gray-700">
-            Explore world landmarks and learn about amazing places! 🗺️✨
+            Explore world landmarks and race against time! ⏳✨
           </p>
         </div>
 
@@ -126,17 +167,24 @@ const GeographyQuizAdventure = () => {
                 <Trophy className="w-8 h-8 mx-auto mb-2 text-yellow-600" />
                 <p className="font-comic text-lg font-bold text-gray-700">Score</p>
                 <p className="font-fredoka text-2xl font-bold text-orange-700">{score}</p>
+                <p className="font-comic text-sm text-gray-500 mt-2">🏆 Best: {bestScore}</p>
               </div>
             </Card>
-            
+
             <Card className="p-6 bg-gradient-to-br from-green-100 to-teal-100 border-2 border-green-200 card-magic">
               <div className="text-center">
                 <Globe className="w-8 h-8 mx-auto mb-2 text-green-600" />
                 <p className="font-comic text-lg font-bold text-gray-700">Question</p>
-                <p className="font-fredoka text-2xl font-bold text-green-700">{currentQuestion + 1}/{landmarks.length}</p>
+                <p className="font-fredoka text-2xl font-bold text-green-700">{currentQuestion + 1}</p>
+                <div className="w-full bg-gray-200 rounded-full mt-2">
+                  <div
+                    className="h-2 bg-green-500 rounded-full transition-all duration-500"
+                    style={{ width: `${(timeLeft / TIMER_SECONDS) * 100}%` }}
+                  />
+                </div>
               </div>
             </Card>
-            
+
             <Card className="p-6 bg-gradient-to-br from-purple-100 to-pink-100 border-2 border-purple-200 card-magic">
               <div className="text-center">
                 <Star className="w-8 h-8 mx-auto mb-2 text-purple-600" />
@@ -170,7 +218,7 @@ const GeographyQuizAdventure = () => {
                       ? option === currentLandmark.correct
                         ? 'bg-gradient-to-br from-green-100 to-emerald-100 text-green-800 border-green-400 shadow-green-200 shadow-lg animate-pulse'
                         : 'bg-gradient-to-br from-red-100 to-pink-100 text-red-800 border-red-400 shadow-red-200 shadow-lg'
-                      : option === currentLandmark.correct && selectedAnswer !== null
+                      : option === currentLandmark.correct
                       ? 'bg-gradient-to-br from-green-100 to-emerald-100 text-green-800 border-green-400 shadow-green-200 shadow-lg animate-pulse'
                       : 'bg-gray-100 text-gray-500 border-gray-200'
                   }`}
@@ -189,13 +237,11 @@ const GeographyQuizAdventure = () => {
                       ? 'text-green-600' 
                       : 'text-red-600'
                   }`}>
-                    {selectedAnswer === currentLandmark.correct 
-                      ? '🎉 Excellent! You\'re a geography expert!' 
-                      : `🤔 Good try! The correct answer is ${currentLandmark.correct}.`
-                    }
+                    {selectedAnswer === currentLandmark.correct
+                      ? '🎉 Excellent! You\'re a geography expert!'
+                      : `🤔 Oops! The correct answer was ${currentLandmark.correct}.`}
                   </p>
                   <div className="bg-white p-4 rounded-xl">
-                    <div className="text-4xl mb-2">🌟</div>
                     <p className="font-comic text-lg text-gray-700 font-bold">
                       Fun Fact: {currentLandmark.fact}
                     </p>
@@ -212,6 +258,9 @@ const GeographyQuizAdventure = () => {
         onClose={() => {
           updateStars(Math.floor(score / 10));
           setShowCompletion(false);
+          localStorage.removeItem('geoQuizCurrentQuestion');
+          localStorage.removeItem('geoQuizScore');
+          localStorage.removeItem('geoQuizStreak');
           navigate('/games');
         }}
         score={score}
@@ -221,5 +270,13 @@ const GeographyQuizAdventure = () => {
     </div>
   );
 };
+
+// Utility: Shuffle array
+function shuffleArray<T>(array: T[]): T[] {
+  return array
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+}
 
 export default GeographyQuizAdventure;

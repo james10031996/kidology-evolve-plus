@@ -43,13 +43,20 @@ const Activities = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="activity" className="w-full">
+        <Tabs defaultValue="creative" className="w-full">
           <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto mb-12 bg-white/70 backdrop-blur-sm rounded-full p-2 shadow-2xl border border-white/20">
+                        
             <TabsTrigger 
-              value="activity" 
+              value="creative" 
+              className="rounded-full font-comic font-bold text-sm data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-400 data-[state=active]:to-red-500 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
+            >
+              🎨 Create
+            </TabsTrigger>
+            <TabsTrigger 
+              value="quizes" 
               className="rounded-full font-comic font-bold text-sm data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-400 data-[state=active]:to-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
             >
-              🎮 Games
+              📝 Quizes
             </TabsTrigger>
             <TabsTrigger 
               value="stories" 
@@ -57,25 +64,19 @@ const Activities = () => {
             >
               📚 Stories
             </TabsTrigger>
-            <TabsTrigger 
-              value="creative" 
-              className="rounded-full font-comic font-bold text-sm data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-400 data-[state=active]:to-red-500 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
-            >
-              🎨 Create
-            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="activity" className="animate-fade-in">
+          <TabsContent value="quizes" className="animate-fade-in">
             <div className="mb-8 text-center">
               <h2 className="font-fredoka text-3xl font-bold text-gray-800 mb-4">
-                🎮 Interactive Learning Games
+                📝 Interactive Learning Quizes
               </h2>
               <p className="font-comic text-gray-600 text-lg">
-                Play and learn with these exciting educational games!
+                Play and learn with these exciting educational quizes!
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {activitiesData.activities.map((game) => (
+              {activitiesData.quizes.map((game) => (
                 <div key={game.id} className="transform hover:scale-105 transition-all duration-300">
                   <ActivityCard activity={game} onPlay={playActivity} />
                 </div>

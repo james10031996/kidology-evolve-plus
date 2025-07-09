@@ -1,18 +1,18 @@
 
 export const activitiesData = {
-  activities: [
+  quizes: [
     {
-      id: 'number-bubble',
-      title: 'Number Bubble Pop',
-      description: 'Pop bubbles in the right order to practice counting!',
-      category: 'Math',
+      id: 'geography-quiz-adventure',
+      title: 'Geography Quiz Adventure',
+      description: 'Explore world landmarks and race against time!⏳✨',
+      category: 'Geography',
       difficulty: 2,
       duration: '5 min',
       bestScore: 850,
       playCount: 1200,
       gradient: 'gradient-blue',
       stars: 15,
-      route: '/activities/number-bubble-pop'
+      route: '/quizes/geography-quiz-adventure'
     },
     {
       id: 'letter-safari',

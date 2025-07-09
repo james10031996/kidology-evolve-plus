@@ -172,7 +172,39 @@ const Games = () => {
     }
   ];
 
-  const allGames = [...mathGames, ...languageGames, ...memoryGames, ...logicGames, ...SearchMissingObject, ...PuzzleAssembly, ...MatchingGame, ...GeographyBubbleGame, ...MathBubbleGame, ...ScienceBubbleGame];
+  const PatternDetective = [
+  {
+    id: 'pattern-detective',
+    title: 'Pattern Detective',
+    description: 'Find and complete fun patterns of colors, shapes, and more!',
+    difficulty: 3,
+    duration: '5 min', 
+    bestScore: 850,
+    playCount: 1320,
+    gradient: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500',
+    stars: 15,
+    route: '/games/pattern-detective',
+    icon: '🧩'
+  }
+];
+
+const WordBuilderChallenge = [
+  {
+    id: 'word-builder-challenge',
+    title: 'Word Builder Challenge',
+    description: 'Rearrange letters to build the correct word before time runs out!',
+    difficulty: 4,
+    duration: '6 min',
+    bestScore: 910,
+    playCount: 1780,
+    gradient: 'bg-gradient-to-r from-green-400 via-teal-500 to-blue-600',
+    stars: 18,
+    route: '/games/word-builder-challenge',
+    icon: '🔤'
+  }
+];
+
+  const allGames = [...mathGames, ...languageGames, ...memoryGames, ...logicGames, ...SearchMissingObject, ...PuzzleAssembly, ...MatchingGame, ...GeographyBubbleGame, ...MathBubbleGame, ...ScienceBubbleGame, ...PatternDetective, ...WordBuilderChallenge];
 
   const playGame = (game: any) => {
     if (game.route) {
