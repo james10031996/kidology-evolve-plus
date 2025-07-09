@@ -26,6 +26,19 @@ const Games = () => {
       stars: 15,
       route: '/activities/number-bubble-pop',
       icon: '🔢'
+    },
+    {
+      id: 'math-bubble-game',
+      title: 'Math Bubble Game',
+      description: 'Pop all the bubbles with expressions that equal the target number!',
+      difficulty: 2,
+      duration: '4 min',
+      bestScore: 720,
+      playCount: 950,
+      gradient: 'bg-gradient-to-r from-green-300 via-cyan-500 to-teal-600',
+      stars: 10,
+      route: '/games/math-bubble-game',
+      icon: '➕'
     }
   ];
 
@@ -42,6 +55,45 @@ const Games = () => {
       stars: 12,
       route: '/activities/letter-safari',
       icon: '🦁'
+    },
+    {
+      id: 'pop-the-letter',
+      title: 'Pop the Letter!',
+      description: 'Pop all the bubbles that start with the target letter!',
+      difficulty: 2,
+      duration: '5 min',
+      bestScore: 780,
+      playCount: 1150,
+      gradient: 'bg-gradient-to-r from-pink-300 via-purple-400 to-blue-500',
+      stars: 15,
+      route: '/games/pop-the-letter',
+      icon: '🔤'
+    },
+    {
+      id: 'matching-game',
+      title: 'Matching Game',
+      description: 'Match objects with their names and learn new words!',
+      difficulty: 2,
+      duration: '4 min',
+      bestScore: 720,
+      playCount: 950,
+      gradient: 'bg-gradient-to-r from-green-300 via-cyan-500 to-teal-600',
+      stars: 10,
+      route: '/games/matching-game',
+      icon: '🎯'
+    },
+    {
+      id: 'word-builder-challenge',
+      title: 'Word Builder Challenge',
+      description: 'Rearrange letters to build the correct word before time runs out!',
+      difficulty: 4,
+      duration: '6 min',
+      bestScore: 910,
+      playCount: 1780,
+      gradient: 'bg-gradient-to-r from-green-400 via-teal-500 to-blue-600',
+      stars: 18,
+      route: '/games/word-builder-challenge',
+      icon: '🔤'
     }
   ];
 
@@ -73,10 +125,23 @@ const Games = () => {
       stars: 10,
       route: '/activities/shape-sorter',
       icon: '🔷'
+    },
+    {
+      id: 'pattern-detective',
+      title: 'Pattern Detective',
+      description: 'Find and complete fun patterns of colors, shapes, and more!',
+      difficulty: 3,
+      duration: '5 min', 
+      bestScore: 850,
+      playCount: 1320,
+      gradient: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500',
+      stars: 15,
+      route: '/games/pattern-detective',
+      icon: '🧩'
     }
   ];
 
-  const SearchMissingObject = [
+  const puzzleGames = [
     {
       id: 'search-missing-object',
       title: 'Search Missing Object',
@@ -89,10 +154,7 @@ const Games = () => {
       stars: 10,
       route: '/games/search-missing-object',
       icon: '🔍'
-    }
-  ];
-
-  const PuzzleAssembly = [
+    },
     {
       id: 'puzzle-assembly',
       title: 'Puzzle Assembly',
@@ -105,26 +167,10 @@ const Games = () => {
       stars: 10,
       route: '/games/puzzle-assembly',
       icon: '🧩'
-    },
-  ];
-
-  const MatchingGame = [
-    {
-      id: 'matching-game',
-      title: 'Matching Game',
-      description: 'Match objects with their names and learn new words!',
-      difficulty: 2,
-      duration: '4 min',
-      bestScore: 720,
-      playCount: 950,
-      gradient: 'bg-gradient-to-r from-green-300 via-cyan-500 to-teal-600',
-      stars: 10,
-      route: '/games/matching-game',
-      icon: '🎯'
     }
   ];
 
-  const GeographyBubbleGame = [
+  const scienceGames = [
     {
       id: 'geography-bubble-game',
       title: 'Geography Bubble Game',
@@ -137,26 +183,7 @@ const Games = () => {
       stars: 10,
       route: '/games/geography-bubble-game',
       icon: '🌍'
-    }
-  ];
-
-  const MathBubbleGame = [
-    {
-      id: 'math-bubble-game',
-      title: 'Math Bubble Game',
-      description: 'Pop all the bubbles with expressions that equal the target number!',
-      difficulty: 2,
-      duration: '4 min',
-      bestScore: 720,
-      playCount: 950,
-      gradient: 'bg-gradient-to-r from-green-300 via-cyan-500 to-teal-600',
-      stars: 10,
-      route: '/games/math-bubble-game',
-      icon: '➕'
-    }
-  ];
-
-  const ScienceBubbleGame = [
+    },
     {
       id: 'science-bubble-game',
       title: 'Science Bubble Game',
@@ -172,39 +199,7 @@ const Games = () => {
     }
   ];
 
-  const PatternDetective = [
-  {
-    id: 'pattern-detective',
-    title: 'Pattern Detective',
-    description: 'Find and complete fun patterns of colors, shapes, and more!',
-    difficulty: 3,
-    duration: '5 min', 
-    bestScore: 850,
-    playCount: 1320,
-    gradient: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500',
-    stars: 15,
-    route: '/games/pattern-detective',
-    icon: '🧩'
-  }
-];
-
-const WordBuilderChallenge = [
-  {
-    id: 'word-builder-challenge',
-    title: 'Word Builder Challenge',
-    description: 'Rearrange letters to build the correct word before time runs out!',
-    difficulty: 4,
-    duration: '6 min',
-    bestScore: 910,
-    playCount: 1780,
-    gradient: 'bg-gradient-to-r from-green-400 via-teal-500 to-blue-600',
-    stars: 18,
-    route: '/games/word-builder-challenge',
-    icon: '🔤'
-  }
-];
-
-  const allGames = [...mathGames, ...languageGames, ...memoryGames, ...logicGames, ...SearchMissingObject, ...PuzzleAssembly, ...MatchingGame, ...GeographyBubbleGame, ...MathBubbleGame, ...ScienceBubbleGame, ...PatternDetective, ...WordBuilderChallenge];
+  const allGames = [...mathGames, ...languageGames, ...memoryGames, ...logicGames, ...puzzleGames, ...scienceGames];
 
   const playGame = (game: any) => {
     if (game.route) {
@@ -280,21 +275,24 @@ const WordBuilderChallenge = [
         </div>
 
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 max-w-2xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
-            <TabsTrigger value="all" className="rounded-full font-comic font-bold data-[state=active]:bg-blue-200 data-[state=active]">
+          <TabsList className="grid w-full grid-cols-6 max-w-3xl mx-auto mb-8 bg-white rounded-full p-2 shadow-lg">
+            <TabsTrigger value="all" className="rounded-full font-comic font-bold data-[state=active]:bg-blue-200">
               🎯 All
             </TabsTrigger>
-            <TabsTrigger value="math" className="rounded-full font-comic font-bold data-[state=active]:bg-purple-200 data-[state=active]">
+            <TabsTrigger value="math" className="rounded-full font-comic font-bold data-[state=active]:bg-purple-200">
               🔢 Math
             </TabsTrigger>
-            <TabsTrigger value="language" className="rounded-full font-comic font-bold data-[state=active]:bg-violet-200 data-[state=active]">
+            <TabsTrigger value="language" className="rounded-full font-comic font-bold data-[state=active]:bg-violet-200">
               📝 Language
             </TabsTrigger>
-            <TabsTrigger value="memory" className="rounded-full font-comic font-bold data-[state=active]:bg-sky-200 data-[state=active]">
+            <TabsTrigger value="memory" className="rounded-full font-comic font-bold data-[state=active]:bg-sky-200">
               🧠 Memory
             </TabsTrigger>
-            <TabsTrigger value="logic" className="rounded-full font-comic font-bold data-[state=active]:bg-green-200 data-[state=active]">
+            <TabsTrigger value="logic" className="rounded-full font-comic font-bold data-[state=active]:bg-green-200">
               🧩 Logic
+            </TabsTrigger>
+            <TabsTrigger value="puzzle" className="rounded-full font-comic font-bold data-[state=active]:bg-yellow-200">
+              🔍 Puzzle
             </TabsTrigger>
           </TabsList>
 
@@ -333,6 +331,14 @@ const WordBuilderChallenge = [
           <TabsContent value="logic">
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {logicGames.map((game) => (
+                <GameCard key={game.id} game={game} />
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="puzzle">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {puzzleGames.map((game) => (
                 <GameCard key={game.id} game={game} />
               ))}
             </div>

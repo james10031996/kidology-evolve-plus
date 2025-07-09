@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -10,7 +9,7 @@ import GameOver from './components/GameOver';
 import LevelComplete from './components/LevelComplete';
 import GameState from './components/GameState';
 import BadgeSystem from './components/BadgeSystem';
-import BubbleArea from './components/BubbleArea';
+import EnhancedBubbleArea from './components/EnhancedBubbleArea';
 import FeedbackDisplay from './components/FeedbackDisplay';
 import { generateLetterBubbles } from './utils/letterBubbleGenerator';
 import { calculateScore, getTimeLimit, checkForBadges, saveGameState, loadGameState } from './utils/gameLogic';
@@ -25,6 +24,10 @@ interface LetterBubble {
   y: number;
   clicked: boolean;
   color: string;
+  fullName?: string;
+  information?: string;
+  category?: string;
+  habitat?: string;
 }
 
 interface GameStats {
@@ -66,6 +69,7 @@ const PopTheLetterGame = () => {
   const [isSpeedRound, setIsSpeedRound] = useState(false);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [solveStartTime, setSolveStartTime] = useState<number>(Date.now());
+  const [selectedBubble, setSelectedBubble] = useState<LetterBubble | null>(null);
   
   const badgesList = [
     { id: 'streak5', name: 'Letter Streak', description: '5 in a row!', icon: 'zap', earned: gameStats.badges?.streak5 || false, condition: 'Get 5 correct in a row' },
@@ -101,6 +105,7 @@ const PopTheLetterGame = () => {
     setSolveStartTime(Date.now());
     levelCompleteRef.current = false;
     confettiTriggeredRef.current = false;
+    setSelectedBubble(null);
   }, [gameStats.currentLetter]);
 
   const startGame = (mode: 'series' | 'random') => {
@@ -127,6 +132,7 @@ const PopTheLetterGame = () => {
     setIsSpeedRound(false);
     levelCompleteRef.current = false;
     confettiTriggeredRef.current = false;
+    setSelectedBubble(null);
     
     generateNewBubbles();
     startTimer();
@@ -144,6 +150,9 @@ const PopTheLetterGame = () => {
     setBubbles(newBubbles);
 
     if (bubble.isCorrect) {
+      // Show the information for correct bubbles
+      setSelectedBubble(bubble);
+      
       const scoreGained = calculateScore(gameStats.level, gameStats.streak, timeBonus, isSpeedRound);
       const newStats = {
         ...gameStats,
@@ -196,7 +205,7 @@ const PopTheLetterGame = () => {
           } else {
             generateNewBubbles();
           }
-        }, 1000);
+        }, 3000); // Give more time to read the information
       }
 
       saveGameState(newStats);
@@ -208,6 +217,7 @@ const PopTheLetterGame = () => {
         streak: 0
       }));
       setFeedback('Oops! ❌ Try again!');
+      setSelectedBubble(null);
 
       setTimeout(() => setFeedback(''), 1500);
 
@@ -225,10 +235,10 @@ const PopTheLetterGame = () => {
     
     if (gameStats.mode === 'series') {
       const currentCharCode = gameStats.currentLetter.charCodeAt(0);
-      if (currentCharCode < 90) { // If not Z
+      if (currentCharCode < 90) {
         nextLetter = String.fromCharCode(currentCharCode + 1);
       } else {
-        nextLetter = 'A'; // Reset to A after Z
+        nextLetter = 'A';
       }
     } else {
       nextLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
@@ -251,6 +261,7 @@ const PopTheLetterGame = () => {
     setIsSpeedRound(speedRound);
     levelCompleteRef.current = false;
     confettiTriggeredRef.current = false;
+    setSelectedBubble(null);
     
     if (speedRound) {
       setFeedback('🚀 SPEED ROUND! Double points! 🚀');
@@ -262,7 +273,6 @@ const PopTheLetterGame = () => {
     startTimer();
   };
 
-  // Timer effect with proper cleanup
   useEffect(() => {
     if (gameState === 'playing') {
       startTimer();
@@ -275,7 +285,6 @@ const PopTheLetterGame = () => {
     };
   }, [gameState, startTimer, clearGameTimer]);
 
-  // Game over check effect
   useEffect(() => {
     if (gameState === 'playing' && gameStats.timeLeft === 0) {
       clearGameTimer();
@@ -283,14 +292,12 @@ const PopTheLetterGame = () => {
     }
   }, [gameStats.timeLeft, gameState, clearGameTimer]);
 
-  // Generate new bubbles when needed
   useEffect(() => {
     if (gameState === 'playing' && bubbles.length === 0) {
       generateNewBubbles();
     }
   }, [generateNewBubbles, gameState, bubbles.length]);
 
-  // Clear new badges notification
   useEffect(() => {
     if (newBadges.length > 0) {
       const timer = setTimeout(() => setNewBadges([]), 4000);
@@ -298,7 +305,6 @@ const PopTheLetterGame = () => {
     }
   }, [newBadges]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       clearGameTimer();
@@ -358,7 +364,11 @@ const PopTheLetterGame = () => {
           </div>
         )}
 
-        <BubbleArea bubbles={bubbles} onBubbleClick={handleBubbleClick} />
+        <EnhancedBubbleArea 
+          bubbles={bubbles} 
+          onBubbleClick={handleBubbleClick}
+          selectedBubble={selectedBubble}
+        />
       </div>
     </div>
   );

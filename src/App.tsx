@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -24,6 +25,7 @@ import SearchMissingObject from '@/components/game/SearchMissingObject/SearchMis
 import GeographyBubbleGame from '@/components/game/GeographyBubbleGame/GeographyBubbleGame';
 import MathBubbleGame from '@/components/game/MathBubbleGame/MathBubbleGame';
 import ScienceBubbleGame from '@/components/game/ScienceBubbleGame/ScienceBubbleGame';
+import PopTheLetterGame from '@/components/game/PopTheLetterGame/PopTheLetterGame';
 
 // Activity & Creative Tools 
 import PaperCraftsTool from '@/components/activities/creativeTools/PaperCraftsTool';
@@ -93,6 +95,7 @@ function App() {
                 <Route path="/games/science-bubble-game" element={<ScienceBubbleGame />} />
                 <Route path="/games/word-builder-challenge" element={<WordBuilderChallenge />} />
                 <Route path="/games/pattern-detective" element={<PatternDetective />} />
+                <Route path="/games/pop-the-letter" element={<PopTheLetterGame />} />
 
                 {/* Creative Tools Routes */}
                 <Route path="/activities/paper-crafts" element={<PaperCraftsTool onClose={() => window.history.back()} />} />
