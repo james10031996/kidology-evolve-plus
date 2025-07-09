@@ -5,20 +5,21 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/home/Header';
 import confetti from 'canvas-confetti';
-import GameState from './components/GameState';
-import BadgeSystem from './components/BadgeSystem';
 import GameMenu from './components/GameMenu';
 import GameOver from './components/GameOver';
 import LevelComplete from './components/LevelComplete';
+import GameState from './components/GameState';
+import BadgeSystem from './components/BadgeSystem';
 import BubbleArea from './components/BubbleArea';
 import FeedbackDisplay from './components/FeedbackDisplay';
-import { generateBubbles } from './utils/expressionGenerator';
+import { generateLetterBubbles } from './utils/letterBubbleGenerator';
 import { calculateScore, getTimeLimit, checkForBadges, saveGameState, loadGameState } from './utils/gameLogic';
 
-interface MathExpression {
+interface LetterBubble {
   id: number;
-  expression: string;
-  value: number; 
+  emoji: string;
+  name: string;
+  letter: string;
   isCorrect: boolean;
   x: number;
   y: number;
@@ -35,9 +36,11 @@ interface GameStats {
   totalCorrect: number;
   highScore: number;
   badges: { [key: string]: boolean };
+  currentLetter: string;
+  mode: 'series' | 'random';
 }
 
-const MathBubbleGame = () => {
+const PopTheLetterGame = () => {
   const navigate = useNavigate();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const levelCompleteRef = useRef<boolean>(false);
@@ -50,12 +53,13 @@ const MathBubbleGame = () => {
     timeLeft: 45,
     streak: 0,
     totalCorrect: 0,
-    highScore: parseInt(localStorage.getItem('mathBubbleHighScore') || '0'),
-    badges: {}
+    highScore: parseInt(localStorage.getItem('popLetterHighScore') || '0'),
+    badges: {},
+    currentLetter: 'A',
+    mode: 'series'
   });
 
-  const [targetNumber, setTargetNumber] = useState(6);
-  const [expressions, setExpressions] = useState<MathExpression[]>([]);
+  const [bubbles, setBubbles] = useState<LetterBubble[]>([]);
   const [gameState, setGameState] = useState<'menu' | 'playing' | 'paused' | 'gameOver' | 'levelComplete'>('menu');
   const [feedback, setFeedback] = useState<string>('');
   const [levelProgress, setLevelProgress] = useState(0);
@@ -64,14 +68,13 @@ const MathBubbleGame = () => {
   const [solveStartTime, setSolveStartTime] = useState<number>(Date.now());
   
   const badgesList = [
-    { id: 'streak5', name: 'Streak Master', description: '5 in a row!', icon: 'zap', earned: gameStats.badges?.streak5 || false, condition: 'Get 5 correct in a row' },
-    { id: 'streak10', name: 'Unstoppable', description: '10 in a row!', icon: 'crown', earned: gameStats.badges?.streak10 || false, condition: 'Get 10 correct in a row' },
-    { id: 'level10', name: 'Champion', description: 'Reached level 10!', icon: 'trophy', earned: gameStats.badges?.level10 || false, condition: 'Reach level 10' },
-    { id: 'correct50', name: 'Math Wizard', description: '50 correct answers!', icon: 'star', earned: gameStats.badges?.correct50 || false, condition: 'Answer 50 questions correctly' },
+    { id: 'streak5', name: 'Letter Streak', description: '5 in a row!', icon: 'zap', earned: gameStats.badges?.streak5 || false, condition: 'Get 5 correct in a row' },
+    { id: 'streak10', name: 'Alphabet Ace', description: '10 in a row!', icon: 'crown', earned: gameStats.badges?.streak10 || false, condition: 'Get 10 correct in a row' },
+    { id: 'alphabetMaster', name: 'Alphabet Master', description: 'Complete A-Z!', icon: 'trophy', earned: gameStats.badges?.alphabetMaster || false, condition: 'Complete all letters A-Z' },
+    { id: 'correct50', name: 'Word Wizard', description: '50 correct bubbles!', icon: 'star', earned: gameStats.badges?.correct50 || false, condition: 'Pop 50 bubbles correctly' },
     { id: 'highScore', name: 'Record Breaker', description: 'New high score!', icon: 'target', earned: gameStats.badges?.highScore || false, condition: 'Beat your high score' }
   ];
 
-  // Clear timer function
   const clearGameTimer = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -79,7 +82,6 @@ const MathBubbleGame = () => {
     }
   }, []);
 
-  // Start stable timer
   const startTimer = useCallback(() => {
     clearGameTimer();
     timerRef.current = setInterval(() => {
@@ -94,19 +96,18 @@ const MathBubbleGame = () => {
   }, [clearGameTimer]);
 
   const generateNewBubbles = useCallback(() => {
-    const newExpressions = generateBubbles(targetNumber, gameStats.level);
-    setExpressions(newExpressions);
+    const newBubbles = generateLetterBubbles(gameStats.currentLetter);
+    setBubbles(newBubbles);
     setSolveStartTime(Date.now());
     levelCompleteRef.current = false;
     confettiTriggeredRef.current = false;
-  }, [targetNumber, gameStats.level]);
+  }, [gameStats.currentLetter]);
 
-  const startGame = () => {
+  const startGame = (mode: 'series' | 'random') => {
     const savedState = loadGameState();
-    if (savedState) {
+    if (savedState && savedState.mode === mode) {
       setGameStats(savedState);
       setGameState('playing');
-      setTargetNumber(Math.floor(Math.random() * (10 + savedState.level * 3)) + 5);
     } else {
       setGameStats({
         level: 1,
@@ -115,10 +116,11 @@ const MathBubbleGame = () => {
         timeLeft: getTimeLimit(1, false),
         streak: 0,
         totalCorrect: 0,
-        highScore: parseInt(localStorage.getItem('mathBubbleHighScore') || '0'),
-        badges: {}
+        highScore: parseInt(localStorage.getItem('popLetterHighScore') || '0'),
+        badges: {},
+        currentLetter: mode === 'series' ? 'A' : String.fromCharCode(65 + Math.floor(Math.random() * 26)),
+        mode
       });
-      setTargetNumber(Math.floor(Math.random() * 15) + 5);
     }
     
     setLevelProgress(0);
@@ -130,16 +132,16 @@ const MathBubbleGame = () => {
     startTimer();
   };
 
-  const handleBubbleClick = (bubble: MathExpression) => {
+  const handleBubbleClick = (bubble: LetterBubble) => {
     if (bubble.clicked || levelCompleteRef.current) return;
 
     const solveTime = (Date.now() - solveStartTime) / 1000;
-    const timeBonus = solveTime < 5;
+    const timeBonus = solveTime < 3;
 
-    const newExpressions = expressions.map(exp =>
-      exp.id === bubble.id ? { ...exp, clicked: true } : exp
+    const newBubbles = bubbles.map(b =>
+      b.id === bubble.id ? { ...b, clicked: true } : b
     );
-    setExpressions(newExpressions);
+    setBubbles(newBubbles);
 
     if (bubble.isCorrect) {
       const scoreGained = calculateScore(gameStats.level, gameStats.streak, timeBonus, isSpeedRound);
@@ -152,7 +154,7 @@ const MathBubbleGame = () => {
 
       if (newStats.score > newStats.highScore) {
         newStats.highScore = newStats.score;
-        localStorage.setItem('mathBubbleHighScore', newStats.score.toString());
+        localStorage.setItem('popLetterHighScore', newStats.score.toString());
         if (!confettiTriggeredRef.current) {
           confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
           confettiTriggeredRef.current = true;
@@ -160,7 +162,7 @@ const MathBubbleGame = () => {
         setFeedback('🏆 NEW HIGH SCORE! 🏆');
       } else {
         const speedText = isSpeedRound ? ' (2x Speed Round!)' : '';
-        setFeedback(`Correct! ✨ ${timeBonus ? '⚡ Speed Bonus!' : ''} +${scoreGained}${speedText}`);
+        setFeedback(`Perfect! 🎉 ${timeBonus ? '⚡ Speed Bonus!' : ''} +${scoreGained}${speedText}`);
       }
 
       setGameStats(newStats);
@@ -176,14 +178,14 @@ const MathBubbleGame = () => {
 
       setTimeout(() => setFeedback(''), 2000);
 
-      const allCorrectClicked = newExpressions
-        .filter(exp => exp.isCorrect)
-        .every(exp => exp.clicked);
+      const allCorrectClicked = newBubbles
+        .filter(b => b.isCorrect)
+        .every(b => b.clicked);
 
       if (allCorrectClicked && !levelCompleteRef.current) {
         levelCompleteRef.current = true;
-        const correctCount = newExpressions.filter(exp => exp.isCorrect).length;
-        const progressIncrease = correctCount * 25;
+        const correctCount = newBubbles.filter(b => b.isCorrect).length;
+        const progressIncrease = correctCount * 20;
         const newProgress = Math.min(100, levelProgress + progressIncrease);
         setLevelProgress(newProgress);
         
@@ -205,7 +207,7 @@ const MathBubbleGame = () => {
         lives: newLives,
         streak: 0
       }));
-      setFeedback('Wrong! ❌ Try again!');
+      setFeedback('Oops! ❌ Try again!');
 
       setTimeout(() => setFeedback(''), 1500);
 
@@ -219,6 +221,19 @@ const MathBubbleGame = () => {
   };
 
   const nextLevel = () => {
+    let nextLetter = gameStats.currentLetter;
+    
+    if (gameStats.mode === 'series') {
+      const currentCharCode = gameStats.currentLetter.charCodeAt(0);
+      if (currentCharCode < 90) { // If not Z
+        nextLetter = String.fromCharCode(currentCharCode + 1);
+      } else {
+        nextLetter = 'A'; // Reset to A after Z
+      }
+    } else {
+      nextLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+    }
+
     const newLevel = gameStats.level + 1;
     const speedRound = newLevel % 5 === 0;
     const newTimeLimit = getTimeLimit(newLevel, speedRound);
@@ -228,10 +243,10 @@ const MathBubbleGame = () => {
       level: newLevel,
       timeLeft: newTimeLimit,
       streak: 0,
-      lives: Math.min(5, prev.lives + 1)
+      lives: Math.min(5, prev.lives + 1),
+      currentLetter: nextLetter
     }));
 
-    setTargetNumber(Math.floor(Math.random() * (10 + newLevel * 3)) + 5);
     setLevelProgress(0);
     setIsSpeedRound(speedRound);
     levelCompleteRef.current = false;
@@ -270,10 +285,10 @@ const MathBubbleGame = () => {
 
   // Generate new bubbles when needed
   useEffect(() => {
-    if (gameState === 'playing' && expressions.length === 0) {
+    if (gameState === 'playing' && bubbles.length === 0) {
       generateNewBubbles();
     }
-  }, [generateNewBubbles, gameState, expressions.length]);
+  }, [generateNewBubbles, gameState, bubbles.length]);
 
   // Clear new badges notification
   useEffect(() => {
@@ -298,7 +313,7 @@ const MathBubbleGame = () => {
     return (
       <GameOver 
         gameStats={gameStats}
-        onRestart={startGame}
+        onRestart={() => startGame(gameStats.mode)}
         onMenu={() => setGameState('menu')}
       />
     );
@@ -317,7 +332,7 @@ const MathBubbleGame = () => {
   return (
     <div>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-orange-100 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 p-6">
         <div className="flex items-center mb-6">
           <Button
             variant="ghost"
@@ -331,7 +346,6 @@ const MathBubbleGame = () => {
 
         <GameState 
           gameStats={gameStats}
-          targetNumber={targetNumber}
           levelProgress={levelProgress}
           isSpeedRound={isSpeedRound}
         />
@@ -344,10 +358,10 @@ const MathBubbleGame = () => {
           </div>
         )}
 
-        <BubbleArea expressions={expressions} onBubbleClick={handleBubbleClick} />
+        <BubbleArea bubbles={bubbles} onBubbleClick={handleBubbleClick} />
       </div>
     </div>
   );
 };
 
-export default MathBubbleGame;
+export default PopTheLetterGame;
