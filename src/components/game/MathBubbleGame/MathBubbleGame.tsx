@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
@@ -35,6 +35,9 @@ interface GameStats {
 
 const MathBubbleGame = () => {
   const navigate = useNavigate();
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const levelCompleteRef = useRef<boolean>(false);
+  const confettiTriggeredRef = useRef<boolean>(false);
   
   const [gameStats, setGameStats] = useState<GameStats>({
     level: 1,
@@ -64,10 +67,34 @@ const MathBubbleGame = () => {
     { id: 'highScore', name: 'Record Breaker', description: 'New high score!', icon: 'target', earned: gameStats.badges?.highScore || false, condition: 'Beat your high score' }
   ];
 
+  // Clear timer function
+  const clearGameTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  // Start stable timer
+  const startTimer = useCallback(() => {
+    clearGameTimer();
+    timerRef.current = setInterval(() => {
+      setGameStats(prev => {
+        const newTime = prev.timeLeft - 1;
+        if (newTime <= 0) {
+          return { ...prev, timeLeft: 0 };
+        }
+        return { ...prev, timeLeft: newTime };
+      });
+    }, 1000);
+  }, [clearGameTimer]);
+
   const generateNewBubbles = useCallback(() => {
     const newExpressions = generateBubbles(targetNumber, gameStats.level);
     setExpressions(newExpressions);
     setSolveStartTime(Date.now());
+    levelCompleteRef.current = false;
+    confettiTriggeredRef.current = false;
   }, [targetNumber, gameStats.level]);
 
   const startGame = () => {
@@ -78,12 +105,11 @@ const MathBubbleGame = () => {
       setGameState('playing');
       setTargetNumber(Math.floor(Math.random() * (10 + savedState.level * 3)) + 5);
     } else {
-      setGameState('playing');
       setGameStats({
         level: 1,
         score: 0,
         lives: 3,
-        timeLeft: 45,
+        timeLeft: getTimeLimit(1, false),
         streak: 0,
         totalCorrect: 0,
         highScore: parseInt(localStorage.getItem('mathBubbleHighScore') || '0'),
@@ -91,12 +117,19 @@ const MathBubbleGame = () => {
       });
       setTargetNumber(Math.floor(Math.random() * 15) + 5);
     }
+    
+    // Reset level progress and flags
+    setLevelProgress(0);
     setIsSpeedRound(false);
+    levelCompleteRef.current = false;
+    confettiTriggeredRef.current = false;
+    
     generateNewBubbles();
+    startTimer();
   };
 
   const handleBubbleClick = (bubble: MathExpression) => {
-    if (bubble.clicked) return;
+    if (bubble.clicked || levelCompleteRef.current) return;
 
     const solveTime = (Date.now() - solveStartTime) / 1000;
     const timeBonus = solveTime < 5;
@@ -119,10 +152,14 @@ const MathBubbleGame = () => {
       if (newStats.score > newStats.highScore) {
         newStats.highScore = newStats.score;
         localStorage.setItem('mathBubbleHighScore', newStats.score.toString());
-        confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+        if (!confettiTriggeredRef.current) {
+          confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+          confettiTriggeredRef.current = true;
+        }
         setFeedback('🏆 NEW HIGH SCORE! 🏆');
       } else {
-        setFeedback(`Correct! ✨ ${timeBonus ? '⚡ Speed Bonus!' : ''} +${scoreGained}`);
+        const speedText = isSpeedRound ? ' (2x Speed Round!)' : '';
+        setFeedback(`Correct! ✨ ${timeBonus ? '⚡ Speed Bonus!' : ''} +${scoreGained}${speedText}`);
       }
 
       setGameStats(newStats);
@@ -144,12 +181,16 @@ const MathBubbleGame = () => {
         .filter(exp => exp.isCorrect)
         .every(exp => exp.clicked);
 
-      if (allCorrectClicked) {
+      if (allCorrectClicked && !levelCompleteRef.current) {
+        levelCompleteRef.current = true;
         const correctCount = newExpressions.filter(exp => exp.isCorrect).length;
-        setLevelProgress(prev => Math.min(100, prev + (correctCount * 25)));
+        const progressIncrease = correctCount * 25;
+        const newProgress = Math.min(100, levelProgress + progressIncrease);
+        setLevelProgress(newProgress);
         
         setTimeout(() => {
-          if (levelProgress >= 100) {
+          if (newProgress >= 100) {
+            clearGameTimer();
             setGameState('levelComplete');
           } else {
             generateNewBubbles();
@@ -160,16 +201,19 @@ const MathBubbleGame = () => {
       // Auto-save progress
       saveGameState(newStats);
     } else {
+      const newLives = gameStats.lives - 1;
       setGameStats(prev => ({
         ...prev,
-        lives: prev.lives - 1,
+        lives: newLives,
         streak: 0
       }));
       setFeedback('Wrong! ❌ Try again!');
 
       setTimeout(() => setFeedback(''), 1500);
 
-      if (gameStats.lives <= 1) {
+      // Proper game over check
+      if (newLives <= 0) {
+        clearGameTimer();
         setTimeout(() => {
           setGameState('gameOver');
         }, 1000);
@@ -179,8 +223,8 @@ const MathBubbleGame = () => {
 
   const nextLevel = () => {
     const newLevel = gameStats.level + 1;
-    const newTimeLimit = getTimeLimit(newLevel, false);
     const speedRound = newLevel % 5 === 0; // Every 5th level is a speed round
+    const newTimeLimit = getTimeLimit(newLevel, speedRound);
 
     setGameStats(prev => ({
       ...prev,
@@ -191,8 +235,10 @@ const MathBubbleGame = () => {
     }));
 
     setTargetNumber(Math.floor(Math.random() * (10 + newLevel * 3)) + 5);
-    setLevelProgress(0);
+    setLevelProgress(0); // Reset progress bar
     setIsSpeedRound(speedRound);
+    levelCompleteRef.current = false;
+    confettiTriggeredRef.current = false;
     
     if (speedRound) {
       setFeedback('🚀 SPEED ROUND! Double points! 🚀');
@@ -201,27 +247,36 @@ const MathBubbleGame = () => {
 
     generateNewBubbles();
     setGameState('playing');
+    startTimer();
   };
 
-  // Timer effect
+  // Timer effect with proper cleanup
   useEffect(() => {
-    if (gameState === 'playing' && gameStats.timeLeft > 0) {
-      const timer = setTimeout(() => {
-        setGameStats(prev => ({ ...prev, timeLeft: prev.timeLeft - 1 }));
-      }, 1000);
+    if (gameState === 'playing') {
+      startTimer();
+    } else {
+      clearGameTimer();
+    }
 
-      return () => clearTimeout(timer);
-    } else if (gameState === 'playing' && gameStats.timeLeft === 0) {
+    return () => {
+      clearGameTimer();
+    };
+  }, [gameState, startTimer, clearGameTimer]);
+
+  // Game over check effect
+  useEffect(() => {
+    if (gameState === 'playing' && gameStats.timeLeft === 0) {
+      clearGameTimer();
       setGameState('gameOver');
     }
-  }, [gameState, gameStats.timeLeft]);
+  }, [gameStats.timeLeft, gameState, clearGameTimer]);
 
   // Generate new bubbles when needed
   useEffect(() => {
-    if (gameState === 'playing') {
+    if (gameState === 'playing' && expressions.length === 0) {
       generateNewBubbles();
     }
-  }, [generateNewBubbles, gameState]);
+  }, [generateNewBubbles, gameState, expressions.length]);
 
   // Clear new badges notification
   useEffect(() => {
@@ -230,6 +285,13 @@ const MathBubbleGame = () => {
       return () => clearTimeout(timer);
     }
   }, [newBadges]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      clearGameTimer();
+    };
+  }, [clearGameTimer]);
 
   if (gameState === 'menu') {
     return (
