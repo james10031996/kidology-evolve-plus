@@ -175,6 +175,22 @@ const Courses = () => {
       route: '/courses/social-moral'
     },
     {
+      id: 'social-emotional-learning',
+      title: 'Social & Emotional Learning',
+      description: 'Learn about feelings, friendship, and how to be kind to others!',
+      category: 'social',
+      difficulty: 'All Levels',
+      duration: '25 min',
+      lessons: 8,
+      rating: 4.8,
+      students: 1100,
+      progress: userData.progress.find(p => p.name === 'Social')?.progress || 0,
+      color: 'bg-gradient-to-r from-green-300 via-emerald-400 to-teal-500',
+      topics: ['Feelings', 'Sharing', 'Friendship', 'Respect'],
+      nextLesson: 'Being Kind to Others',
+      route: '/courses/social-emotional-learning'
+    },
+    {
       id: 'nature-explorer',
       title: 'Nature Explorer',
       description: 'Explore forests, oceans, mountains, and natural wonders',
@@ -189,7 +205,24 @@ const Courses = () => {
       topics: ['Forests', 'Oceans', 'Mountains', 'Wildlife'],
       nextLesson: 'Forest Adventure',
       route: '/courses/nature-explorer'
+    },
+    {
+      id: 'time-adventurer',
+      title: 'Time Adventurer',
+      description: 'Learn to read clocks, understand time concepts, and become a master of time!',
+      category: 'time',
+      difficulty: 'Beginner',
+      duration: '25 min',
+      lessons: 8,
+      rating: 4.8,
+      students: 1250,
+      progress: userData.progress.find(p => p.name === 'Time')?.progress || 0,
+      color: 'gradient-blue',
+      topics: ['Reading Clocks', 'AM & PM', 'Elapsed Time', 'Time in Daily Life'],
+      nextLesson: 'Reading Analog Clocks',
+      route: '/courses/time-adventurer'
     }
+
   ];
 
   const categories = [
@@ -201,11 +234,12 @@ const Courses = () => {
     { id: 'geography', name: 'Geography', icon: '🌍' },
     { id: 'history', name: 'History', icon: '🏛️' },
     { id: 'social', name: 'Social', icon: '🤝' },
-    { id: 'nature', name: 'Nature', icon: '🌲' }
+    { id: 'nature', name: 'Nature', icon: '🌲' },
+    { id: 'time', name: 'Time', icon: '🕒' }
   ];
 
-  const filteredCourses = selectedCategory === 'all' 
-    ? courses 
+  const filteredCourses = selectedCategory === 'all'
+    ? courses
     : courses.filter(course => course.category === selectedCategory);
 
   const startCourse = (course: any) => {
@@ -213,16 +247,16 @@ const Courses = () => {
       navigate(course.route);
     } else {
       updateStars(10);
-      updateProgress(course.title.includes('Math') ? 'Mathematics' : 
-                    course.title.includes('Reading') ? 'English' :
-                    course.title.includes('Science') ? 'Science' : 'Art', 5);
+      updateProgress(course.title.includes('Math') ? 'Mathematics' :
+        course.title.includes('Reading') ? 'English' :
+          course.title.includes('Science') ? 'Science' : 'Art', 5);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -240,11 +274,10 @@ const Courses = () => {
             <Button
               key={category.id}
               variant={selectedCategory === category.id ? "default" : "outline"}
-              className={`font-comic font-bold rounded-full ${
-                selectedCategory === category.id 
-                  ? 'gradient-orange text-white' 
+              className={`font-comic font-bold rounded-full ${selectedCategory === category.id
+                  ? 'gradient-orange text-white'
                   : 'text-gray-700 hover:bg-orange-50'
-              }`}
+                }`}
               onClick={() => setSelectedCategory(category.id)}
             >
               <span className="mr-2">{category.icon}</span>
@@ -267,6 +300,7 @@ const Courses = () => {
                   {course.category === 'history' && '🏛️'}
                   {course.category === 'social' && '🤝'}
                   {course.category === 'nature' && '🌲'}
+                  {course.category === 'time' && '🕒'}
                 </div>
               </div>
 
@@ -277,7 +311,7 @@ const Courses = () => {
                 <p className="font-comic text-gray-600 text-sm mb-3">
                   {course.description}
                 </p>
-                
+
                 <div className="flex flex-wrap gap-2 mb-3">
                   <Badge variant="outline" className="font-comic text-xs">
                     {course.difficulty}
@@ -335,7 +369,7 @@ const Courses = () => {
                   </div>
                 </div>
 
-                <Button 
+                <Button
                   className={`w-full ${course.color} text-white font-comic font-bold rounded-full hover:scale-105 transition-transform duration-200`}
                   onClick={() => startCourse(course)}
                 >
@@ -347,24 +381,24 @@ const Courses = () => {
           ))}
         </div>
 
-         
-              {/* Daily Rewards */}
-              <Card className="p-6 mt-12 bg-gradient-to-r from-green-100 to-blue-100 border-4 border-green-300">
-                <div className="text-center">
-                  <h2 className="font-fredoka text-2xl text-green-700 mb-4">
-                    🎁 Daily Learning Reward
-                  </h2>
-                  <p className="font-comic text-gray-600 mb-4">
-                    Come back tomorrow for a special surprise!
-                  </p>
-                  <Button className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full">
-                    <Gift className="w-5 h-5 mr-2" />
-                    Claim Tomorrow's Gift
-                  </Button>
-                </div>
-              </Card>
 
-               {/* Achievement Banner */}
+        {/* Daily Rewards */}
+        <Card className="p-6 mt-12 bg-gradient-to-r from-green-100 to-blue-100 border-4 border-green-300">
+          <div className="text-center">
+            <h2 className="font-fredoka text-2xl text-green-700 mb-4">
+              🎁 Daily Learning Reward
+            </h2>
+            <p className="font-comic text-gray-600 mb-4">
+              Come back tomorrow for a special surprise!
+            </p>
+            <Button className="gradient-green text-white font-comic font-bold px-8 py-3 rounded-full">
+              <Gift className="w-5 h-5 mr-2" />
+              Claim Tomorrow's Gift
+            </Button>
+          </div>
+        </Card>
+
+        {/* Achievement Banner */}
         <div className="mt-4 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl p-6 text-center">
           <div className="flex items-center justify-center space-x-3 mb-4">
             <Award className="w-8 h-8 text-orange-500" />

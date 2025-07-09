@@ -22,7 +22,7 @@ import MatchingGame from '@/components/game/MatchingGame/MatchingGame';
 import PuzzleAssembly from '@/components/game/PuzzleAssembly/PuzzleAssembly';
 import SearchMissingObject from '@/components/game/SearchMissingObject/SearchMissingObject';
 import GeographyBubbleGame from '@/components/game/GeographyBubbleGame/GeographyBubbleGame';
-import MathBubbleGame from '@/components/game/MathBubbleGame';
+import MathBubbleGame from '@/components/game/MathBubbleGame/MathBubbleGame';
 import ScienceBubbleGame from '@/components/game/ScienceBubbleGame/ScienceBubbleGame';
 
 // Activity & Creative Tools 
@@ -42,6 +42,7 @@ import ReadingAdventure from '@/components/courses/gk/ReadingAdventure';
 import ScienceExplorers from '@/components/courses/science/ScienceExplorers';
 import HistoryAdventures from '@/components/courses/history/HistoryAdventures';
 import SocialMoral from '@/components/courses/social/SocialMoral';
+import SocialEmotionalLearning from '@/components/courses/social/SocialEmotionalLearning';
 import NatureExplorer from '@/components/courses/nature/NatureExplorer';
 import GeographyExplorer from '@/components/courses/geography/GeographyExplorer';
 import TimeAdventure from '@/components/courses/time/TimeAdventure';
@@ -109,6 +110,7 @@ function App() {
                 <Route path="/courses/science-explorers" element={<ScienceExplorers />} />
                 <Route path="/courses/history-adventures" element={<HistoryAdventures />} />
                 <Route path="/courses/social-moral" element={<SocialMoral />} />
+                <Route path="/courses/social-emotional-learning" element={<SocialEmotionalLearning />} />
                 <Route path="/courses/nature-explorer" element={<NatureExplorer />} />
                 <Route path="/courses/geography-explorer" element={<GeographyExplorer />} />
                 <Route path="/courses/time-adventurer" element={<TimeAdventure />} />
