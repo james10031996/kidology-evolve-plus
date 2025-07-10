@@ -1,14 +1,20 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import GameCard from './GameCard';
-import { mathGames, languageGames, memoryGames, logicGames, puzzleGames, scienceGames } from '../data/gamesData';
+import { mathGames, languageGames, memoryGames, logicGames, puzzleGames, scienceGames, gamesData } from '../data/gamesData';
+import { transformGameData } from '../utils/gameDataTransformer';
 
 interface GameTabsProps {
   onPlayGame: (game: any) => void;
 }
 
 const GameTabs = ({ onPlayGame }: GameTabsProps) => {
-  const allGames = [...mathGames, ...languageGames, ...memoryGames, ...logicGames, ...puzzleGames, ...scienceGames];
+  const allGames = gamesData.map(transformGameData);
+  const transformedMathGames = mathGames.map(transformGameData);
+  const transformedLanguageGames = languageGames.map(transformGameData);
+  const transformedMemoryGames = memoryGames.map(transformGameData);
+  const transformedLogicGames = logicGames.map(transformGameData);
+  const transformedPuzzleGames = puzzleGames.map(transformGameData);
 
   return (
     <Tabs defaultValue="all" className="w-full">
@@ -43,7 +49,7 @@ const GameTabs = ({ onPlayGame }: GameTabsProps) => {
 
       <TabsContent value="math">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {mathGames.map((game) => (
+          {transformedMathGames.map((game) => (
             <GameCard key={game.id} game={game} onPlayGame={onPlayGame} />
           ))}
         </div>
@@ -51,7 +57,7 @@ const GameTabs = ({ onPlayGame }: GameTabsProps) => {
 
       <TabsContent value="language">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {languageGames.map((game) => (
+          {transformedLanguageGames.map((game) => (
             <GameCard key={game.id} game={game} onPlayGame={onPlayGame} />
           ))}
         </div>
@@ -59,7 +65,7 @@ const GameTabs = ({ onPlayGame }: GameTabsProps) => {
 
       <TabsContent value="memory">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {memoryGames.map((game) => (
+          {transformedMemoryGames.map((game) => (
             <GameCard key={game.id} game={game} onPlayGame={onPlayGame} />
           ))}
         </div>
@@ -67,7 +73,7 @@ const GameTabs = ({ onPlayGame }: GameTabsProps) => {
 
       <TabsContent value="logic">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {logicGames.map((game) => (
+          {transformedLogicGames.map((game) => (
             <GameCard key={game.id} game={game} onPlayGame={onPlayGame} />
           ))}
         </div>
@@ -75,7 +81,7 @@ const GameTabs = ({ onPlayGame }: GameTabsProps) => {
 
       <TabsContent value="puzzle">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {puzzleGames.map((game) => (
+          {transformedPuzzleGames.map((game) => (
             <GameCard key={game.id} game={game} onPlayGame={onPlayGame} />
           ))}
         </div>
