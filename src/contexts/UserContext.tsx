@@ -14,6 +14,21 @@ interface UserData {
   progress: SubjectProgress[];
   petData: PetData;
   rewards: Reward[];
+  gameStats: GameStats;
+}
+
+interface GameStats {
+  wordSafariChallenge: {
+    highScore: number;
+    totalWordsTyped: number;
+    lettersCompleted: string[];
+    badges: { [key: string]: boolean };
+  };
+  popTheLetter: {
+    highScore: number;
+    totalBubblesPopped: number;
+    lettersCompleted: string[];
+  };
 }
 
 interface Achievement {
@@ -58,6 +73,7 @@ interface UserContextType {
   unlockAchievement: (achievementId: string) => void;
   feedPet: () => void;
   purchaseReward: (rewardId: string) => void;
+  updateGameStats: (game: string, stats: any) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -78,13 +94,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       { id: '3', name: 'Reading Star', icon: '⭐', unlocked: true, description: 'Read 10 stories', unlockedDate: '2024-01-25' },
       { id: '4', name: 'Science Explorer', icon: '🔬', unlocked: false, description: 'Complete 5 experiments' },
       { id: '5', name: 'Art Master', icon: '🎨', unlocked: false, description: 'Create 20 artworks' },
-      { id: '6', name: 'Music Lover', icon: '🎵', unlocked: false, description: 'Learn 15 songs' }
+      { id: '6', name: 'Music Lover', icon: '🎵', unlocked: false, description: 'Learn 15 songs' },
+      { id: '7', name: 'Typing Master', icon: '⌨️', unlocked: false, description: 'Complete Word Safari Challenge' },
+      { id: '8', name: 'Letter Expert', icon: '🔤', unlocked: false, description: 'Complete all letters A-Z' }
     ],
     progress: [
       { name: 'Mathematics', progress: 85, level: 8, color: 'gradient-blue', nextMilestone: '100 problems solved' },
       { name: 'English', progress: 72, level: 6, color: 'gradient-green', nextMilestone: '5 more stories to read' },
       { name: 'Science', progress: 45, level: 4, color: 'gradient-purple', nextMilestone: '3 experiments left' },
-      { name: 'Art', progress: 60, level: 5, color: 'gradient-pink', nextMilestone: '10 more artworks' }
+      { name: 'Art', progress: 60, level: 5, color: 'gradient-pink', nextMilestone: '10 more artworks' },
+      { name: 'Typing', progress: 30, level: 3, color: 'gradient-orange', nextMilestone: 'Complete 5 more letters' }
     ],
     petData: {
       name: 'Sparky',
@@ -99,7 +118,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       { id: '2', name: 'Rainbow Badge', icon: '🌈', cost: 100, owned: 1, description: 'Colorful completion reward' },
       { id: '3', name: 'Super Crown', icon: '👑', cost: 200, owned: 0, description: 'Ultimate learning champion' },
       { id: '4', name: 'Magic Wand', icon: '🪄', cost: 150, owned: 0, description: 'Cast spells of knowledge' }
-    ]
+    ],
+    gameStats: {
+      wordSafariChallenge: {
+        highScore: 0,
+        totalWordsTyped: 0,
+        lettersCompleted: [],
+        badges: {}
+      },
+      popTheLetter: {
+        highScore: 0,
+        totalBubblesPopped: 0,
+        lettersCompleted: []
+      }
+    }
   });
 
   const updateStars = (amount: number) => {
@@ -159,6 +191,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateGameStats = (game: string, stats: any) => {
+    setUserData(prev => ({
+      ...prev,
+      gameStats: {
+        ...prev.gameStats,
+        [game]: {
+          ...prev.gameStats[game as keyof typeof prev.gameStats],
+          ...stats
+        }
+      }
+    }));
+  };
+
   return (
     <UserContext.Provider value={{
       userData,
@@ -166,7 +211,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updateProgress,
       unlockAchievement,
       feedPet,
-      purchaseReward
+      purchaseReward,
+      updateGameStats
     }}>
       {children}
     </UserContext.Provider>

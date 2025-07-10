@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '@/contexts/UserContext';
 import Header from '@/components/home/Header';
 import GameMenu from './components/GameMenu';
 import GameOver from './components/GameOver';
@@ -15,6 +16,7 @@ import { useTypingGameLogic } from './components/TypingGameLogic';
 
 const LetterTypingChallenge = () => {
   const navigate = useNavigate();
+  const { updateStars, updateGameStats, updateProgress, unlockAchievement } = useUser();
   
   const {
     gameStats,
@@ -44,6 +46,34 @@ const LetterTypingChallenge = () => {
     { id: 'correct50', name: 'Typing Wizard', description: '50 correct words!', icon: 'star', earned: gameStats.badges?.correct50 || false, condition: 'Type 50 words correctly' },
     { id: 'speedTyper', name: 'Speed Demon', description: 'Lightning fast!', icon: 'target', earned: gameStats.badges?.speedTyper || false, condition: 'Type 5 words in 30 seconds' }
   ];
+
+  // Update user context when game stats change
+  useEffect(() => {
+    if (gameStats.score > 0) {
+      updateGameStats('wordSafariChallenge', {
+        highScore: Math.max(gameStats.highScore, gameStats.score),
+        totalWordsTyped: gameStats.totalCorrect,
+        badges: gameStats.badges
+      });
+    }
+  }, [gameStats, updateGameStats]);
+
+  // Award stars and progress when completing levels
+  useEffect(() => {
+    if (gameState === 'gameOver' && gameStats.score > 0) {
+      const starsEarned = Math.floor(gameStats.score / 100);
+      updateStars(starsEarned);
+      updateProgress('Typing', Math.min(10, gameStats.level));
+      
+      // Check for achievements
+      if (gameStats.totalCorrect >= 50) {
+        unlockAchievement('7'); // Typing Master
+      }
+      if (gameStats.level >= 26) {
+        unlockAchievement('8'); // Letter Expert
+      }
+    }
+  }, [gameState, gameStats, updateStars, updateProgress, unlockAchievement]);
 
   useEffect(() => {
     if (gameState === 'playing' && bubbles.length === 0) {
