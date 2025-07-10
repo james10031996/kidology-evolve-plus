@@ -1,36 +1,35 @@
 
-import { getRandomLetterItems } from '../data/letterData';
+import { getRandomLetterItems } from '../../PopTheLetterGame/data/letterData';
 
-export interface LetterBubble {
+export interface TypingItem {
   id: number;
   emoji: string;
   name: string;
   letter: string;
-  isCorrect: boolean;
   x: number;
   y: number;
-  clicked: boolean;
+  found: boolean;
   color: string;
   fullName?: string;
   information?: string;
   category?: string;
   habitat?: string;
-  isBlinking?: boolean;
-  isDisappearing?: boolean;
+  pulsing?: boolean;
+  fading?: boolean;
 }
 
 const colors = [
-  'from-pink-400 to-pink-600',
-  'from-purple-400 to-purple-600',
+  'from-emerald-400 to-emerald-600',
+  'from-teal-400 to-teal-600',
+  'from-cyan-400 to-cyan-600',
   'from-blue-400 to-blue-600',
-  'from-green-400 to-green-600',
-  'from-yellow-400 to-yellow-600',
-  'from-red-400 to-red-600',
   'from-indigo-400 to-indigo-600',
-  'from-orange-400 to-orange-600'
+  'from-purple-400 to-purple-600',
+  'from-pink-400 to-pink-600',
+  'from-rose-400 to-rose-600'
 ];
 
-const wrongAnswers = [
+const distractorItems = [
   { emoji: '🌟', name: 'Star', letter: 'S' },
   { emoji: '🌙', name: 'Moon', letter: 'M' },
   { emoji: '☀️', name: 'Sun', letter: 'S' },
@@ -48,20 +47,20 @@ const wrongAnswers = [
   { emoji: '🌹', name: 'Rose', letter: 'R' }
 ];
 
-export const generateLetterBubbles = (targetLetter: string, targetCount: number = 5): LetterBubble[] => {
-  const bubbles: LetterBubble[] = [];
-  let letterItems = getRandomLetterItems(targetLetter, targetCount);
+export const generateTypingItems = (targetLetter: string, totalCount: number = 10): TypingItem[] => {
+  const items: TypingItem[] = [];
+  
+  // Get target letter items (5 items)
+  let letterItems = getRandomLetterItems(targetLetter, 5);
   
   // Ensure we have exactly 5 items by repeating if necessary
   while (letterItems.length < 5) {
     const additionalItems = getRandomLetterItems(targetLetter, 5 - letterItems.length);
     letterItems = [...letterItems, ...additionalItems];
   }
-  
-  // Take exactly 5 items
   letterItems = letterItems.slice(0, 5);
   
-  // Add target letter bubbles (exactly 5)
+  // Add target letter items
   letterItems.forEach((item, index) => {
     let x, y;
     let attempts = 0;
@@ -72,33 +71,32 @@ export const generateLetterBubbles = (targetLetter: string, targetCount: number 
       attempts++;
     } while (
       attempts < 10 &&
-      bubbles.some(existing => Math.abs(existing.x - x) < 12 && Math.abs(existing.y - y) < 12)
+      items.some(existing => Math.abs(existing.x - x) < 12 && Math.abs(existing.y - y) < 12)
     );
 
-    bubbles.push({
+    items.push({
       id: index,
       emoji: item.emoji,
       name: item.name,
       letter: targetLetter,
-      isCorrect: true,
       x,
       y,
-      clicked: false,
+      found: false,
       color: colors[index % colors.length],
       fullName: item.fullName,
       information: item.information,
       category: item.category,
       habitat: item.habitat,
-      isBlinking: false,
-      isDisappearing: false
+      pulsing: false,
+      fading: false
     });
   });
 
-  // Add random wrong answer bubbles (exactly 5)
-  const availableWrong = wrongAnswers.filter(item => item.letter !== targetLetter);
-  const selectedWrong = availableWrong.sort(() => Math.random() - 0.5).slice(0, 5);
+  // Add distractor items (5 items)
+  const availableDistractors = distractorItems.filter(item => item.letter !== targetLetter);
+  const selectedDistractors = availableDistractors.sort(() => Math.random() - 0.5).slice(0, 5);
   
-  selectedWrong.forEach((item, index) => {
+  selectedDistractors.forEach((item, index) => {
     let x, y;
     let attempts = 0;
     
@@ -108,23 +106,22 @@ export const generateLetterBubbles = (targetLetter: string, targetCount: number 
       attempts++;
     } while (
       attempts < 10 &&
-      bubbles.some(existing => Math.abs(existing.x - x) < 12 && Math.abs(existing.y - y) < 12)
+      items.some(existing => Math.abs(existing.x - x) < 12 && Math.abs(existing.y - y) < 12)
     );
 
-    bubbles.push({
-      id: bubbles.length,
+    items.push({
+      id: items.length,
       emoji: item.emoji,
       name: item.name,
       letter: item.letter,
-      isCorrect: false,
       x,
       y,
-      clicked: false,
-      color: colors[(index + targetCount) % colors.length],
-      isBlinking: false,
-      isDisappearing: false
+      found: false,
+      color: colors[(index + 5) % colors.length],
+      pulsing: false,
+      fading: false
     });
   });
 
-  return bubbles.sort(() => Math.random() - 0.5);
+  return items.sort(() => Math.random() - 0.5);
 };

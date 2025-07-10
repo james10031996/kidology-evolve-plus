@@ -1,186 +1,191 @@
+import { StaticImageData } from "next/image";
 
-export const mathGames = [
+// Define the structure for each game
+export interface GameData {
+  id: number;
+  title: string;
+  description: string;
+  image: string | StaticImageData;
+  difficulty: string;
+  category: string;
+  path: string;
+  color: string;
+  tags: string[];
+  ageRange: string;
+  skills: string[];
+  playTime: string;
+  isNew?: boolean;
+  featured?: boolean;
+}
+
+export const gamesData = [
   {
-    id: 'number-bubble',
-    title: 'Number Bubble Pop',
-    description: 'Pop bubbles in the right order to practice counting!',
-    difficulty: 2,
-    duration: '5 min',
-    bestScore: 850,
-    playCount: 1200,
-    gradient: 'gradient-blue',
-    stars: 15,
-    route: '/activities/number-bubble-pop',
-    icon: '🔢'
+    id: 1,
+    title: "Math Sprint",
+    description: "Sharpen your math skills with fast-paced challenges!",
+    image: "/images/game-card-icons/math.png",
+    difficulty: "Beginner",
+    category: "Math",
+    path: "/games/math-sprint",
+    color: "from-red-400 to-red-600",
+    tags: ["Math", "Numbers", "Quick Thinking", "Arithmetic"],
+    ageRange: "6-12 years",
+    skills: ["Addition", "Subtraction", "Multiplication", "Division"],
+    playTime: "5-10 minutes",
   },
   {
-    id: 'math-bubble-game',
-    title: 'Math Bubble Game',
-    description: 'Pop all the bubbles with expressions that equal the target number!',
-    difficulty: 2,
-    duration: '4 min',
-    bestScore: 720,
-    playCount: 950,
-    gradient: 'bg-gradient-to-r from-green-300 via-cyan-500 to-teal-600',
-    stars: 10,
-    route: '/games/math-bubble-game',
-    icon: '➕'
+    id: 2,
+    title: "Word Scramble",
+    description: "Unscramble letters to form words and expand your vocabulary!",
+    image: "/images/game-card-icons/word.png",
+    difficulty: "Intermediate",
+    category: "Language",
+    path: "/games/word-scramble",
+    color: "from-blue-400 to-blue-600",
+    tags: ["Words", "Vocabulary", "Spelling", "Anagrams"],
+    ageRange: "8-14 years",
+    skills: ["Spelling", "Vocabulary", "Word Recognition", "Pattern Recognition"],
+    playTime: "5-10 minutes",
+  },
+  {
+    id: 3,
+    title: "Memory Match",
+    description: "Test your memory by matching pairs of cards!",
+    image: "/images/game-card-icons/memory.png",
+    difficulty: "Beginner",
+    category: "Memory",
+    path: "/games/memory-match",
+    color: "from-green-400 to-green-600",
+    tags: ["Memory", "Matching", "Concentration", "Pairs"],
+    ageRange: "4-10 years",
+    skills: ["Concentration", "Visual Memory", "Short-term Memory", "Focus"],
+    playTime: "5-10 minutes",
+  },
+  {
+    id: 4,
+    title: "Color Catch",
+    description: "Improve your reflexes by catching the correct colors!",
+    image: "/images/game-card-icons/color.png",
+    difficulty: "Intermediate",
+    category: "Reaction",
+    path: "/games/color-catch",
+    color: "from-yellow-400 to-yellow-600",
+    tags: ["Colors", "Reflexes", "Speed", "Coordination"],
+    ageRange: "6-12 years",
+    skills: ["Reflexes", "Color Recognition", "Hand-eye Coordination", "Speed"],
+    playTime: "5-10 minutes",
+  },
+  {
+    id: 5,
+    title: "Shape Sorter",
+    description: "Sort shapes into the correct containers!",
+    image: "/images/game-card-icons/shape.png",
+    difficulty: "Beginner",
+    category: "Logic",
+    path: "/games/shape-sorter",
+    color: "from-purple-400 to-purple-600",
+    tags: ["Shapes", "Sorting", "Logic", "Patterns"],
+    ageRange: "3-7 years",
+    skills: ["Shape Recognition", "Sorting Skills", "Logical Thinking", "Problem Solving"],
+    playTime: "5-10 minutes",
+  },
+  {
+    id: 6,
+    title: "Number Sequence",
+    description: "Identify the next number in the sequence!",
+    image: "/images/game-card-icons/number.png",
+    difficulty: "Intermediate",
+    category: "Math",
+    path: "/games/number-sequence",
+    color: "from-orange-400 to-orange-600",
+    tags: ["Numbers", "Sequences", "Patterns", "Math"],
+    ageRange: "7-13 years",
+    skills: ["Pattern Recognition", "Logical Thinking", "Math Skills", "Problem Solving"],
+    playTime: "5-10 minutes",
+  },
+  {
+    id: 7,
+    title: "Animal Sounds",
+    description: "Match the animal to the sound it makes!",
+    image: "/images/game-card-icons/animal.png",
+    difficulty: "Beginner",
+    category: "Educational",
+    path: "/games/animal-sounds",
+    color: "from-teal-400 to-teal-600",
+    tags: ["Animals", "Sounds", "Matching", "Educational"],
+    ageRange: "3-7 years",
+    skills: ["Auditory Recognition", "Animal Knowledge", "Matching Skills", "Memory"],
+    playTime: "5-10 minutes",
+  },
+  {
+    id: 8,
+    title: "Letter Tracing",
+    description: "Practice writing by tracing letters!",
+    image: "/images/game-card-icons/letter.png",
+    difficulty: "Beginner",
+    category: "Language",
+    path: "/games/letter-tracing",
+    color: "from-pink-400 to-pink-600",
+    tags: ["Letters", "Tracing", "Writing", "Language"],
+    ageRange: "4-8 years",
+    skills: ["Fine Motor Skills", "Letter Recognition", "Writing Skills", "Hand-eye Coordination"],
+    playTime: "5-10 minutes",
+  },
+  {
+    id: 9,
+    title: "Letter Safari",
+    description: "Embark on a safari to find animals and learn the alphabet!",
+    image: "🦁",
+    difficulty: "Beginner",
+    category: "Language",
+    path: "/games/letter-safari",
+    color: "from-lime-400 to-green-500",
+    tags: ["Letters", "Animals", "Alphabet", "Safari"],
+    ageRange: "4-7 years",
+    skills: ["Letter Recognition", "Animal Knowledge", "Vocabulary", "Observation"],
+    playTime: "5-10 minutes",
+    isNew: true,
+    featured: true
+  },
+  {
+    id: 10,
+    title: "Pop the Letter",
+    description: "Pop bubbles with letters and learn new words!",
+    image: "🎈",
+    difficulty: "Intermediate",
+    category: "Language",
+    path: "/games/pop-the-letter",
+    color: "from-pink-400 to-purple-500",
+    tags: ["Letters", "Words", "Vocabulary", "Bubbles"],
+    ageRange: "5-9 years",
+    skills: ["Letter Recognition", "Vocabulary", "Reading", "Reflexes"],
+    playTime: "7-12 minutes",
+    isNew: true,
+    featured: true
+  },
+  {
+    id: 11,
+    title: "Word Safari Challenge",
+    description: "Type animal names and discover amazing facts! Combine typing skills with learning.",
+    image: "🔤",
+    difficulty: "Intermediate",
+    category: "Typing",
+    path: "/games/word-safari-challenge",
+    color: "from-emerald-400 to-teal-500",
+    tags: ["Typing", "Animals", "Learning", "Safari"],
+    ageRange: "6-12 years",
+    skills: ["Typing Speed", "Spelling", "Animal Knowledge", "Memory"],
+    playTime: "10-15 minutes",
+    isNew: true,
+    featured: true
   }
 ];
 
-export const languageGames = [
-  {
-    id: 'letter-safari',
-    title: 'Letter Safari',
-    description: 'Find letters hiding in the jungle adventure!',
-    difficulty: 1,
-    duration: '7 min',
-    bestScore: 650,
-    playCount: 800,
-    gradient: 'gradient-green',
-    stars: 12,
-    route: '/activities/letter-safari',
-    icon: '🦁'
-  },
-  {
-    id: 'pop-the-letter',
-    title: 'Pop the Letter!',
-    description: 'Pop all the bubbles that start with the target letter!',
-    difficulty: 2,
-    duration: '5 min',
-    bestScore: 780,
-    playCount: 1150,
-    gradient: 'bg-gradient-to-r from-pink-300 via-purple-400 to-blue-500',
-    stars: 15,
-    route: '/games/pop-the-letter',
-    icon: '🔤'
-  },
-  {
-    id: 'matching-game',
-    title: 'Matching Game',
-    description: 'Match objects with their names and learn new words!',
-    difficulty: 2,
-    duration: '4 min',
-    bestScore: 720,
-    playCount: 950,
-    gradient: 'bg-gradient-to-r from-green-300 via-cyan-500 to-teal-600',
-    stars: 10,
-    route: '/games/matching-game',
-    icon: '🎯'
-  },
-  {
-    id: 'word-builder-challenge',
-    title: 'Word Builder Challenge',
-    description: 'Rearrange letters to build the correct word before time runs out!',
-    difficulty: 4,
-    duration: '6 min',
-    bestScore: 910,
-    playCount: 1780,
-    gradient: 'bg-gradient-to-r from-green-400 via-teal-500 to-blue-600',
-    stars: 18,
-    route: '/games/word-builder-challenge',
-    icon: '🔤'
+// Organize games by category
+export const categorizedGames = gamesData.reduce((acc: { [key: string]: GameData[] }, game) => {
+  if (!acc[game.category]) {
+    acc[game.category] = [];
   }
-];
-
-export const memoryGames = [
-  {
-    id: 'memory-palace',
-    title: 'Memory Palace',
-    description: 'Train your brain with colorful memory challenges!',
-    difficulty: 3,
-    duration: '6 min',
-    playCount: 450,
-    gradient: 'gradient-purple',
-    stars: 20,
-    route: '/activities/memory-palace',
-    icon: '🧠'
-  }
-];
-
-export const logicGames = [
-  {
-    id: 'shape-sorter',
-    title: 'Shape Sorter',
-    description: 'Sort shapes and learn geometry fundamentals!',
-    difficulty: 2,
-    duration: '4 min',
-    bestScore: 720,
-    playCount: 950,
-    gradient: 'gradient-pink',
-    stars: 10,
-    route: '/activities/shape-sorter',
-    icon: '🔷'
-  },
-  {
-    id: 'pattern-detective',
-    title: 'Pattern Detective',
-    description: 'Find and complete fun patterns of colors, shapes, and more!',
-    difficulty: 3,
-    duration: '5 min', 
-    bestScore: 850,
-    playCount: 1320,
-    gradient: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500',
-    stars: 15,
-    route: '/games/pattern-detective',
-    icon: '🧩'
-  }
-];
-
-export const puzzleGames = [
-  {
-    id: 'search-missing-object',
-    title: 'Search Missing Object',
-    description: 'Search the missing object, find and drag to correct position!',
-    difficulty: 2,
-    duration: '4 min',
-    bestScore: 720,
-    playCount: 950,
-    gradient: 'bg-gradient-to-r from-purple-300 via-violet-400 to-pink-500',
-    stars: 10,
-    route: '/games/search-missing-object',
-    icon: '🔍'
-  },
-  {
-    id: 'puzzle-assembly',
-    title: 'Puzzle Assembly',
-    description: 'Drag the puzzle pieces to the right location!',
-    difficulty: 2,
-    duration: '4 min',
-    bestScore: 720,
-    playCount: 950,
-    gradient: 'bg-gradient-to-r from-yellow-300 via-pink-500 to-orange-600',
-    stars: 10,
-    route: '/games/puzzle-assembly',
-    icon: '🧩'
-  }
-];
-
-export const scienceGames = [
-  {
-    id: 'geography-bubble-game',
-    title: 'Geography Bubble Game',
-    description: 'Explore the world by popping the correct geography answers!',
-    difficulty: 2,
-    duration: '4 min',
-    bestScore: 720,
-    playCount: 950,
-    gradient: 'bg-gradient-to-r from-cyan-600 via-blue-400 to-purple-600',
-    stars: 10,
-    route: '/games/geography-bubble-game',
-    icon: '🌍'
-  },
-  {
-    id: 'science-bubble-game',
-    title: 'Science Bubble Game',
-    description: 'Pop the bubble with the correct answer to science questions!',
-    difficulty: 2,
-    duration: '4 min',
-    bestScore: 720,
-    playCount: 950,
-    gradient: 'bg-gradient-to-r from-purple-500 via-violet-400 to-pink-600',
-    stars: 10,
-    route: '/games/science-bubble-game',
-    icon: '🔬'
-  }
-];
+  acc[game.category].push(game);
+  return acc;
+}, {});

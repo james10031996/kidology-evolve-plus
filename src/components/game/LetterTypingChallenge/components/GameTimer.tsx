@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 interface GameTimerProps {
   timeLeft: number;
   gameState: string;
-  onTimeUpdate: (newTime: number) => void;
+  onTimeUpdate: (newTime: number | ((prev: number) => number)) => void;
   onTimeUp: () => void;
 }
 
@@ -16,13 +16,6 @@ const GameTimer = ({ timeLeft, gameState, onTimeUpdate, onTimeUp }: GameTimerPro
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
-  };
-
-  const startTimer = () => {
-    clearGameTimer();
-    timerRef.current = setInterval(() => {
-      onTimeUpdate(timeLeft - 1);
-    }, 1000);
   };
 
   useEffect(() => {
