@@ -1,11 +1,10 @@
-import { StaticImageData } from "next/image";
 
 // Define the structure for each game
 export interface GameData {
   id: number;
   title: string;
   description: string;
-  image: string | StaticImageData;
+  image: string;
   difficulty: string;
   category: string;
   path: string;
@@ -189,3 +188,11 @@ export const categorizedGames = gamesData.reduce((acc: { [key: string]: GameData
   acc[game.category].push(game);
   return acc;
 }, {});
+
+// Export categorized arrays
+export const mathGames = gamesData.filter(game => game.category === 'Math');
+export const languageGames = gamesData.filter(game => game.category === 'Language');
+export const memoryGames = gamesData.filter(game => game.category === 'Memory');
+export const logicGames = gamesData.filter(game => game.category === 'Logic');
+export const puzzleGames = gamesData.filter(game => game.category === 'Puzzle');
+export const scienceGames = gamesData.filter(game => game.category === 'Science');
