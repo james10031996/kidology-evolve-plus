@@ -1,5 +1,4 @@
-
-import letterSafariData from '../../LetterSafari/letterSafariData';
+import { letterSafariData } from '../../LetterSafari/letterSafariData';
 
 export interface LetterItem {
   emoji: string;
