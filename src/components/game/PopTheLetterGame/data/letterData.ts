@@ -1,4 +1,5 @@
-import { letterSafariData } from '../../LetterSafari/letterSafariData';
+
+import { allAnimalsDatabase } from '../../LetterSafari/letterSafariData';
 
 export interface LetterItem {
   emoji: string;
@@ -9,16 +10,16 @@ export interface LetterItem {
   habitat?: string;
 }
 
-// Convert letterSafariData to our format
+// Convert allAnimalsDatabase to our format
 export const letterDatabase: { [key: string]: LetterItem[] } = {};
 
-// Transform the data from letterSafariData
-Object.keys(letterSafariData).forEach(letter => {
-  const items = letterSafariData[letter as keyof typeof letterSafariData];
+// Transform the data from allAnimalsDatabase
+Object.keys(allAnimalsDatabase).forEach(letter => {
+  const items = allAnimalsDatabase[letter as keyof typeof allAnimalsDatabase];
   letterDatabase[letter] = items.map(item => ({
     emoji: item.emoji,
-    name: item.name,
-    fullName: item.fullName || item.name,
+    name: item.animal,
+    fullName: item.fullName || item.animal,
     information: item.information,
     category: item.category,
     habitat: item.habitat
