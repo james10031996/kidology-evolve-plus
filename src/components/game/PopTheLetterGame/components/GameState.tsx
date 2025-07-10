@@ -1,6 +1,5 @@
 
 import { Card } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Star, Clock, Heart, Trophy, Zap } from 'lucide-react';
 
 interface GameStateProps {
@@ -15,11 +14,10 @@ interface GameStateProps {
     currentLetter: string;
     mode: 'series' | 'random';
   };
-  levelProgress: number;
   isSpeedRound: boolean;
 }
 
-const GameState = ({ gameStats, levelProgress, isSpeedRound }: GameStateProps) => {
+const GameState = ({ gameStats, isSpeedRound }: GameStateProps) => {
   return (
     <>
       <div className="max-w-6xl mx-auto">
@@ -52,14 +50,10 @@ const GameState = ({ gameStats, levelProgress, isSpeedRound }: GameStateProps) =
               {gameStats.currentLetter}
             </div>
             <div className="font-comic text-lg text-gray-600">
-              {isSpeedRound ? '⚡ SPEED ROUND! ⚡' : 'Pop bubbles starting with this letter!'}
+              {isSpeedRound ? '⚡ SPEED ROUND! ⚡' : 'Pop 5 bubbles starting with this letter!'}
             </div>
-            <div className="mt-2">
-              <div className="flex items-center space-x-2 mb-1">
-                <Zap className="w-4 h-4 text-yellow-500" />
-                <span className="font-comic text-sm">Letter Progress</span>
-              </div>
-              <Progress value={levelProgress} className="h-2 w-32" />
+            <div className="mt-2 text-sm text-gray-500 font-comic">
+              Find all {gameStats.currentLetter} items to move to the next letter!
             </div>
           </div>
 
@@ -70,9 +64,9 @@ const GameState = ({ gameStats, levelProgress, isSpeedRound }: GameStateProps) =
               ))}
             </div>
             <div className="text-center">
-              <Clock className={`w-6 h-6 mx-auto ${gameStats.timeLeft <= 10 ? 'text-red-500 animate-pulse' : 'text-red-500'}`} />
-              <div className={`font-bold text-xl ${gameStats.timeLeft <= 10 ? 'text-red-600 animate-pulse' : 'text-red-600'}`}>
-                {gameStats.timeLeft}s
+              <Clock className={`w-6 h-6 mx-auto ${gameStats.timeLeft <= 30 ? 'text-red-500 animate-pulse' : 'text-red-500'}`} />
+              <div className={`font-bold text-xl ${gameStats.timeLeft <= 30 ? 'text-red-600 animate-pulse' : 'text-red-600'}`}>
+                {Math.floor(gameStats.timeLeft / 60)}:{(gameStats.timeLeft % 60).toString().padStart(2, '0')}
               </div>
             </div>
           </div>

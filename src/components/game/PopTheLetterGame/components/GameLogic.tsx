@@ -31,17 +31,29 @@ interface LetterBubble {
   information?: string;
   category?: string;
   habitat?: string;
+  isBlinking?: boolean;
+  isDisappearing?: boolean;
+}
+
+interface PoppedBubble {
+  emoji: string;
+  name: string;
+  information: string;
+  letter: string;
+  fullName?: string;
 }
 
 export const useGameLogic = () => {
   const levelCompleteRef = useRef<boolean>(false);
   const confettiTriggeredRef = useRef<boolean>(false);
+  const blinkingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const disappearingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
   const [gameStats, setGameStats] = useState<GameStats>({
     level: 1,
     score: 0,
     lives: 3,
-    timeLeft: 45,
+    timeLeft: 120, // 2 minutes
     streak: 0,
     totalCorrect: 0,
     highScore: parseInt(localStorage.getItem('popLetterHighScore') || '0'),
@@ -53,20 +65,64 @@ export const useGameLogic = () => {
   const [bubbles, setBubbles] = useState<LetterBubble[]>([]);
   const [gameState, setGameState] = useState<'menu' | 'playing' | 'paused' | 'gameOver' | 'levelComplete'>('menu');
   const [feedback, setFeedback] = useState<string>('');
-  const [levelProgress, setLevelProgress] = useState(0);
   const [isSpeedRound, setIsSpeedRound] = useState(false);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [solveStartTime, setSolveStartTime] = useState<number>(Date.now());
   const [selectedBubble, setSelectedBubble] = useState<LetterBubble | null>(null);
+  const [poppedBubbles, setPoppedBubbles] = useState<PoppedBubble[][]>([]);
+  const [currentRow, setCurrentRow] = useState<PoppedBubble[]>([]);
+
+  const clearChallengeIntervals = () => {
+    if (blinkingIntervalRef.current) {
+      clearInterval(blinkingIntervalRef.current);
+      blinkingIntervalRef.current = null;
+    }
+    if (disappearingIntervalRef.current) {
+      clearInterval(disappearingIntervalRef.current);
+      disappearingIntervalRef.current = null;
+    }
+  };
+
+  const startChallenges = () => {
+    clearChallengeIntervals();
+    
+    // Start blinking effect for higher levels
+    if (gameStats.level >= 3) {
+      blinkingIntervalRef.current = setInterval(() => {
+        setBubbles(prev => prev.map(bubble => ({
+          ...bubble,
+          isBlinking: Math.random() < 0.3
+        })));
+      }, 2000);
+    }
+
+    // Start disappearing effect for higher levels
+    if (gameStats.level >= 5) {
+      disappearingIntervalRef.current = setInterval(() => {
+        setBubbles(prev => prev.map(bubble => ({
+          ...bubble,
+          isDisappearing: !bubble.clicked && Math.random() < 0.2
+        })));
+        
+        setTimeout(() => {
+          setBubbles(prev => prev.map(bubble => ({
+            ...bubble,
+            isDisappearing: false
+          })));
+        }, 1000);
+      }, 4000);
+    }
+  };
 
   const generateNewBubbles = useCallback(() => {
-    const newBubbles = generateLetterBubbles(gameStats.currentLetter);
+    const newBubbles = generateLetterBubbles(gameStats.currentLetter, 5); // 5 target bubbles + 5 random
     setBubbles(newBubbles);
     setSolveStartTime(Date.now());
     levelCompleteRef.current = false;
     confettiTriggeredRef.current = false;
     setSelectedBubble(null);
-  }, [gameStats.currentLetter]);
+    startChallenges();
+  }, [gameStats.currentLetter, gameStats.level]);
 
   const startGame = (mode: 'series' | 'random') => {
     const savedState = loadGameState();
@@ -89,17 +145,18 @@ export const useGameLogic = () => {
       setGameState('playing');
     }
     
-    setLevelProgress(0);
     setIsSpeedRound(false);
     levelCompleteRef.current = false;
     confettiTriggeredRef.current = false;
     setSelectedBubble(null);
+    setPoppedBubbles([]);
+    setCurrentRow([]);
     
     generateNewBubbles();
   };
 
   const handleBubbleClick = (bubble: LetterBubble) => {
-    if (bubble.clicked || levelCompleteRef.current) return;
+    if (bubble.clicked || levelCompleteRef.current || bubble.isDisappearing) return;
 
     const solveTime = (Date.now() - solveStartTime) / 1000;
     const timeBonus = solveTime < 3;
@@ -119,6 +176,18 @@ export const useGameLogic = () => {
         streak: gameStats.streak + 1,
         totalCorrect: gameStats.totalCorrect + 1
       };
+
+      // Add to current row
+      const poppedBubble: PoppedBubble = {
+        emoji: bubble.emoji,
+        name: bubble.name,
+        information: bubble.information || `This ${bubble.name} starts with ${bubble.letter}`,
+        letter: bubble.letter,
+        fullName: bubble.fullName
+      };
+      
+      const newCurrentRow = [...currentRow, poppedBubble];
+      setCurrentRow(newCurrentRow);
 
       if (newStats.score > newStats.highScore) {
         newStats.highScore = newStats.score;
@@ -152,18 +221,13 @@ export const useGameLogic = () => {
 
       if (allCorrectClicked && !levelCompleteRef.current) {
         levelCompleteRef.current = true;
-        const correctCount = newBubbles.filter(b => b.isCorrect).length;
-        const progressIncrease = correctCount * 20;
-        const newProgress = Math.min(100, levelProgress + progressIncrease);
-        setLevelProgress(newProgress);
         
+        // Move current row to popped bubbles and start new row
         setTimeout(() => {
-          if (newProgress >= 100) {
-            setGameState('levelComplete');
-          } else {
-            generateNewBubbles();
-          }
-        }, 3000);
+          setPoppedBubbles(prev => [...prev, newCurrentRow]);
+          setCurrentRow([]);
+          nextLetter();
+        }, 2000);
       }
 
       saveGameState(newStats);
@@ -181,13 +245,14 @@ export const useGameLogic = () => {
 
       if (newLives <= 0) {
         setTimeout(() => {
+          clearChallengeIntervals();
           setGameState('gameOver');
         }, 1000);
       }
     }
   };
 
-  const nextLevel = () => {
+  const nextLetter = () => {
     let nextLetter = gameStats.currentLetter;
     
     if (gameStats.mode === 'series') {
@@ -214,7 +279,6 @@ export const useGameLogic = () => {
       currentLetter: nextLetter
     }));
 
-    setLevelProgress(0);
     setIsSpeedRound(speedRound);
     levelCompleteRef.current = false;
     confettiTriggeredRef.current = false;
@@ -223,10 +287,12 @@ export const useGameLogic = () => {
     if (speedRound) {
       setFeedback('🚀 SPEED ROUND! Double points! 🚀');
       setTimeout(() => setFeedback(''), 3000);
+    } else {
+      setFeedback(`✨ Next Letter: ${nextLetter}! ✨`);
+      setTimeout(() => setFeedback(''), 2000);
     }
 
     generateNewBubbles();
-    setGameState('playing');
   };
 
   const updateTimeLeft = (newTime: number) => {
@@ -234,6 +300,7 @@ export const useGameLogic = () => {
   };
 
   const handleTimeUp = () => {
+    clearChallengeIntervals();
     setGameState('gameOver');
   };
 
@@ -242,13 +309,13 @@ export const useGameLogic = () => {
     bubbles,
     gameState,
     feedback,
-    levelProgress,
     isSpeedRound,
     newBadges,
     selectedBubble,
+    poppedBubbles,
+    currentRow,
     startGame,
     handleBubbleClick,
-    nextLevel,
     setGameState,
     generateNewBubbles,
     updateTimeLeft,

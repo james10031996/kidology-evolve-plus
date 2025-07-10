@@ -15,6 +15,8 @@ export interface LetterBubble {
   information?: string;
   category?: string;
   habitat?: string;
+  isBlinking?: boolean;
+  isDisappearing?: boolean;
 }
 
 const colors = [
@@ -46,12 +48,12 @@ const wrongAnswers = [
   { emoji: '🌹', name: 'Rose', letter: 'R' }
 ];
 
-export const generateLetterBubbles = (targetLetter: string): LetterBubble[] => {
+export const generateLetterBubbles = (targetLetter: string, targetCount: number = 5): LetterBubble[] => {
   const bubbles: LetterBubble[] = [];
-  const letterItems = getRandomLetterItems(targetLetter, 4);
+  const letterItems = getRandomLetterItems(targetLetter, targetCount);
   
-  // Add 4 correct answers
-  letterItems.forEach((item, index) => {
+  // Add target letter bubbles (exactly 5)
+  letterItems.slice(0, targetCount).forEach((item, index) => {
     let x, y;
     let attempts = 0;
     
@@ -61,7 +63,7 @@ export const generateLetterBubbles = (targetLetter: string): LetterBubble[] => {
       attempts++;
     } while (
       attempts < 10 &&
-      bubbles.some(existing => Math.abs(existing.x - x) < 15 && Math.abs(existing.y - y) < 15)
+      bubbles.some(existing => Math.abs(existing.x - x) < 12 && Math.abs(existing.y - y) < 12)
     );
 
     bubbles.push({
@@ -77,13 +79,15 @@ export const generateLetterBubbles = (targetLetter: string): LetterBubble[] => {
       fullName: item.fullName,
       information: item.information,
       category: item.category,
-      habitat: item.habitat
+      habitat: item.habitat,
+      isBlinking: false,
+      isDisappearing: false
     });
   });
 
-  // Add 6 wrong answers
+  // Add random wrong answer bubbles (exactly 5)
   const availableWrong = wrongAnswers.filter(item => item.letter !== targetLetter);
-  const selectedWrong = availableWrong.sort(() => Math.random() - 0.5).slice(0, 6);
+  const selectedWrong = availableWrong.sort(() => Math.random() - 0.5).slice(0, 5);
   
   selectedWrong.forEach((item, index) => {
     let x, y;
@@ -95,7 +99,7 @@ export const generateLetterBubbles = (targetLetter: string): LetterBubble[] => {
       attempts++;
     } while (
       attempts < 10 &&
-      bubbles.some(existing => Math.abs(existing.x - x) < 15 && Math.abs(existing.y - y) < 15)
+      bubbles.some(existing => Math.abs(existing.x - x) < 12 && Math.abs(existing.y - y) < 12)
     );
 
     bubbles.push({
@@ -107,7 +111,9 @@ export const generateLetterBubbles = (targetLetter: string): LetterBubble[] => {
       x,
       y,
       clicked: false,
-      color: colors[(index + 4) % colors.length]
+      color: colors[(index + targetCount) % colors.length],
+      isBlinking: false,
+      isDisappearing: false
     });
   });
 

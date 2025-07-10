@@ -1,4 +1,3 @@
-
 export const calculateScore = (level: number, streak: number, timeBonus: boolean, isSpeedRound: boolean) => {
   let baseScore = 15 * level;
   let streakBonus = streak * 8;
@@ -15,9 +14,11 @@ export const calculateScore = (level: number, streak: number, timeBonus: boolean
 
 export const getTimeLimit = (level: number, isSpeedRound: boolean) => {
   if (isSpeedRound) {
-    return 25;
+    return Math.max(30, 120 - level * 5); // Reduced time for speed rounds
   }
-  return Math.max(30, 60 - level * 2);
+  
+  // Base 2 minutes, reduce by 5 seconds per level, minimum 60 seconds
+  return Math.max(60, 120 - level * 5);
 };
 
 export const checkForBadges = (gameStats: any) => {

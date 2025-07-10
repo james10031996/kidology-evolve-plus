@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import Header from '@/components/home/Header';
 import GameMenu from './components/GameMenu';
 import GameOver from './components/GameOver';
-import LevelComplete from './components/LevelComplete';
 import GameState from './components/GameState';
 import BadgeSystem from './components/BadgeSystem';
 import EnhancedBubbleArea from './components/EnhancedBubbleArea';
@@ -22,13 +21,13 @@ const PopTheLetterGame = () => {
     bubbles,
     gameState,
     feedback,
-    levelProgress,
     isSpeedRound,
     newBadges,
     selectedBubble,
+    poppedBubbles,
+    currentRow,
     startGame,
     handleBubbleClick,
-    nextLevel,
     setGameState,
     generateNewBubbles,
     updateTimeLeft,
@@ -71,16 +70,6 @@ const PopTheLetterGame = () => {
     );
   }
 
-  if (gameState === 'levelComplete') {
-    return (
-      <LevelComplete 
-        gameStats={gameStats}
-        isSpeedRound={isSpeedRound}
-        onNextLevel={nextLevel}
-      />
-    );
-  }
-
   return (
     <div>
       <Header />
@@ -104,7 +93,6 @@ const PopTheLetterGame = () => {
 
         <GameState 
           gameStats={gameStats}
-          levelProgress={levelProgress}
           isSpeedRound={isSpeedRound}
         />
 
@@ -120,6 +108,8 @@ const PopTheLetterGame = () => {
           bubbles={bubbles} 
           onBubbleClick={handleBubbleClick}
           selectedBubble={selectedBubble}
+          poppedBubbles={poppedBubbles}
+          currentRow={currentRow}
         />
       </div>
     </div>
